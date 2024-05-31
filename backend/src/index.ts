@@ -1,7 +1,16 @@
-import { Elysia } from "elysia";
+import {Elysia} from 'elysia';
+import {yoga} from '@elysiajs/graphql-yoga';
 
-const app = new Elysia().get("/", () => "Hello Elysia").listen(3000);
+const typeDefs = `
+    type Query {
+        hi: String
+    }
+`;
 
-console.log(
-  `🦊 Elysia is running at ${app.server?.hostname}:${app.server?.port}`
-);
+const resolvers = {
+    Query: {
+        hi: () => 'Hello from Elysia'
+    }
+};
+
+const app = new Elysia().use(yoga({typeDefs, resolvers})).listen(4000);
