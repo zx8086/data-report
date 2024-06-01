@@ -1,7 +1,8 @@
 <script>
 	import "../app.css";
+	import config from '../configFrontend'
 	import posthog from 'posthog-js'
-	posthog.init('phc_qmqwPLsWmycDSEzZqEYoYVj4fVl8JuEO8wjaxTfezTh', { api_host: "https://eu.i.posthog.com" })
+	posthog.init(config.postHog.API_KEY, { api_host: config.postHog.API_HOST })
 	posthog.capture('$pageview')
 </script>
 
