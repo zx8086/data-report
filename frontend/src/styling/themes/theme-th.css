@@ -1,0 +1,53 @@
+/* Tommy Hilfiger theme styles */
+.theme-th {
+    /* Base styles for the th-theme */
+    @apply bg-tommy-background-lightest text-tommy-dark-blue;
+  
+  .btn {
+    @apply px-4 py-2 font-bold border border-transparent rounded text-tommy-white bg-tommy-red;
+  }
+  
+  .btn:hover {
+    @apply bg-tommy-orange; /* Assuming you want a darker red on hover */
+  }
+  
+  .btn:focus {
+    @apply outline-none ring-tommy-dark-blue ring-opacity-50;
+  }
+  /* Styles for product cards in CK theme */
+    .card {
+      @apply  border border-gray-200 rounded-xl ;
+    }
+    .card:hover {
+      @apply border shadow-lg border-tommy-background-deep-blue;
+    }
+  
+    /* Styles for navigation in TH theme */
+    .nav {
+      @apply bg-tommy-background-navy text-tommy-white;
+    }
+    .nav a {
+      @apply text-tommy-white hover:text-tommy-light-gray;
+    }
+    /* Styles for headings in TH theme */
+    .heading {
+      @apply text-2xl font-bold text-tommy-dark-blue;
+    }
+    /* Styles for prices in TH theme */
+    .price {
+      @apply text-lg font-semibold text-tommy-red;
+    }
+    /* Other utility styles in TH theme */
+    .placeholder {
+      @apply placeholder-tommy-background-medium-gray;
+    }
+  
+    /* Styles for the 'VIEW DETAILED REPORT' button in TH theme */
+    .btn-detailed-report {
+      @apply px-4 py-2 font-bold transition-colors duration-300 ease-in-out border border-transparent rounded text-tommy-white bg-tommy-background-medium-gray;
+    }
+  
+    .btn-detailed-report:hover {
+      @apply bg-tommy-black; /* Change according to the hover color you want */
+    }
+  }
