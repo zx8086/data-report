@@ -1,0 +1,52 @@
+/* Calvin Klein theme styles */
+.theme-ck {
+    /* Base styles for the ck-theme */
+    @apply text-gray-800 bg-white;
+  
+    /* Styles for buttons in CK theme */
+    .btn {
+      @apply px-4 py-2 font-bold text-white bg-black border border-transparent rounded;
+    }
+    .btn:hover {
+      @apply bg-gray-800; /* A slightly lighter black on hover */
+    }
+    .btn:focus {
+      @apply outline-none ring-gray-800 ring-opacity-50;
+    }
+  
+    /* Styles for product cards in CK theme */
+    .card {
+      @apply overflow-hidden bg-white border border-gray-300 rounded-lg;
+    }
+    .card:hover {
+      @apply shadow-lg;
+    }
+  
+    /* Styles for navigation in CK theme */
+    .nav {
+      @apply text-white bg-gray-900;
+    }
+    .nav a {
+      @apply text-white hover:text-gray-300;
+    }
+  
+    /* Styles for headings in CK theme */
+    .heading {
+      @apply text-3xl font-bold text-gray-900;
+    }
+  
+    /* Styles for text in CK theme */
+    .text {
+      @apply font-sans text-base font-normal leading-normal;
+    }
+  
+    /* Styles for prices in CK theme */
+    .price {
+      @apply text-lg font-semibold text-black;
+    }
+  
+    /* Other utility styles in CK theme */
+    .placeholder {
+      @apply placeholder-gray-500;
+    }
+  }
