@@ -1,16 +1,7 @@
 import {Elysia} from 'elysia';
+
 import {yoga} from '@elysiajs/graphql-yoga';
+import typeDefs from './graphql/schema/typeDefs';
+import resolvers from './graphql/schema/resolvers';
 
-const typeDefs = `
-    type Query {
-        hi: String
-    }
-`;
-
-const resolvers = {
-    Query: {
-        hi: () => 'Hello from Elysia'
-    }
-};
-
-const app = new Elysia().use(yoga({typeDefs, resolvers})).listen(4000);
+const app = new Elysia().use(yoga({logging: 'debug', typeDefs, resolvers})).listen(4000);
