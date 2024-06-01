@@ -1,27 +1,5 @@
-// configFrontend.ts
-export interface CouchbaseConfig {
-  URL: string;
-  USERNAME: string;
-  PASSWORD: string;
-  BUCKET: string;
-  SCOPE: string;
-  COLLECTION: string;
-}
-
-export interface ElysiaConfig {
-  PORT: string;
-  BASE_URL: string
-}
-
-export interface PostHogConfig {
-  API_KEY: string;
-  API_HOST: string
-}
-export interface ConfigFrontend {
-  couchbase: CouchbaseConfig;
-  elysiaJs: ElysiaConfig;
-  postHog: PostHogConfig;
-}
+// frontend.ts
+import type { CouchbaseConfig, ElysiaConfig, PostHogConfig, FrontendConfig } from './types';
 
 function getOrThrow(envVariable: string | undefined, name: string): string {
   if (!envVariable) {
@@ -49,7 +27,7 @@ const elysiaConfig: ElysiaConfig = {
   BASE_URL: getOrThrow(Bun.env.BASE_URL, 'BASE_URL') || 'http://localhost',
 };
 
-const config: ConfigFrontend = {
+const config: FrontendConfig = {
   couchbase: couchbaseConfig,
   elysiaJs: elysiaConfig,
   postHog: postHogConfig,
