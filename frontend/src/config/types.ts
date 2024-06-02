@@ -1,3 +1,5 @@
+// types.ts
+
 export interface CouchbaseConfig {
 	URL: string;
 	USERNAME: string;
@@ -16,6 +18,7 @@ export interface PostHogConfig {
 	API_KEY: string;
 	API_HOST: string
 }
+
 export interface FrontendConfig {
 	couchbase: CouchbaseConfig;
 	elysiaJs: ElysiaConfig;
