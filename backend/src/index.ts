@@ -1,7 +1,6 @@
-import {Elysia} from 'elysia';
+import { Elysia } from 'elysia';
 import { cors } from '@elysiajs/cors'
-
-import {yoga} from '@elysiajs/graphql-yoga';
+import { yoga } from '@elysiajs/graphql-yoga';
 import typeDefs from './graphql/schema/typeDefs';
 import resolvers from './graphql/schema/resolvers';
 import { useResponseCache } from '@graphql-yoga/plugin-response-cache';

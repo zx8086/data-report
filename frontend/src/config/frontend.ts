@@ -1,5 +1,6 @@
 // frontend.ts
-import type { CouchbaseConfig, ElysiaConfig, PostHogConfig, FrontendConfig } from './types';
+import type { CouchbaseConfig, ElysiaConfig, PostHogConfig, FrontendConfig } from './types.ts';
+import * as bun from 'bun';
 
 function getOrThrow(envVariable: string | undefined, name: string): string {
   if (!envVariable) {
@@ -9,22 +10,22 @@ function getOrThrow(envVariable: string | undefined, name: string): string {
 }
 
 const couchbaseConfig: CouchbaseConfig = {
-  URL: getOrThrow((Bun.env as Record<string, string>)['COUCHBASE_URL'], 'COUCHBASE_URL'),
-  USERNAME: getOrThrow((Bun.env as Record<string, string>)['COUCHBASE_USERNAME'], 'COUCHBASE_USERNAME'),
-  PASSWORD: getOrThrow((Bun.env as Record<string, string>)['COUCHBASE_PASSWORD'], 'COUCHBASE_PASSWORD'),
-  BUCKET: getOrThrow((Bun.env as Record<string, string>)['COUCHBASE_BUCKET'], 'COUCHBASE_BUCKET'),
-  SCOPE: getOrThrow((Bun.env as Record<string, string>)['COUCHBASE_SCOPE'], 'COUCHBASE_SCOPE'),
-  COLLECTION: getOrThrow((Bun.env as Record<string, string>)['COUCHBASE_COLLECTION'], 'COUCHBASE_COLLECTION'),
+  URL: getOrThrow((process.env as Record<string, string>)['COUCHBASE_URL'], 'COUCHBASE_URL'),
+  USERNAME: getOrThrow((process.env as Record<string, string>)['COUCHBASE_USERNAME'], 'COUCHBASE_USERNAME'),
+  PASSWORD: getOrThrow((process.env as Record<string, string>)['COUCHBASE_PASSWORD'], 'COUCHBASE_PASSWORD'),
+  BUCKET: getOrThrow((process.env as Record<string, string>)['COUCHBASE_BUCKET'], 'COUCHBASE_BUCKET'),
+  SCOPE: getOrThrow((process.env as Record<string, string>)['COUCHBASE_SCOPE'], 'COUCHBASE_SCOPE'),
+  COLLECTION: getOrThrow((process.env as Record<string, string>)['COUCHBASE_COLLECTION'], 'COUCHBASE_COLLECTION'),
 };
 
 const postHogConfig: PostHogConfig = {
-  API_KEY: getOrThrow(Bun.env.POSTHOG_API_KEY, 'POSTHOG_API_KEY'),
-  API_HOST: getOrThrow(Bun.env.POSTHOG_API_HOST, 'POSTHOG_API_HOST') || 'https://eu.i.posthog.com',
+  API_KEY: getOrThrow(process.env.POSTHOG_API_KEY, 'POSTHOG_API_KEY'),
+  API_HOST: getOrThrow(process.env.POSTHOG_API_HOST, 'POSTHOG_API_HOST') || 'https://eu.i.posthog.com',
 };
 
 const elysiaConfig: ElysiaConfig = {
-  PORT: getOrThrow(Bun.env.PORT, 'PORT') || '4000',
-  BASE_URL: getOrThrow(Bun.env.BASE_URL, 'BASE_URL') || 'http://localhost',
+  PORT: getOrThrow(process.env.PORT, 'PORT') || '4000',
+  BASE_URL: getOrThrow(process.env.BASE_URL, 'BASE_URL') || 'http://localhost',
 };
 
 const config: FrontendConfig = {
