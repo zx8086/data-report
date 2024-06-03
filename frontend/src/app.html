@@ -2,6 +2,7 @@
 <html lang="en">
 	<head>
 		<meta charset="utf-8" />
+		<title>Data Report</title>
 		<link rel="icon" href="%sveltekit.assets%/favicon.png" />
 		<meta name="viewport" content="width=device-width, initial-scale=1" />
 		%sveltekit.head%
@@ -17,8 +18,10 @@
 						serverUrl: 'https://apm.siobytes.com',
 						serviceVersion: '1.0.0',
 						environment: 'development',
-						logLevel: 'trace',
+						logLevel: 'debug',
 						breakdownMetrics: true,
+						pageLoadTransactionName: '/homepage',
+						centralConfig: true,
 					});
 					console.log('Elastic APM initialized.');
 				} catch (e) {

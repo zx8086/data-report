@@ -9,8 +9,8 @@ declare global {
 		// interface Platform {}
 	}
 	// Extend the Window interface to include elasticApm
-	// interface Window {
-	// 	elasticApm: any; // Replace 'any' with a more specific type if you have one
-	// }
+	interface Window {
+		elasticApm: any; // Replace 'any' with a more specific type if you have one
+	}
 }
 export {};
