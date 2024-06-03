@@ -9,7 +9,6 @@ const app = new Elysia()
 	.use(cors())
 	.use(yoga({
 		logging: 'debug',
-		healthCheckEndpoint: '/live',
 		typeDefs,
 		resolvers,
 		// plugins: [
@@ -20,3 +19,4 @@ const app = new Elysia()
 		// ],
 	}),
 ).listen(4000);
+console.log(`Server is running on port 4000`);
