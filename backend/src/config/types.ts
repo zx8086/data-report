@@ -23,9 +23,19 @@ export interface ElasticConfig {
 	ELASTIC_URL: string;
 }
 
-export interface FrontendConfig {
+export interface OpenTelemetryConfig {
+	SERVICE_NAME: string;
+	SERVICE_VERSION: string
+	DEPLOYMENT_ENVIRONMENT: string
+	OTLP_TRACES_ENDPOINT: string
+	OTLP_METRICS_ENDPOINT: string
+	OTLP_LOGS_ENDPOINT: string
+}
+
+export interface BackendConfig {
 	couchbase: CouchbaseConfig;
 	elysiaJs: ElysiaConfig;
 	postHog: PostHogConfig;
 	elastic: ElasticConfig;
+	openTelemetry: OpenTelemetryConfig;
 }

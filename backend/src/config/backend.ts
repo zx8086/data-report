@@ -1,6 +1,7 @@
 // backend.ts
-import type { CouchbaseConfig, ElysiaConfig, PostHogConfig, FrontendConfig, ElasticConfig } from './types.ts';
-import * as bun from 'bun';
+import type { CouchbaseConfig, ElysiaConfig, PostHogConfig, BackendConfig, ElasticConfig, OpenTelemetryConfig } from './types.ts';
+import Backend from './backend';
+// import * as bun from 'bun';
 
 function getOrThrow(envVariable: string | undefined, name: string): string  {
   if (!envVariable) {
@@ -32,11 +33,21 @@ const elysiaConfig: ElysiaConfig = {
   BASE_URL: getOrThrow(process.env.BASE_URL, 'BASE_URL') || 'http://localhost',
 };
 
-const config: FrontendConfig = {
+const telemetryConfig: OpenTelemetryConfig = {
+  SERVICE_NAME: getOrThrow((Bun.env as Record<string, string>)['SERVICE_NAME'], 'SERVICE_NAME'),
+  SERVICE_VERSION: getOrThrow((Bun.env as Record<string, string>)['SERVICE_VERSION'], 'SERVICE_VERSION'),
+  DEPLOYMENT_ENVIRONMENT: getOrThrow((Bun.env as Record<string, string>)['DEPLOYMENT_ENVIRONMENT'], 'DEPLOYMENT_ENVIRONMENT'),
+  OTLP_TRACES_ENDPOINT: getOrThrow((Bun.env as Record<string, string>)['OTLP_TRACES_ENDPOINT'], 'OTLP_TRACES_ENDPOINT'),
+  OTLP_METRICS_ENDPOINT: getOrThrow((Bun.env as Record<string, string>)['OTLP_METRICS_ENDPOINT'], 'OTLP_METRICS_ENDPOINT'),
+  OTLP_LOGS_ENDPOINT: getOrThrow((Bun.env as Record<string, string>)['OTLP_LOGS_ENDPOINT'], 'OTLP_LOGS_ENDPOINT')
+};
+
+const config: BackendConfig = {
   couchbase: couchbaseConfig,
   elysiaJs: elysiaConfig,
   postHog: postHogConfig,
   elastic: elasticConfig,
+  openTelemetry: telemetryConfig,
 };
 
 export default config;
