@@ -1,9 +1,5 @@
 {
   "name": "data-report",
-  "private": true,
-  "workspaces": [
-    "packages/*"
-  ],
   "module": "index.ts",
   "type": "module",
   "devDependencies": {
