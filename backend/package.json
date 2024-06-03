@@ -6,9 +6,11 @@
     "dev": "bun run --watch src/index.ts"
   },
   "dependencies": {
+    "@elastic/apm-rum": "^5.16.0",
     "@elysiajs/cors": "^1.0.2",
     "@elysiajs/graphql-yoga": "^1.0.3",
     "@graphql-yoga/plugin-response-cache": "^3.5.1",
+    "elastic-apm-node": "^4.5.4",
     "elysia": "latest"
   },
   "devDependencies": {
