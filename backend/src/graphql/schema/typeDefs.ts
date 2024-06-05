@@ -12,6 +12,7 @@ const typeDefs: string = `
         trend: String
         relatedStyles: [String] 
         isCompleted: Boolean
+        isDeleted: Boolean
     }
 
     type Query {
