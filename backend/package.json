@@ -21,6 +21,7 @@
     "@opentelemetry/sdk-trace-node": "^1.24.1",
     "@opentelemetry/semantic-conventions": "^1.24.1",
     "@opentelemetry/tracing": "^0.24.0",
+    "couchbase": "^4.3.1",
     "elastic-apm-node": "^4.5.4",
     "elysia": "latest"
   },
