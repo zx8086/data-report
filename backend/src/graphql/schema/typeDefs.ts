@@ -15,9 +15,21 @@ const typeDefs: string = `
         isDeleted: Boolean
     }
 
+    type LooksTotals {
+        hasGender: Int
+        hasTag: Int
+        totalLooks: Int
+        hasRelatedStyles: Int
+        hasDescription: Int
+        hasTrend: Int
+        hasTitle: Int
+        hasDeliveryName: Int
+    }
+
     type Query {
         hi: String
         looksByBrandSeasonDivision(brand: String!, season: String!, division: String!): [Look]
+        looksTotalsByBrandSeasonDivision(brand: String!, season: String!, division: String!): LooksTotals
     }
 `;
 
