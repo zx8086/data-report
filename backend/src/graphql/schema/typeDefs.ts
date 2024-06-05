@@ -4,13 +4,14 @@
 
 const typeDefs: string = `
     type Look {
+    	  documentKey: String
         divisionCode: String
-        lookType: String
-        documentKey: String
+        lookType: Int
         assetUrl: String
         title: String
         trend: String
         relatedStyles: [String] 
+        isCompleted: Boolean
     }
 
     type Query {
