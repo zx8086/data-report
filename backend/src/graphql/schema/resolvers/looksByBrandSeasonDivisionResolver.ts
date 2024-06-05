@@ -23,6 +23,7 @@ const looksByBrandSeasonDivisionResolver = {
         li.title,
         li.trend,
         li.relatedStyles,
+        li.isDeleted,
         (ARRAY_LENGTH(li.relatedStyles) > 0) AS isCompleted
     FROM default.media_assets.look_items li
     WHERE li.brand = "${brand}"
