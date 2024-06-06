@@ -28,9 +28,7 @@ const typeDefs: string = `
     }
 
     type Query {
-        hi: String
-        looksByBrandSeasonDivision(brand: String!, season: String!, division: String!): [Look]
-        lookTotalsByBrandSeasonDivision(brand: String!, season: String!, division: String!): LookTotals
+        looksSummary(brand: String!, season: String!, division: String!): LookTotals
     }
 `;
 

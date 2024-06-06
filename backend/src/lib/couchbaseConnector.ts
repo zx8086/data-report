@@ -1,9 +1,14 @@
 // src/lib/couchbaseConnector.ts
 import config from '../config';
-import { connect, type Cluster, type Bucket, type Scope, type Collection } from 'couchbase';
+import { Cluster, Bucket, Scope, Collection, connect, QueryOptions, QueryResult, StreamableRowPromise, QueryMetaData} from 'couchbase';
+
+// define this interface
+interface QueryableCluster extends Cluster {
+    query<TRow = any>(statement: string, options?: QueryOptions): StreamableRowPromise<QueryResult<TRow>, TRow, QueryMetaData>;
+}
 
 export interface capellaConn {
-    cluster: Cluster;
+    cluster: QueryableCluster;
     bucket: Bucket;
     scope: Scope;
     collection: Collection;
@@ -28,7 +33,7 @@ export async function clusterConn(): Promise<capellaConn> {
                     Scope: ${scopeName}, 
                     Collection: ${collectionName}`);
 
-        const cluster: Cluster = await connect(clusterConnStr, {
+        const cluster: QueryableCluster = await connect(clusterConnStr, {
             username: username,
             password: password
         });
