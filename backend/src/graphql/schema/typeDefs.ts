@@ -1,10 +1,11 @@
 /**
- * GraphQL type definitions for queries
+ * GraphQL Type Definitions:
+ * Contains Look, LookTotals and Queries.
  */
 
 const typeDefs: string = `
     type Look {
-    	  documentKey: String
+    		documentKey: String
         divisionCode: String
         lookType: Int
         assetUrl: String
@@ -15,7 +16,7 @@ const typeDefs: string = `
         isDeleted: Boolean
     }
 
-    type LooksTotals {
+    type LookTotals {
         hasGender: Int
         hasTag: Int
         totalLooks: Int
@@ -29,7 +30,7 @@ const typeDefs: string = `
     type Query {
         hi: String
         looksByBrandSeasonDivision(brand: String!, season: String!, division: String!): [Look]
-        looksTotalsByBrandSeasonDivision(brand: String!, season: String!, division: String!): LooksTotals
+        lookTotalsByBrandSeasonDivision(brand: String!, season: String!, division: String!): LookTotals
     }
 `;
 

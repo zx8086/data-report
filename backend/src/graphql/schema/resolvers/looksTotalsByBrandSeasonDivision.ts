@@ -1,16 +1,10 @@
-// looksTotalsByBrandSeasonDivisionResolver.ts
+// looksTotalsByBrandSeasonDivision.ts
 
 import { getCluster } from "../../../lib/clusterProvider";
 
-interface QueryParameters {
-	brand: string;
-	season: string;
-	division: string;
-}
-
-const looksByBrandSeasonDivisionResolver = {
+const looksTotalsByBrandSeasonDivision = {
 	Query: {
-		looksByBrandSeasonDivision: async (_: unknown, args: QueryParameters): Promise<any> => {
+		looksByBrandSeasonDivision: async (_: unknown, args: {brand: string, season: string, division: string}): Promise<any> => {
 			try {
 				const {brand, season, division} = args;
 
@@ -34,14 +28,7 @@ WHERE li.brand = $brand
     AND li.lookType IN [1, 2, 3, 4, 5, 9, 11]
 `;
 
-				console.log(queryString);
-
-// Create an options object to include the parameters
-				let queryOptions = {
-					parameters: [brand, season, division],
-				};
-
-// Execute the query and store the result
+				// Execute the query and store the result
 				const queryResult = await connection.cluster.query(queryString);
 
 				// Log the result
@@ -57,4 +44,4 @@ WHERE li.brand = $brand
 	},
 };
 
-export default looksByBrandSeasonDivisionResolver;
+export default looksTotalsByBrandSeasonDivision;
