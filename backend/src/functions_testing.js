@@ -1,7 +1,7 @@
 const couchbase = require('couchbase');
 
 async function queryExample() {
-	const cluster = await couchbase.connect("couchbases://cb.mn1uxqblvorb0cle.cloud.couchbase.com", {
+	const cluster = await couchbase.connect(Bun.env.COUCHBASE_URL, {
 		username: Bun.env.COUCHBASE_USERNAME,
 		password: Bun.env.COUCHBASE_PASSWORD,
 	});
