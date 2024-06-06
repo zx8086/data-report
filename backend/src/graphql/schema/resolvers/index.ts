@@ -1,12 +1,8 @@
-import hiResolver from './hiResolver';
-import looksByBrandSeasonDivision from './looksByBrandSeasonDivision';
-import looksTotalsByBrandSeasonDivision from './looksTotalsByBrandSeasonDivision';
+import looksSummary from './looksSummary';
 
 const resolvers = {
 	Query: {
-		...hiResolver.Query,
-		...looksByBrandSeasonDivision.Query,
-		...looksTotalsByBrandSeasonDivision.Query,
+		...looksSummary.Query,
 	},
 };
 

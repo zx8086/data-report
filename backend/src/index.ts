@@ -1,23 +1,22 @@
 // index.ts
 import { Elysia } from 'elysia';
-import { cors } from '@elysiajs/cors'
-import { yoga } from '@elysiajs/graphql-yoga';
-import typeDefs from './graphql/schema/typeDefs';
-import resolvers from './graphql/schema/resolvers';
-import { useResponseCache } from '@graphql-yoga/plugin-response-cache';
+import { cors } from '@elysiajs/cors';
+import { createYoga } from 'graphql-yoga';
+import { schema } from './graphql/schema';
 
-const app = new Elysia()
-	.use(cors())
-	.use(yoga({
-		logging: 'debug',
-		typeDefs,
-		resolvers,
-		// plugins: [
-		// 	useResponseCache({
-		// 		// global cache
-		// 		session: () => null,
-		// 	}),
-		// ],
-	}),
-).listen(4000);
-console.log(`Server is running on port 4000`);
+const yoga = createYoga({ schema });
+
+const app = new Elysia();
+
+app.use(cors());
+
+app.use((context) => {
+	if (context.request.url.startsWith('/graphql')) {
+		return yoga.handleRequest(context.request);
+	}
+	return context.next();
+});
+
+app.listen(4000, () => {
+	console.info('Server is running on http://localhost:4000/graphql');
+});
