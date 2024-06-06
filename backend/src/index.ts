@@ -1,3 +1,4 @@
+// index.ts
 import { Elysia } from 'elysia';
 import { cors } from '@elysiajs/cors'
 import { yoga } from '@elysiajs/graphql-yoga';

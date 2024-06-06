@@ -1,7 +1,7 @@
-// looksByBrandSeasonDivisionResolver.ts
+// looksByBrandSeasonDivision.ts
 
 import {getCluster} from "../../../lib/clusterProvider";
-import { QueryResult } from 'couchbase';
+// import { QueryResult } from 'couchbase';
 
 interface QueryParameters {
 	brand: string;
@@ -32,6 +32,8 @@ const looksByBrandSeasonDivision = {
         AND li.divisionCode = "${division}"
         AND li.lookType IN [1, 2, 3, 4, 5, 9, 11]
 `;
+
+
 
 			console.log(queryString);
 			// Execute the query and store the result
