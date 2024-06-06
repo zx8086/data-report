@@ -9,7 +9,6 @@ const typeDefs = gql`
         title: String
         trend: String
         relatedStyles: [String]
-        isCompleted: Boolean
         isDeleted: Boolean
     }
 
@@ -26,6 +25,8 @@ const typeDefs = gql`
 
     type Query {
         looksSummary(brand: String, season: String, division: String): LookSummary
+        looks(brand: String, season: String, division: String): [Look]
+
     }
 `;
 
