@@ -24,7 +24,7 @@ const looks = {
 
 				let result = await cluster.cluster.query(query, queryOptions);
 
-				console.log(JSON.stringify(result.rows, null, 2));
+				console.log(JSON.stringify(result, null, 2));
 
 				return result.rows[0];
 			} catch (error) {

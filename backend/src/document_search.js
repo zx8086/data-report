@@ -1,37 +1,46 @@
 const couchbase = require('couchbase');
 
+async function queryCollection(cluster, scopeName, collectionName, documentKey) {
+	const query = `SELECT META().id, * FROM \`default\`.\`${scopeName}\`.\`${collectionName}\` USE KEYS '${documentKey}'`;
+
+	console.log("Query:",query)
+
+	const result = await cluster.query(query);
+	if (result.rows.length > 0) {
+		console.log(`Found document in ${scopeName}.${collectionName}:`, result.rows);
+	}
+}
+
 async function main() {
-	// Initialize the Couchbase connection
 	const cluster = await couchbase.connect(Bun.env.COUCHBASE_URL, {
 		username: Bun.env.COUCHBASE_USERNAME,
 		password: Bun.env.COUCHBASE_PASSWORD,
 	});
-
 	const bucket = cluster.bucket('default');
-	const documentKey = 'OPTION_65_C51_LV047B358GCEF';
 
-	// List of scopes and collections
+	// Add searchable key here....
+	const documentKey = 'LOOK_CK_C51_70_2_7e0c7d63-4765-46be-9ae0-2342d7c0aeea';
+
 	const scopes = {
-		'scope1': ['collection1', 'collection2'],
-		'scope2': ['collection3', 'collection4']
+		'_default': ['_default', 'data_merge_check'],
+		'order': ['archived-order-items', 'archived-orders'],
+		'customer': ['assignments', 'sales-organizations', 'customers'],
+		'styles': ['prepacks', 'distribution_curves', 'variant', 'article', 'product2g'],
+		'media_assets': ['look_items'],
+		'brands_divisions': ['brands_divisions'],
+		'seasons': ['delivery_dates_import', 'delivery_dates', 'dates_import', 'dates']
 	};
 
-	// Iterate over each scope and collection
 	for (const [scopeName, collections] of Object.entries(scopes)) {
 		for (const collectionName of collections) {
-			const query = `SELECT META().id, * FROM \`${scopeName}\`.\`${collectionName}\` USE KEYS '${documentKey}'`;
-			try {
-				const result = await cluster.query(query);
-				if (result.rows.length > 0) {
-					console.log(`Found document in ${scopeName}.${collectionName}:`, result.rows);
-				}
-			} catch (error) {
-				console.error(`Error querying ${scopeName}.${collectionName}:`, error);
-			}
+			await queryCollection(cluster, scopeName, collectionName, documentKey);
 		}
 	}
 }
 
 main().catch((err) => {
 	console.error('Error:', err);
+}).finally(() => {
+	console.log('Exiting program');
+	process.exit();
 });
