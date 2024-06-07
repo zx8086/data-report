@@ -4,14 +4,16 @@ async function queryCollection(cluster, scopeName, collectionName, documentKey) 
 	const query = `SELECT META().id, * FROM \`default\`.\`${scopeName}\`.\`${collectionName}\` USE KEYS '${documentKey}'`;
 
 	console.log("Query:",query)
-
+	console.time("queryCollection");
 	const result = await cluster.query(query);
+	console.timeEnd("queryCollection");
 	if (result.rows.length > 0) {
 		console.log(`Found document in ${scopeName}.${collectionName}:`, result.rows);
 	}
 }
 
 async function main() {
+	console.time("main")
 	const cluster = await couchbase.connect(Bun.env.COUCHBASE_URL, {
 		username: Bun.env.COUCHBASE_USERNAME,
 		password: Bun.env.COUCHBASE_PASSWORD,
@@ -37,6 +39,8 @@ async function main() {
 			await queryCollection(cluster, scopeName, collectionName, documentKey);
 		}
 	}
+	console.timeEnd("main");
+
 }
 
 main().catch((err) => {
