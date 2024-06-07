@@ -23,7 +23,7 @@ const looks = {
 
 				console.log(JSON.stringify(result.rows, null, 2));
 
-				return result.rows;
+				return result.rows[0];
 			} catch (error) {
 				console.error('Error:', error);
 				throw error;
