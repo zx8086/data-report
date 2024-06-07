@@ -19,7 +19,8 @@ async function main() {
 	const bucket = cluster.bucket('default');
 
 	// Add searchable key here....
-	const documentKey = 'LOOK_CK_C51_70_2_7e0c7d63-4765-46be-9ae0-2342d7c0aeea';
+	const documentKey = Bun.env.COUCHBASE_SEARCH_DOCUMENT;
+	console.log(`Document key: ${documentKey}`);
 
 	const scopes = {
 		'_default': ['_default', 'data_merge_check'],
