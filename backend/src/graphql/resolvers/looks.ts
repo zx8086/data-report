@@ -4,7 +4,7 @@ import { getCluster } from "../../lib/clusterProvider";
 
 const looks = {
 	Query: {
-		looksSummary: async (_: unknown, args: { brand: string, season: string, division: string }): Promise<any> => {
+		looks: async (_: unknown, args: { brand: string, season: string, division: string }): Promise<any> => {
 			try {
 				const { brand, season, division } = args;
 

@@ -26,7 +26,6 @@ const typeDefs = gql`
     type Query {
         looksSummary(brand: String, season: String, division: String): LookSummary
         looks(brand: String, season: String, division: String): [Look]
-
     }
 `;
 

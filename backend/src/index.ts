@@ -1,13 +1,14 @@
-import { Elysia } from 'elysia'
-import { yoga } from '@elysiajs/graphql-yoga'
-import typeDefs from './graphql/typeDefs';
-import resolvers from './graphql/resolvers';
+import { createServer } from 'node:http'
+import { createYoga } from 'graphql-yoga'
+import { schema } from './graphql/schema'
 
-const app = new Elysia()
-.use(
-	yoga({
-		typeDefs:typeDefs,
-		resolvers: resolvers
-	}))
-.listen(4000)
-console.log("GraphQL server running on port:4000");
+// Create a Yoga instance with a GraphQL schema.
+const yoga = createYoga({ schema, logging: 'debug' })
+
+// Pass it into a server to hook into request handlers.
+const server = createServer(yoga)
+
+// Start the server and you're done!
+server.listen(4000, () => {
+	console.info('Server is running on http://localhost:4000/graphql')
+})
