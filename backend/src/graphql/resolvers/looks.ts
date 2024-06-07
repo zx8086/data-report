@@ -8,7 +8,10 @@ const looks = {
 			try {
 				const { brand, season, division } = args;
 
-				const cluster = await getCluster();
+				const cluster = await getCluster().catch(error => {
+					console.error('Error in getCluster:', error);
+					throw error;
+				});
 				const query = `EXECUTE FUNCTION \`default\`.\`media_assets\`.get_looks($brand, $season, $division)`;
 
 				const queryOptions = {
