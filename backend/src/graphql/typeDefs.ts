@@ -1,6 +1,11 @@
 import { gql } from 'graphql-tag';
 
 const typeDefs = gql`
+    enum SalesChannel {
+        SELLIN
+        B2B
+    }
+    
     type Look {
         documentKey: String
         divisionCode: String
@@ -11,7 +16,7 @@ const typeDefs = gql`
         relatedStyles: [String]
         isDeleted: Boolean
     }
-
+    
     type LookSummary {
         hasDeliveryName: Int
         hasDescription: Int
@@ -22,7 +27,22 @@ const typeDefs = gql`
         hasTrend: Int
         totalLooks: Int
     }
-
+    
+    type OptionSummary {
+        totalOptions: Int!
+        hasImages: Int!
+        isActive: Int!
+        isAvailable: Int!
+        isCancelled: Int!
+        isClosed: Int!
+        isInvalid: Int!
+        isLicensed: Int!
+        isNew: Int!
+        isSoldOut: Int!
+        isUpdated: Int!
+        isOpenForEcom: Int!
+        hasDeliveryDates: Int!
+    }
     type Status {
         code: String
         description: String
@@ -176,6 +196,7 @@ const typeDefs = gql`
     type Query {
         looksSummary(brand: String, season: String, division: String): LookSummary
         looks(brand: String, season: String, division: String): [Look]
+        optionsSummary( SalesOrganizationCode: String!, StyleSeasonCode: String!, DivisionCode: String!, ActiveOption: Boolean!, SalesChannels: [SalesChannel!]!): OptionSummary!
     }
 `;
 
