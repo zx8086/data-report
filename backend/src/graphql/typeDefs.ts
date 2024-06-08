@@ -104,7 +104,7 @@ const typeDefs = gql`
         world: String
     }
 
-    type Option {
+    type OptionDetailed {
         activeOption: Boolean
         brandCode: String
         certificationStyles: [String]
