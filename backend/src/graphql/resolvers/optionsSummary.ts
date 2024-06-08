@@ -12,10 +12,10 @@ const optionsSummary = {
 			try {
 				const { SalesOrganizationCode, StyleSeasonCode, DivisionCode, ActiveOption, SalesChannels } = args;
 				const cluster = await getCluster();
-				const query = `EXECUTE FUNCTION \`default\`.\`_default\`.get_options_summary($SalesOrganizationCode, $StyleSeasonCode, $DivisionCode, $ActiveOption, $SalesChannels)`;
+				const query = `EXECUTE FUNCTION \`default\`.\`_default\`.get_options_summary($BrandCode, $SalesOrganizationCode, $StyleSeasonCode, $DivisionCode, $ActiveOption, $SalesChannels)`;
 				const queryOptions = {
 					parameters: {
-						SalesOrganizationCode, StyleSeasonCode, DivisionCode, ActiveOption, SalesChannels
+						 SalesOrganizationCode, StyleSeasonCode, DivisionCode, ActiveOption, SalesChannels
 					},
 				};
 				console.log("Query", query);

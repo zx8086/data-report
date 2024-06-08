@@ -104,7 +104,25 @@ const typeDefs = gql`
         world: String
     }
 
-    type OptionDetailed {
+    type OptionProductView {
+        activeOption: Boolean
+        divisionCode: String
+        brandCode: String
+        images: String
+        isAvailable: Boolean
+        isCancelled: Boolean
+        isClosed: Boolean
+        isInvalid: Boolean
+        isLicensed: Boolean
+        isNew: Boolean
+        isSoldOut: Boolean
+        isUpdated: Boolean
+        isOpenForEcom: Boolean
+        hasDeliveryDropDate: Boolean
+        hasImageDocument: Boolean
+    }
+    
+    type OptionFull {
         activeOption: Boolean
         brandCode: String
         certificationStyles: [String]
@@ -197,6 +215,7 @@ const typeDefs = gql`
         looksSummary(brand: String, season: String, division: String): LookSummary
         looks(brand: String, season: String, division: String): [Look]
         optionsSummary( SalesOrganizationCode: String!, StyleSeasonCode: String!, DivisionCode: String!, ActiveOption: Boolean!, SalesChannels: [SalesChannel!]!): OptionSummary!
+        optionsProductView ( BrandCode: String!, SalesOrganizationCode: String!, StyleSeasonCode: String!, DivisionCode: String!, ActiveOption: Boolean!, SalesChannels: [SalesChannel!]!): OptionProductView
     }
 `;
 
