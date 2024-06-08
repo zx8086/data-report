@@ -28,7 +28,6 @@ const createEnvelopPlugins = () => [
 const createYogaOptions = () => ({
 	typeDefs,
 	resolvers,
-	logging: 'debug',
 	batching: {
 		limit: 10
 	},
