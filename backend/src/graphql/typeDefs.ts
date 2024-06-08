@@ -108,6 +108,9 @@ const typeDefs = gql`
         activeOption: Boolean
         divisionCode: String
         brandCode: String
+        description: String
+        styleDescription: String
+        internal_id: String
         images: String
         isAvailable: Boolean
         isCancelled: Boolean
@@ -215,7 +218,7 @@ const typeDefs = gql`
         looksSummary(brand: String, season: String, division: String): LookSummary
         looks(brand: String, season: String, division: String): [Look]
         optionsSummary( SalesOrganizationCode: String!, StyleSeasonCode: String!, DivisionCode: String!, ActiveOption: Boolean!, SalesChannels: [SalesChannel!]!): OptionSummary!
-        optionsProductView ( BrandCode: String!, SalesOrganizationCode: String!, StyleSeasonCode: String!, DivisionCode: String!, ActiveOption: Boolean!, SalesChannels: [SalesChannel!]!): OptionProductView
+        optionsProductView ( BrandCode: String!, SalesOrganizationCode: String!, StyleSeasonCode: String!, DivisionCode: String!, ActiveOption: Boolean!, SalesChannels: [SalesChannel!]!): [OptionProductView]
     }
 `;
 

@@ -4,7 +4,7 @@ import { getCluster } from "../../lib/clusterProvider";
 
 const optionsProductView = {
 	Query: {
-		looks: async (_: unknown,  args: {
+		optionsProductView: async (_: unknown,  args: {
 			BrandCode: string,
 			SalesOrganizationCode: string,
 			StyleSeasonCode: string,
@@ -19,7 +19,7 @@ const optionsProductView = {
 					console.error('Error in getCluster:', error);
 					throw error;
 				});
-				const query = `EXECUTE FUNCTION \`default\`.\`_default\.get_options_product_view($BrandCode, SalesOrganizationCode, StyleSeasonCode, $DivisionCode, $ActiveOption, $SalesChannels)`;
+				const query = `EXECUTE FUNCTION \`default\`.\`_default\`.get_options_product_view($BrandCode, $SalesOrganizationCode, $StyleSeasonCode, $DivisionCode, $ActiveOption, $SalesChannels)`;
 
 				const queryOptions = {
 					parameters: {
@@ -31,7 +31,7 @@ const optionsProductView = {
 
 				let result = await cluster.cluster.query(query, queryOptions);
 
-				console.log(JSON.stringify(result, null, 2));
+				console.log(JSON.stringify(result.rows, null, 2));
 
 				return result.rows[0];
 			} catch (error) {
