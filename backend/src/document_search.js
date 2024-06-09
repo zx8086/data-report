@@ -25,13 +25,13 @@ async function main() {
 	console.log(`Document key: ${documentKey}`);
 
 	const scopes = {
-		'_default': ['_default', 'data_merge_check'],
 		'order': ['archived-order-items', 'archived-orders'],
-		'customer': ['assignments', 'sales-organizations', 'customers'],
-		'styles': ['prepacks', 'distribution_curves', 'variant', 'article', 'product2g'],
-		'media_assets': ['look_items'],
+		'seasons': ['dates', 'dates_import', 'delivery_dates_import', 'delivery_dates'],
 		'brands_divisions': ['brands_divisions'],
-		'seasons': ['delivery_dates_import', 'delivery_dates', 'dates_import', 'dates']
+		'media_assets': ['look_items'],
+		'styles': ['article', 'variant', 'prepacks', 'distribution_curves', 'product2g'],
+		'customer': ['assignments', 'sales-organizations', 'customers'],
+		'_default': ['_default', 'data_merge_check']
 	};
 
 	for (const [scopeName, collections] of Object.entries(scopes)) {
