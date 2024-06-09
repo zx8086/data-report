@@ -56,7 +56,7 @@ async function documentSearch(cluster, documentKey, scopesCollections) {
 (async function() {
 	const cluster = await getCouchbaseConnection(couchbaseConfig);
 
-	const documentKey = Bun.env.COUCHBASE_SEARCH_DOCUMENT;
+	const documentKey = process.argv[2] || Bun.env.COUCHBASE_SEARCH_DOCUMENT;
 	const bucketScopesCollections = {
 		'default': {
 			'order': ['archived-order-items', 'archived-orders'],
