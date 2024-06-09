@@ -1,27 +1,62 @@
 const couchbase = require('couchbase');
 
-async function queryCollection(cluster, bucketName, scopeName, collectionName, documentKey) {
-	const query = `SELECT META().id, * FROM \`${bucketName}\`.\`${scopeName}\`.\`${collectionName}\` USE KEYS '${documentKey}'`;
+const couchbaseConfig = {
+	url: Bun.env.COUCHBASE_URL,
+	username: Bun.env.COUCHBASE_USERNAME,
+	password: Bun.env.COUCHBASE_PASSWORD
+};
 
-	console.log("Query:", query);
-	console.time("queryCollection");
-	const result = await cluster.query(query);
-	console.timeEnd("queryCollection");
-	if (result.rows.length > 0) {
-		console.log(`Found document in ${bucketName}.${scopeName}.${collectionName}:`, result.rows);
-	}
+const logMessages = {
+	documentKey: 'Document Key',
+	documentSearch: 'Document Search',
+	querySearch: 'Query'
+};
+
+async function getCouchbaseConnection(config) {
+	return couchbase.connect(config.url, {
+		username: config.username,
+		password: config.password
+	});
 }
 
-async function main() {
-	console.time("main");
-	const cluster = await couchbase.connect(Bun.env.COUCHBASE_URL, {
-		username: Bun.env.COUCHBASE_USERNAME,
-		password: Bun.env.COUCHBASE_PASSWORD,
-	});
+async function queryCollection(cluster, bucketName, scopeName, collectionName, documentKey) {
+	const timerLabel = `<- Time taken to search in - ${bucketName}.${scopeName}.${collectionName}`;
+
+	const query = `SELECT META().id, * FROM \`${bucketName}\`.\`${scopeName}\`.\`${collectionName}\` USE KEYS '${documentKey}'`;
+
+	console.log(logMessages.querySearch, query);
+	console.time(timerLabel);
+
+	const result = await cluster.query(query);
+
+	console.timeEnd(timerLabel);
+
+	if (result.rows.length > 0) {
+		console.log(`Found document in ${bucketName}.${scopeName}.${collectionName}:`, result);
+	}
+
+	return result;
+}
+
+async function documentSearch(cluster, documentKey, scopesCollections) {
+	console.time(logMessages.documentSearch);
+	console.log(`${logMessages.documentKey}: ${documentKey}`);
+
+	for (const [bucketName, scopes] of Object.entries(scopesCollections)) {
+		for (const [scopeName, collections] of Object.entries(scopes)) {
+			for (const collectionName of collections) {
+				await queryCollection(cluster, bucketName, scopeName, collectionName, documentKey);
+			}
+		}
+	}
+
+	console.timeEnd(logMessages.documentSearch);
+}
+
+(async function() {
+	const cluster = await getCouchbaseConnection(couchbaseConfig);
 
 	const documentKey = Bun.env.COUCHBASE_SEARCH_DOCUMENT;
-	console.log(`Document key: ${documentKey}`);
-
 	const bucketScopesCollections = {
 		'default': {
 			'order': ['archived-order-items', 'archived-orders'],
@@ -37,19 +72,12 @@ async function main() {
 		}
 	};
 
-	for (const [bucketName, scopes] of Object.entries(bucketScopesCollections)) {
-		for (const [scopeName, collections] of Object.entries(scopes)) {
-			for (const collectionName of collections) {
-				await queryCollection(cluster, bucketName, scopeName, collectionName, documentKey);
-			}
-		}
+	try {
+		await documentSearch(cluster, documentKey, bucketScopesCollections);
+	} catch (err) {
+		console.error('Error:', err);
+	} finally {
+		console.log('Exiting program');
+		process.exit();
 	}
-	console.timeEnd("main");
-}
-
-main().catch((err) => {
-	console.error('Error:', err);
-}).finally(() => {
-	console.log('Exiting program');
-	process.exit();
-});
+})();
