@@ -5,7 +5,7 @@ import typeDefs from './graphql/typeDefs';
 import resolvers from './graphql/resolvers';
 import { useResponseCache } from '@graphql-yoga/plugin-response-cache'
 import { execute, parse, specifiedRules, subscribe, validate } from 'graphql'
-import { envelop, useEngine } from '@envelop/core'
+import { useEngine } from '@envelop/core'
 import { usePrometheus } from '@envelop/prometheus'
 
 const SERVER_PORT = config.elysiaJs.PORT;
