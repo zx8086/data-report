@@ -1,14 +1,16 @@
 // backend.ts
-import type { CouchbaseConfig, ElysiaConfig, PostHogConfig, BackendConfig, ElasticConfig, OpenTelemetryConfig } from './types.ts';
+import type { CouchbaseConfig, ElysiaConfig, PostHogConfig, BackendConfig, ElasticConfig, OpenTelemetryConfig, YogaConfig } from './types.ts';
 import Backend from './backend';
 // import * as bun from 'bun';
 
-function getOrThrow(envVariable: string | undefined, name: string): string  {
+function getOrThrow(envVariable: any, name: string): string  {
   if (!envVariable) {
     throw new Error(`Required environment variable ${name} is not set`);
   }
   return envVariable;
 }
+
+const responseCache = Number(process.env.YOGA_RESPONSE_CACHE_TTL);
 
 const couchbaseConfig: CouchbaseConfig = {
   URL: getOrThrow((process.env as Record<string, string>)['COUCHBASE_URL'], 'COUCHBASE_URL'),
@@ -26,6 +28,10 @@ const postHogConfig: PostHogConfig = {
 
 const elasticConfig: ElasticConfig = {
   ELASTIC_URL: getOrThrow(process.env.ELASTIC_URL, 'ELASTIC_URL'),
+};
+
+const yogaConfig: YogaConfig = {
+  RESPONSE_CACHE_TTL: getOrThrow(responseCache, 'YOGA_RESPONSE_CACHE_TTL'),
 };
 
 const elysiaConfig: ElysiaConfig = {
@@ -48,6 +54,7 @@ const config: BackendConfig = {
   postHog: postHogConfig,
   elastic: elasticConfig,
   openTelemetry: telemetryConfig,
+  yoga: yogaConfig,
 };
 
 export default config;

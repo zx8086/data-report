@@ -112,6 +112,7 @@ const typeDefs = gql`
         styleDescription: String
         internal_id: String
         images: String
+        imageUrl: String
         isAvailable: Boolean
         isCancelled: Boolean
         isClosed: Boolean

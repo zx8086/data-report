@@ -1,4 +1,5 @@
 import { Elysia } from 'elysia'
+import config from './config';
 import { yoga } from '@elysiajs/graphql-yoga'
 import typeDefs from './graphql/typeDefs';
 import resolvers from './graphql/resolvers';
@@ -7,8 +8,8 @@ import { execute, parse, specifiedRules, subscribe, validate } from 'graphql'
 import { envelop, useEngine } from '@envelop/core'
 import { usePrometheus } from '@envelop/prometheus'
 
-const SERVER_PORT = 4000;
-const PLUGIN_RESPONSE_CACHE_TTL = 600000; // ten minutes
+const SERVER_PORT = config.elysiaJs.PORT;
+const YOGA_RESPONSE_CACHE_TTL = config.yoga.RESPONSE_CACHE_TTL;
 
 const createEnvelopPlugins = () => [
 	useEngine({ parse, validate, specifiedRules, execute, subscribe }),
@@ -34,7 +35,7 @@ const createYogaOptions = () => ({
 	plugins: [
 		useResponseCache({
 			session: () => null,
-			ttl: PLUGIN_RESPONSE_CACHE_TTL,
+			ttl: YOGA_RESPONSE_CACHE_TTL,
 		})
 	]
 });
