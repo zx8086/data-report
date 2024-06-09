@@ -23,6 +23,10 @@ export interface ElasticConfig {
 	ELASTIC_URL: string;
 }
 
+export interface YogaConfig {
+	RESPONSE_CACHE_TTL: any;
+}
+
 export interface OpenTelemetryConfig {
 	SERVICE_NAME: string;
 	SERVICE_VERSION: string
@@ -38,4 +42,5 @@ export interface BackendConfig {
 	postHog: PostHogConfig;
 	elastic: ElasticConfig;
 	openTelemetry: OpenTelemetryConfig;
+	yoga: YogaConfig;
 }
