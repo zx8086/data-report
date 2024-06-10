@@ -22,10 +22,22 @@ interface LooksSummaryResponse {
 const brandCodeToBrand: any = {
 	THEU: 'TH',
 	CKEU: 'CK',
-	NIKE: 'NIKE',
+	NIKE: 'NIKE'
 };
 
 const YOUR_GRAPHQL_ENDPOINT = 'http://localhost:4000/graphql';
+
+const createApolloClient = () => {
+	const link = createHttpLink({
+		uri: YOUR_GRAPHQL_ENDPOINT,
+		fetch
+	});
+	const client = new ApolloClient({
+		link,
+		cache: new InMemoryCache()
+	});
+	return client;
+};
 
 export const load: Load = async ({ params }) => {
 	const { styleSeasonCode: season, brandCode, divisionCode: division } = params;
@@ -46,35 +58,28 @@ export const load: Load = async ({ params }) => {
           }
       }
 	`;
+
 	const variables = { brand, season, division };
-
-	const link = createHttpLink({
-		uri: YOUR_GRAPHQL_ENDPOINT,
-		fetch,
-	});
-
-	const client = new ApolloClient({
-		link,
-		cache: new InMemoryCache(),
-	});
+	const client = createApolloClient();
 
 	try {
 		const response = await client.query<LooksSummaryResponse>({ query, variables });
 		console.log("Fetched from Endpoint:", response.data);
 
-		if (response.data.looksSummary.length > 0) {
-			return { props: response.data.looksSummary[0] };
+		if (response.data.looksSummary) {
+			console.log('What is being passed', response.data.looksSummary);
+			return response.data.looksSummary
 		} else {
 			return {
-				status: 404, // Indicate "Not Found"
-				error: "No looks found for the given parameters."
+				status: 404,
+				error: "No looks found for the given parameters.",
 			};
 		}
 	} catch (error) {
 		console.error("Error fetching looks:", error);
 		return {
 			status: 500,
-			error: "Error fetching looks data."
+			error: "Error fetching looks data.",
 		};
 	}
 };

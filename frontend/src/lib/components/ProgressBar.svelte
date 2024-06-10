@@ -9,6 +9,6 @@
     <div class="h-4 rounded-full" style="width: {percentage}%"></div>
   </div>
   <p class="text-sm font-medium text-gray-700">
-    {percentage}% COMPLETE - {completed} OF {total}
+    {percentage}% Complete - {completed} OF {total}
   </p>
   
