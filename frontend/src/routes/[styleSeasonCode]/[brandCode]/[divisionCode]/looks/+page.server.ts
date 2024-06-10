@@ -21,6 +21,7 @@ interface LooksResponse {
 const brandCodeToBrand: any = {
 	THEU: 'TH',
 	CKEU: 'CK',
+	NIKE: 'NIKE',
 };
 
 const YOUR_GRAPHQL_ENDPOINT = 'http://localhost:4000/graphql';
@@ -35,6 +36,7 @@ export const load: Load = async ({ params }) => {
           looks(brand: $brand, division: $division, season: $season) {
               assetUrl
               title
+							trend
           }
       }
 	`;
