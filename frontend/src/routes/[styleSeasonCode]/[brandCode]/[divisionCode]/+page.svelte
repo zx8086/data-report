@@ -18,7 +18,6 @@
 			<div class="card-th">
 				<h2 class="heading-th p-4">LOOKS</h2>
 				<div class="p-4">
-					<p class="font-bold">{divisionName} LOOKS</p>
 					<p>Gender
 						<ProgressBar percentage={Math.round((data.hasGender / data.totalLooks) * 100)} completed={data.hasGender} total={data.totalLooks} />
 					</p>
