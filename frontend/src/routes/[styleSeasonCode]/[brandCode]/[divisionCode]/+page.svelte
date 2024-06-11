@@ -1,4 +1,8 @@
 <script lang="ts">
+	import posthog from 'posthog-js';
+	posthog.capture('$pageview')
+
+
 	import type { LooksSummary } from './+page.server';
 	import ProgressBar from '$lib/components/ProgressBar.svelte';
 
