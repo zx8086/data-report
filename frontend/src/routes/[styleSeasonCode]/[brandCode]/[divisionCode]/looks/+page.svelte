@@ -1,6 +1,10 @@
 <script lang="ts">
 	import type { Look } from '$lib/types';
+	import posthog from 'posthog-js';
+	posthog.capture('$pageview')
+
 	export let data: { looks: Look[] };
+
 </script>
 
 <div class="bg-white">
@@ -10,7 +14,7 @@
 				<div class="relative group">
 					<div
 						class="overflow-hidden bg-gray-200 rounded-md aspect-w-1 aspect-h-1 lg:aspect-none lg:h-80 transform-gpu transition-transform duration-300 group-hover:scale-110 opacity-85 group-hover:opacity-100">
-						{#if look.lookType === '11'}
+						{#if look.lookType === '99'}
 							<video
 								src={look.assetUrl}
 								controls
