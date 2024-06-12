@@ -45,11 +45,13 @@ const brandTranslations = {
 export function generateBreadcrumbs(path: string): Breadcrumb[] {
 
 	if (posthog.isFeatureEnabled('console-logging') ) {
-
 		console.log('Generating breadcrumbs for path:', path);
-		const segments = path.split('/').filter(Boolean);
-		console.log('Path segments:', segments);
+	}
 
+	const segments = path.split('/').filter(Boolean);
+
+	if (posthog.isFeatureEnabled('console-logging') ) {
+		console.log('Path segments:', segments);
 	}
 
 	const breadcrumbs = [{ label: 'HOME', href: '/' }];

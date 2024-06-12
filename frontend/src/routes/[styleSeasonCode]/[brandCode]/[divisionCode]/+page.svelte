@@ -7,7 +7,7 @@
 	import ProgressBar from '$lib/components/ProgressBar.svelte';
 
 	export let data: LooksSummary;
-	let divisionName = 'Kids';
+	// let divisionName = 'Kids';
 </script>
 
 <div class="container ml-20 mx-auto p-0">
