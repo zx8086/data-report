@@ -59,7 +59,6 @@ async function documentSearch(cluster, documentKey, scopesCollections) {
 	const documentKey = process.argv[2] || Bun.env.COUCHBASE_SEARCH_DOCUMENT;
 	const bucketScopesCollections = {
 		'default': {
-			'order': ['archived-order-items', 'archived-orders'],
 			'seasons': ['dates', 'dates_import', 'delivery_dates_import', 'delivery_dates'],
 			'brands_divisions': ['brands_divisions'],
 			'media_assets': ['look_items'],

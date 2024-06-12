@@ -10,6 +10,13 @@
 		<!-- Load Elastic APM script -->
 		<script src="/elastic-apm-rum.umd.js"></script>
 		<script type="text/javascript">
+			posthog.onFeatureFlags(function() {
+				// feature flags should be available at this point
+				if (posthog.isFeatureEnabled('console-logging') ) {
+					// do something
+				}
+			})
+
 			// Initialize Elastic APM
 			if (window.elasticApm) {
 				try {
