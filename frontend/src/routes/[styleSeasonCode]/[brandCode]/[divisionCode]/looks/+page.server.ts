@@ -2,6 +2,7 @@
 import { ApolloClient, gql, InMemoryCache, createHttpLink } from '@apollo/client/core';
 import fetch from 'cross-fetch';
 import type { Load } from '@sveltejs/kit';
+import posthog from 'posthog-js';
 
 interface Look {
 	assetUrl: string;
@@ -58,7 +59,13 @@ export const load: Load = async ({ params }) => {
 
 		if (response.data.looks.length > 0) {
 
-			return response.data
+			if (posthog.isFeatureEnabled('console-logging') ) {
+
+				console.log("Data Being Fetched", response.data)
+
+			}
+
+				return response.data
 
 		} else {
 			throw new Error('No looks found for the given parameters.');
