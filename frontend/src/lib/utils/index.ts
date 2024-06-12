@@ -52,6 +52,14 @@ export function generateBreadcrumbs(path: string): Breadcrumb[] {
 
 	}
 
+	const segments = path.split('/').filter(Boolean);
+
+	if (posthog.isFeatureEnabled('console-logging') ) {
+
+		console.log('Path segments:', segments);
+
+	}
+
 	const breadcrumbs = [{ label: 'HOME', href: '/' }];
 	for (let i = 0; i < segments.length; i++) {
 		const segment = segments[i];
