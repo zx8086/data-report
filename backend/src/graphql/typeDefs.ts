@@ -108,6 +108,7 @@ const typeDefs = gql`
         activeOption: Boolean
         divisionCode: String
         brandCode: String
+        optionCode: String
         description: String
         styleDescription: String
         internal_id: String
