@@ -1,5 +1,7 @@
 // src/lib/utils/index.ts
 
+import posthog from 'posthog-js';
+
 interface Breadcrumb {
 	label: string;
 	href: string;
@@ -41,9 +43,15 @@ const brandTranslations = {
 } as const;
 
 export function generateBreadcrumbs(path: string): Breadcrumb[] {
-	console.log('Generating breadcrumbs for path:', path);
-	const segments = path.split('/').filter(Boolean);
-	console.log('Path segments:', segments);
+
+	if (posthog.isFeatureEnabled('console-logging') ) {
+
+		console.log('Generating breadcrumbs for path:', path);
+		const segments = path.split('/').filter(Boolean);
+		console.log('Path segments:', segments);
+
+	}
+
 	const breadcrumbs = [{ label: 'HOME', href: '/' }];
 	for (let i = 0; i < segments.length; i++) {
 		const segment = segments[i];
@@ -59,6 +67,9 @@ export function generateBreadcrumbs(path: string): Breadcrumb[] {
 		breadcrumbs.push({ label: label.toUpperCase(), href });
 	}
 
-	console.log('Final breadcrumbs:', breadcrumbs);
+	if (posthog.isFeatureEnabled('console-logging') ) {
+
+		console.log('Final breadcrumbs:', breadcrumbs);
+	}
 	return breadcrumbs;
 }

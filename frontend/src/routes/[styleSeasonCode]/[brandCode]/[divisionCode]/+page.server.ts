@@ -1,6 +1,7 @@
 // +page.server.ts
 import { ApolloClient, gql, InMemoryCache, createHttpLink } from '@apollo/client/core';
 import fetch from 'cross-fetch';
+import posthog from 'posthog-js'
 import type { Load } from '@sveltejs/kit';
 
 export interface LooksSummary {
@@ -64,10 +65,15 @@ export const load: Load = async ({ params }) => {
 
 	try {
 		const response = await client.query<LooksSummaryResponse>({ query, variables });
-		console.log("Fetched from Endpoint:", response.data);
+		if (posthog.isFeatureEnabled('console-logging') ) {
 
+			console.log("Fetched from Endpoint:", response.data);
+		}
 		if (response.data.looksSummary) {
-			console.log('What is being passed', response.data.looksSummary);
+			if (posthog.isFeatureEnabled('console-logging') ) {
+
+				console.log('What is being passed', response.data.looksSummary);
+			}
 			return response.data.looksSummary
 		} else {
 			return {
