@@ -25,7 +25,7 @@
     "couchbase": "^4.3.1",
     "elastic-apm-node": "^4.6.0",
     "elysia": "latest",
-    "graphql": "^16.8.1",
+    "graphql": "^16.8.2",
     "graphql-tag": "^2.12.6",
     "graphql-yoga": "^5.3.1",
     "prom-client": "^15.1.2"
