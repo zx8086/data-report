@@ -1,5 +1,4 @@
 const couchbase = require('couchbase');
-
 const couchbaseConfig = {
 	url: Bun.env.COUCHBASE_URL,
 	username: Bun.env.COUCHBASE_USERNAME,
@@ -38,14 +37,16 @@ async function queryCollection(cluster, bucketName, scopeName, collectionName, d
 	return result;
 }
 
-async function documentSearch(cluster, documentKey, scopesCollections) {
+async function documentSearch(cluster, documentKeys, scopesCollections) {
 	console.time(logMessages.documentSearch);
-	console.log(`${logMessages.documentKey}: ${documentKey}`);
 
-	for (const [bucketName, scopes] of Object.entries(scopesCollections)) {
-		for (const [scopeName, collections] of Object.entries(scopes)) {
-			for (const collectionName of collections) {
-				await queryCollection(cluster, bucketName, scopeName, collectionName, documentKey);
+	for (const documentKey of documentKeys) {
+		console.log(`${logMessages.documentKey}: ${documentKey}`);
+		for (const [bucketName, scopes] of Object.entries(scopesCollections)) {
+			for (const [scopeName, collections] of Object.entries(scopes)) {
+				for (const collectionName of collections) {
+					await queryCollection(cluster, bucketName, scopeName, collectionName, documentKey);
+				}
 			}
 		}
 	}
@@ -55,8 +56,9 @@ async function documentSearch(cluster, documentKey, scopesCollections) {
 
 (async function() {
 	const cluster = await getCouchbaseConnection(couchbaseConfig);
+	const documentKeyArg = process.argv[2] || defaultDocumentKey;
+	let documentKeys = documentKeyArg.includes(',') ? documentKeyArg.split(',').map(x => x.trim()) : [documentKeyArg];
 
-	const documentKey = process.argv[2] || Bun.env.COUCHBASE_SEARCH_DOCUMENT;
 	const bucketScopesCollections = {
 		'default': {
 			'seasons': ['dates', 'dates_import', 'delivery_dates_import', 'delivery_dates'],
@@ -71,12 +73,7 @@ async function documentSearch(cluster, documentKey, scopesCollections) {
 		}
 	};
 
-	try {
-		await documentSearch(cluster, documentKey, bucketScopesCollections);
-	} catch (err) {
-		console.error('Error:', err);
-	} finally {
-		console.log('Exiting program');
-		process.exit();
-	}
+	console.log(`${logMessages.documentKey}: ${documentKeys.join(', ')}`);
+	await documentSearch(cluster, documentKeys, bucketScopesCollections);
+	process.exit(0);
 })();
