@@ -5,7 +5,6 @@ import fetch from 'cross-fetch';
 import type { Load } from '@sveltejs/kit';
 import posthog from 'posthog-js';
 
-// Collection Interface
 export interface Collection {
 	description: string;
 	imageUrl: string;
@@ -32,6 +31,10 @@ const brandCodeToBrand: any = {
 	NIKE: 'NIKE',
 };
 
+const salesOrganizationCode = 'CK07';
+const salesChannels = ['SELLIN', 'B2B'];
+const activeOption = true;
+
 interface ProductResponse {
 	collections: Collection[];
 }
@@ -57,7 +60,6 @@ export const load: Load = async ({ params }) => {
 
 	console.log("Parameters",params)
 
-	const salesOrganizationCode = 'CK07';
 
 	// GraphQL Query for optionsProductView
 	const productViewQuery = gql`
@@ -91,9 +93,7 @@ export const load: Load = async ({ params }) => {
       }
 	`;
 
-	// Assuming your GraphQL schema has an enum called SalesChannel for this
-	const salesChannels = "SELLIN";
-	const activeOption = true;
+
 
 	const variables = {
 		brandCode,

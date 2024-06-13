@@ -30,11 +30,15 @@
     "graphql-yoga": "^5.3.1",
     "prom-client": "^15.1.2"
   },
+  "overrides": {
+    "*/graphql": "^16.8.2"
+  },
   "devDependencies": {
     "bun-types": "latest"
   },
   "module": "src/index.js",
   "trustedDependencies": [
+    "couchbase",
     "protobufjs"
   ]
 }

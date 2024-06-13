@@ -1,4 +1,3 @@
-<!--+page.svelte-->
 <script lang="ts">
 	import type { Collection } from './+page.server';
 	import posthog from 'posthog-js';
@@ -8,28 +7,27 @@
 		posthog.capture('$pageview');
 	}
 
+	const baseUrl = 'https://s7g10.scene7.com/is/image/TommyHilfigerEU';
 	export let data: { optionsProductView: Collection[] };
-	let baseUrl = 'https://s7g10.scene7.com/is/image/TommyHilfigerEU';
 
-	function handleImageError(event: Event) {
-		const target = event.target as HTMLImageElement;
-		target.src = '/static/not-found.png';
-		target.onerror = null;
+	function handleImageError(event: any) {
+		event.target.src = '/img/not-found.png';
+		// Prevents the fallback image from triggering an infinite loop if it's also missing
+		event.target.onerror = null;
 	}
-
 </script>
+
 <div class="bg-white">
 	<div class="max-w-2xl px-4 py-8 mx-auto sm:px-6 sm:py-24 lg:max-w-7xl lg:px-8">
 		{#if data?.optionsProductView}
-			<div class="grid grid-cols-1 sm:grid-cols-3 lg:grid-cols-6 gap-4">
+			<div class="grid grid-cols-1 sm:grid-cols-3 lg:grid-cols-8 gap-4">
 				{#each data.optionsProductView as product (product.optionCode)}
 					<div class="relative group">
-						<div
-							class="overflow-hidden bg-gray-200 rounded-md aspect-w-1 aspect-h-1 lg:aspect-none lg:h-80 group-hover:scale-50 transition-transform duration-300 group-hover:scale-110 group-hover:opacity-100">
+						<div class="overflow-hidden rounded-md aspect-w-1 aspect-h-1 transition-transform duration-300 group-hover:scale-110 group-hover:opacity-100">
 							<img
-								src={baseUrl + (product.imageUrl ?? '/static/path-to-your-placeholder-image.jpg')}
+								src={product.imageUrl ? baseUrl + product.imageUrl : '/img/not-found.png'}
 								alt={product.description}
-								class="object-cover object-top w-full h-full lg:w-full lg:h-full"
+								class="object-contain object-center w-full h-full"
 								on:error={handleImageError}
 							/>
 						</div>
