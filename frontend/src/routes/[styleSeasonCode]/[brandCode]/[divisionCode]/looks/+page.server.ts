@@ -30,6 +30,7 @@ const YOUR_GRAPHQL_ENDPOINT = 'http://localhost:4000/graphql';
 export const load: Load = async ({ params }) => {
 	const { styleSeasonCode: season, brandCode, divisionCode: division } = params;
 
+
 	const brand = brandCode ? (brandCodeToBrand[brandCode] || brandCode) : undefined;
 
 	const query = gql`
@@ -38,6 +39,7 @@ export const load: Load = async ({ params }) => {
               assetUrl
               title
 							trend
+							lookType
           }
       }
 	`;
@@ -54,27 +56,26 @@ export const load: Load = async ({ params }) => {
 	});
 
 	try {
-		const response = await client.query<LooksResponse>({ query, variables }); // Typed response
-		// console.log("Fetched from Endpoint:", response.data); // Log response
+		const response = await client.query<LooksResponse>({ query, variables });
 
 		if (response.data.looks.length > 0) {
-
-			if (posthog.isFeatureEnabled('console-logging') ) {
-
-				console.log("Data Being Fetched", response.data)
-
+			if (posthog.isFeatureEnabled('console-logging')) {
+				console.log("Data Being Fetched", response.data);
 			}
 
-				return response.data
-
+			return { looks: response.data.looks};
 		} else {
-			throw new Error('No looks found for the given parameters.');
+			return {
+				status: 404,
+				error: 'No looks found for the given parameters.',
+			};
 		}
 	} catch (error) {
-		console.error("Error fetching looks:", error); // Log specific error
+		console.error("Error fetching looks:", error);
+
 		return {
-			status: 404,
-			error: new Error('Not found'),
+			status: 500,
+			error: 'Error fetching looks.',
 		};
 	}
 };
