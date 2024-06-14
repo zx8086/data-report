@@ -8,7 +8,7 @@
 	}
 
 	const baseUrl = 'https://s7g10.scene7.com/is/image/TommyHilfigerEU';
-	export let data: { optionsProductView: Collection[] };
+	export let data: {optionsProductView: Collection[] | null, status?: number, error?: string};
 
 	function handleImageError(event: any) {
 		event.target.src = '/img/not-found.png';
@@ -36,6 +36,10 @@
 					</div>
 				{/each}
 			</div>
+		{:else if data?.status === 404}
+			<div>{data.error}</div>
+		{:else if data?.status === 500}
+			<div>{data.error}</div>
 		{:else}
 			<div>Loading...</div>
 		{/if}

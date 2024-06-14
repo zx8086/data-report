@@ -3,7 +3,7 @@
 import { ApolloClient, gql, InMemoryCache, createHttpLink } from '@apollo/client/core';
 import fetch from 'cross-fetch';
 import type { Load } from '@sveltejs/kit';
-import posthog from 'posthog-js';
+// import posthog from 'posthog-js';
 
 export interface Collection {
 	description: string;
@@ -31,9 +31,8 @@ const brandCodeToBrand: any = {
 	NIKE: 'NIKE',
 };
 
-const salesOrganizationCode = 'CK07';
-const salesChannels = ['SELLIN', 'B2B'];
 const activeOption = true;
+const salesChannels = ['SELLIN', 'B2B'];
 
 interface ProductResponse {
 	collections: Collection[];
@@ -56,10 +55,16 @@ export const load: Load = async ({ params }) => {
 
 	const brand = brandCode ? (brandCodeToBrand[brandCode] || brandCode) : undefined;
 
+	let salesOrganizationCode = '';
+	if(brand === 'CK') {
+		salesOrganizationCode = 'CK07';
+	} else if(brand === 'TH') {
+		salesOrganizationCode = 'THE1';
+	}
+
 	console.log("Brand",brand)
-
 	console.log("Parameters",params)
-
+	console.log("Sales Organisation Code",salesOrganizationCode)
 
 	// GraphQL Query for optionsProductView
 	const productViewQuery = gql`
@@ -92,9 +97,7 @@ export const load: Load = async ({ params }) => {
           }
       }
 	`;
-
-
-
+	
 	const variables = {
 		brandCode,
 		salesOrganizationCode,

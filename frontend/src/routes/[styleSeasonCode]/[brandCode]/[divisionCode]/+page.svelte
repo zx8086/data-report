@@ -1,19 +1,36 @@
 <script lang="ts">
 	import posthog from 'posthog-js';
+	import ProgressBar from '$lib/components/ProgressBar.svelte';
+	import DivisionalVideoPlayer from '$lib/components/DivisionalVideoPlayer.svelte';
+
 	posthog.capture('$pageview')
 
-
 	import type { LooksSummary } from './+page.server';
-	import ProgressBar from '$lib/components/ProgressBar.svelte';
 
 	export let data: LooksSummary;
-	let divisionName = 'Kids';
+
+	function getVideoForDivision(divisionCode: string): string {
+		let videoMap = {
+			'01': `https://s7g10.scene7.com/is/content/TommyHilfigerEU/TH%20SP25%20MSW%20TRAILER_SP25_1920x1080_C5101`,
+			'02': `https://s7g10.scene7.com/is/content/TommyHilfigerEU/TH_SP25_MASH%20UP_JEANS_C5102`,
+			'03': `https://s7g10.scene7.com/is/content/TommyHilfigerEU/TH_SP25_MASH%20UP_JEANS_C5102`
+		}
+		// You can set a default URL as well
+		return videoMap[divisionCode]
+	}
+
+	let video = `https://s7g10.scene7.com/is/content/TommyHilfigerEU/TH%20SP25%20MSW%20TRAILER_SP25_1920x1080_C5101`;
+
+	console.log("Video",video)
+
 </script>
 
 <div class="container ml-20 mx-auto p-0">
+	<div class="flex items-center justify-center">
+		<DivisionalVideoPlayer src={video} class="mx-auto"/>
+	</div>
 	<div class="flex flex-row justify-center space-x-4">
 		<div class="w-1/2">Collections</div>
-
 		<div class="w-1/2">
 			<div class="card-th">
 				<h2 class="heading-th p-4">LOOKS</h2>
