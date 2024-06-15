@@ -6,9 +6,13 @@
 
 	posthog.capture('$pageview')
 
-	import type { LooksSummary } from './+page.server';
+	import type { LooksSummary, CollectionsSummary } from './+page.server';
 
-	export let data: LooksSummary;
+	export let looksData: LooksSummary;
+	export let collectionsData: CollectionsSummary;
+
+	console.log("Collection Data",collectionsData)
+	console.log("Looks Data", looksData)
 
 	function getVideoForDivision(divisionCode: string): string {
 		let videoMap = {
@@ -59,28 +63,41 @@
 		<DivisionalVideoPlayer src={video} class="mx-auto"/>
 	</div>
 	<div class="flex flex-row justify-center space-x-4">
-		<div class="w-1/2">Collections</div>
+		<div class="w-1/2">
+			<div class="card-th">
+				<h2 class="heading-th p-4">COLLECTIONS</h2>
+				<div class="p-4">
+					<p>Active
+						<ProgressBar percentage={Math.round((collectionsData.isActive / collectionsData.totalOptions) * 100)} completed={collectionsData.isActive} total={collectionsData.totalOptions} />
+					</p>
+					<p>Sold Out
+						<ProgressBar percentage={Math.round((collectionsData.isSoldOut / collectionsData.totalOptions) * 100)} completed={collectionsData.isSoldOut} total={collectionsData.totalOptions} />
+					</p>
+					<!-- Add other fields as you see fit -->
+				</div>
+			</div>
+		</div>
 		<div class="w-1/2">
 			<div class="card-th">
 				<h2 class="heading-th p-4">LOOKS</h2>
 				<div class="p-4">
 					<p>Gender
-						<ProgressBar percentage={Math.round((data.hasGender / data.totalLooks) * 100)} completed={data.hasGender} total={data.totalLooks} />
+						<ProgressBar percentage={Math.round((looksData.hasGender / looksData.totalLooks) * 100)} completed={looksData.hasGender} total={looksData.totalLooks} />
 					</p>
 					<p>Tags
-						<ProgressBar percentage={Math.round((data.hasTag / data.totalLooks) * 100)} completed={data.hasTag} total={data.totalLooks} />
+						<ProgressBar percentage={Math.round((looksData.hasTag / looksData.totalLooks) * 100)} completed={looksData.hasTag} total={looksData.totalLooks} />
 					</p>
 					<p>Description
-						<ProgressBar percentage={Math.round((data.hasDescription / data.totalLooks) * 100)} completed={data.hasDescription} total={data.totalLooks} />
+						<ProgressBar percentage={Math.round((looksData.hasDescription / looksData.totalLooks) * 100)} completed={looksData.hasDescription} total={looksData.totalLooks} />
 					</p>
 					<p>Trends
-						<ProgressBar percentage={Math.round((data.hasTrend / data.totalLooks) * 100)} completed={data.hasTrend} total={data.totalLooks} />
+						<ProgressBar percentage={Math.round((looksData.hasTrend / looksData.totalLooks) * 100)} completed={looksData.hasTrend} total={looksData.totalLooks} />
 					</p>
 					<p>Related Styles
-						<ProgressBar percentage={Math.round((data.hasRelatedStyles / data.totalLooks) * 100)} completed={data.hasRelatedStyles} total={data.totalLooks} />
+						<ProgressBar percentage={Math.round((looksData.hasRelatedStyles / looksData.totalLooks) * 100)} completed={looksData.hasRelatedStyles} total={looksData.totalLooks} />
 					</p>
 					<p>Title
-						<ProgressBar percentage={Math.round((data.hasTitle / data.totalLooks) * 100)} completed={data.hasTitle} total={data.totalLooks} />
+						<ProgressBar percentage={Math.round((looksData.hasTitle / looksData.totalLooks) * 100)} completed={looksData.hasTitle} total={looksData.totalLooks} />
 					</p>
 				</div>
 			</div>

@@ -17,7 +17,27 @@ export interface LooksSummary {
 }
 
 interface LooksSummaryResponse {
-	looksSummary: LooksSummary[];
+	looksSummary: LooksSummary;
+}
+
+export interface CollectionsSummary {
+	totalOptions: number;
+	hasImages: number;
+	isActive: number;
+	isAvailable: number;
+	isCancelled: number;
+	isClosed: number;
+	isInvalid: number;
+	isLicensed: number;
+	isNew: number;
+	isSoldOut: number;
+	isUpdated: number;
+	isOpenForEcom: number;
+	hasDeliveryDates: number;
+}
+
+interface CollectionsSummaryResponse {
+	optionsSummary: CollectionsSummary;
 }
 
 const brandCodeToBrand: any = {
@@ -41,11 +61,12 @@ const createApolloClient = () => {
 };
 
 export const load: Load = async ({ params }) => {
+
 	const { styleSeasonCode: season, brandCode, divisionCode: division } = params;
 
 	const brand = brandCode ? (brandCodeToBrand[brandCode] || brandCode) : undefined;
 
-	const query = gql`
+	const looksQuery = gql`
       query looksSummary($brand: String!, $division: String!, $season: String!) {
           looksSummary(brand: $brand, division: $division, season: $season) {
               hasDeliveryName
@@ -60,32 +81,77 @@ export const load: Load = async ({ params }) => {
       }
 	`;
 
-	const variables = { brand, season, division };
+	const collectionsQuery = gql`
+      query collectionsSummary($ActiveOption: Boolean!, $DivisionCode: String!, $SalesChannels: [SalesChannel!]!, $SalesOrganizationCode: String!,$StyleSeasonCode: String!) {
+          optionsSummary(
+              ActiveOption: $ActiveOption
+              DivisionCode: $DivisionCode
+              SalesChannels: $SalesChannels
+              SalesOrganizationCode: $SalesOrganizationCode
+              StyleSeasonCode: $StyleSeasonCode
+          ) {
+              totalOptions
+              isUpdated
+              isSoldOut
+              isOpenForEcom
+              isNew
+              isLicensed
+              isInvalid
+              isClosed
+              isCancelled
+              isAvailable
+              isActive
+              hasImages
+              hasDeliveryDates
+          }
+      }
+	`;
+
 	const client = createApolloClient();
 
 	try {
-		const response = await client.query<LooksSummaryResponse>({ query, variables });
-		if (posthog.isFeatureEnabled('console-logging') ) {
 
-			console.log("Fetched from Endpoint:", response.data);
-		}
-		if (response.data.looksSummary) {
-			if (posthog.isFeatureEnabled('console-logging') ) {
+		const looksVariables = {
+			brand,
+			season,
+			division
+		};
 
-				console.log('What is being passed', response.data.looksSummary);
-			}
-			return response.data.looksSummary
-		} else {
+		const looksResponse = await client.query<LooksSummaryResponse>({ query: looksQuery, variables: looksVariables });
+
+		console.log("Looks Response", looksResponse)
+
+		const collectionsVariables = {
+			ActiveOption: true,
+			DivisionCode: division,
+			SalesChannels: ["SELLIN", "B2B"],
+			SalesOrganizationCode: "INLC",
+			StyleSeasonCode: season
+		};
+
+		const collectionsResponse = await client.query<CollectionsSummaryResponse>({ query: collectionsQuery, variables: collectionsVariables });
+
+		console.log("Collection Response", collectionsResponse)
+
+
+		if(looksResponse.data.looksSummary ) {
+
+			console.log("looksSummary", looksResponse.data.looksSummary)
+			console.log("collectionsSummary", collectionsResponse.data.optionsSummary)
+			posthog.capture('Looks and Collections Loaded');
+
 			return {
-				status: 404,
-				error: "No looks found for the given parameters.",
+				body: {
+					looksSummary: looksResponse.data.looksSummary,
+					collectionsSummary: collectionsResponse.data.optionsSummary
+				}
 			};
 		}
 	} catch (error) {
-		console.error("Error fetching looks:", error);
+		console.error("Error fetching data: ", error);
 		return {
 			status: 500,
-			error: "Error fetching looks data.",
+			error: "Error fetching looks and collections data."
 		};
 	}
 };
