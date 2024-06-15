@@ -24,8 +24,6 @@ export interface ElasticConfig {
 }
 
 export interface FrontendConfig {
-	couchbase: CouchbaseConfig;
-	elysiaJs: ElysiaConfig;
 	postHog: PostHogConfig;
 	elastic: ElasticConfig;
 }

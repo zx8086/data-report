@@ -6,14 +6,18 @@
 	import ProgressBar from '$lib/components/ProgressBar.svelte';
 	import DivisionalVideoPlayer from '$lib/components/DivisionalVideoPlayer.svelte';
 	import { page } from '$app/stores';
-
 	posthog.capture('$pageview');
 
 	export let data: any;
 	const { collectionsData, looksData } = data.divisional;
 
-	console.log("Looks Data",looksData)
-	console.log("Collection Data",collectionsData)
+	posthog.onFeatureFlags(function() {
+		// feature flags should be available at this point
+		if (posthog.isFeatureEnabled('console-logging') ) {
+			console.log("Looks Data",looksData)
+			console.log("Collection Data",collectionsData)
+		}
+	})
 
 	function getVideoForDivision(divisionCode: string): string {
 		let videoMap = {
@@ -35,26 +39,32 @@
 	}
 
 	let video: string = '';
+	let styleSeasonCode : any;
+	let brandCode : any;
+	let divisionCode : any;
+
 	$: {
-		if ($page && $page.url) {
-			const divisionCode = $page.url.pathname.split('/')[3];
+		if ($page) {
+			const pathParts = $page.url.pathname.split('/');
+			styleSeasonCode = pathParts[1];
+			brandCode = pathParts[2];
+			divisionCode = pathParts[3];
 			video = getVideoForDivision(divisionCode);
-			console.log("Division Code", divisionCode);
-			console.log("Video", video);
+			posthog.capture(`Divisional Data Completion - ${divisionCode}`);
 		}
 	}
 </script>
 
 <div class="container mx-auto p-0">
-	<div class="flex items-center justify-center mb-8">
+	<div class="flex items-center justify-center mb-4">
 		<DivisionalVideoPlayer src={video} class="mx-auto"/>
 	</div>
 	<div class="flex flex-row justify-between">
 		{#if collectionsData}
-			<div class="w-1/2 pr-4">
+			<div class="w-1/2">
 				<div class="card-th">
-					<h2 class="heading-th p-4">COLLECTIONS</h2>
-					<div class="p-4">
+					<h2 class="heading-th flex justify-center">COLLECTION DATA COMPLETION</h2>
+					<div>
 							<ProgressBar titleHeading="Active" percentage={Math.round((collectionsData.isActive / collectionsData.totalOptions) * 100)} completed={collectionsData.isActive} total={collectionsData.totalOptions} />
 							<ProgressBar titleHeading="Sold Out" percentage={Math.round((collectionsData.isSoldOut / collectionsData.totalOptions) * 100)} completed={collectionsData.isSoldOut} total={collectionsData.totalOptions} />
 							<ProgressBar titleHeading="Images" percentage={Math.round((collectionsData.hasImages / collectionsData.totalOptions) * 100)} completed={collectionsData.hasImages} total={collectionsData.totalOptions} />
@@ -68,22 +78,32 @@
 							<ProgressBar titleHeading="Open For Ecom" percentage={Math.round((collectionsData.isOpenForEcom / collectionsData.totalOptions) * 100)} completed={collectionsData.isOpenForEcom} total={collectionsData.totalOptions} />
 							<ProgressBar titleHeading="Delivery Dates" percentage={Math.round((collectionsData.hasDeliveryDates / collectionsData.totalOptions) * 100)} completed={collectionsData.hasDeliveryDates} total={collectionsData.totalOptions} />
 					</div>
+					<div class="flex justify-center mt-1">
+						<a href={`/${styleSeasonCode}/${brandCode}/${divisionCode}/collection`} class="btn-th-detailed-report border-2">
+							VIEW COLLECTION
+						</a>
+					</div>
 				</div>
 			</div>
 		{:else}
 			<p>Loading Collections data...</p>
 		{/if}
 		{#if looksData}
-			<div class="w-1/2 pl-4">
+			<div class="w-1/2">
 				<div class="card-th">
-					<h2 class="heading-th p-4">LOOKS</h2>
-					<div class="p-4">
+					<h2 class="heading-th flex justify-center">LOOKS DATA COMPLETION</h2>
+					<div>
 							<ProgressBar titleHeading="Gender" percentage={Math.round((looksData.hasGender / looksData.totalLooks) * 100)} completed={looksData.hasGender} total={looksData.totalLooks} />
 							<ProgressBar titleHeading="Tags" percentage={Math.round((looksData.hasTag / looksData.totalLooks) * 100)} completed={looksData.hasTag} total={looksData.totalLooks} />
 							<ProgressBar titleHeading="Description" percentage={Math.round((looksData.hasDescription / looksData.totalLooks) * 100)} completed={looksData.hasDescription} total={looksData.totalLooks} />
 							<ProgressBar titleHeading="Trends" percentage={Math.round((looksData.hasTrend / looksData.totalLooks) * 100)} completed={looksData.hasTrend} total={looksData.totalLooks} />
 							<ProgressBar titleHeading="Related Styles" percentage={Math.round((looksData.hasRelatedStyles / looksData.totalLooks) * 100)} completed={looksData.hasRelatedStyles} total={looksData.totalLooks} />
 							<ProgressBar titleHeading="Title" percentage={Math.round((looksData.hasTitle / looksData.totalLooks) * 100)} completed={looksData.hasTitle} total={looksData.totalLooks} />
+					</div>
+					<div class="flex justify-center mt-1">
+						<a href={`/${styleSeasonCode}/${brandCode}/${divisionCode}/looks`} class="btn-th-detailed-report border-2">
+							VIEW LOOKS
+						</a>
 					</div>
 				</div>
 			</div>
@@ -92,4 +112,3 @@
 		{/if}
 	</div>
 </div>
-
