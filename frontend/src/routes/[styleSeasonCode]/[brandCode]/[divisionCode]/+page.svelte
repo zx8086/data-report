@@ -7,12 +7,13 @@
 	posthog.capture('$pageview')
 
 	import type { LooksSummary, CollectionsSummary } from './+page.server';
+	import { data } from 'autoprefixer';
 
 	export let looksData: LooksSummary;
 	export let collectionsData: CollectionsSummary;
 
-	console.log("Collection Data",collectionsData)
-	console.log("Looks Data", looksData)
+	console.log("LooksData: ", looksData);
+	console.log("CollectionsData: ", collectionsData);
 
 	function getVideoForDivision(divisionCode: string): string {
 		let videoMap = {
@@ -44,8 +45,6 @@
 		return videoMap[divisionCode]  || videoMap['01']; // default video when there is no videoMap for current `divisionCode`
 	}
 
-	// let video = `https://s7g10.scene7.com/is/content/TommyHilfigerEU/TH%20SP25%20MSW%20TRAILER_SP25_1920x1080_C5101`;
-
 	let video: any = null;
 	$: {
 		if ($page && $page.url) {
@@ -62,7 +61,7 @@
 	<div class="flex items-center justify-center">
 		<DivisionalVideoPlayer src={video} class="mx-auto"/>
 	</div>
-	<div class="flex flex-row justify-center space-x-4">
+	{#if collectionsData}
 		<div class="w-1/2">
 			<div class="card-th">
 				<h2 class="heading-th p-4">COLLECTIONS</h2>
@@ -77,6 +76,10 @@
 				</div>
 			</div>
 		</div>
+	{:else}
+		<p>Loading Collections data... </p>
+	{/if}
+	{#if looksData}
 		<div class="w-1/2">
 			<div class="card-th">
 				<h2 class="heading-th p-4">LOOKS</h2>
@@ -102,5 +105,7 @@
 				</div>
 			</div>
 		</div>
-	</div>
+	{:else}
+		<p>Loading Looks data... </p>
+	{/if}
 </div>

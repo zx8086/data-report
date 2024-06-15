@@ -5,6 +5,7 @@ import posthog from 'posthog-js'
 import type { Load } from '@sveltejs/kit';
 
 export interface LooksSummary {
+	__typename: string;
 	hasDeliveryName: number;
 	hasDescription: number;
 	hasGender: number;
@@ -21,6 +22,7 @@ interface LooksSummaryResponse {
 }
 
 export interface CollectionsSummary {
+	__typename: string;
 	totalOptions: number;
 	hasImages: number;
 	isActive: number;
@@ -134,18 +136,34 @@ export const load: Load = async ({ params }) => {
 		console.log("Collection Response", collectionsResponse)
 
 
-		if(looksResponse.data.looksSummary ) {
+		if(looksResponse.data.looksSummary && collectionsResponse.data.optionsSummary) {
 
-			console.log("looksSummary", looksResponse.data.looksSummary)
-			console.log("collectionsSummary", collectionsResponse.data.optionsSummary)
-			posthog.capture('Looks and Collections Loaded');
 
+			// Before returning the result, include this:
+			console.log({
+				body: {
+					looksData: looksResponse.data.looksSummary,
+					collectionsData: collectionsResponse.data.optionsSummary
+				}
+			});
 			return {
 				body: {
-					looksSummary: looksResponse.data.looksSummary,
-					collectionsSummary: collectionsResponse.data.optionsSummary
+					collectionsData: {
+						totalOptions: 4853,
+						isActive: 4853,
+						isAvailable: 4853,
+						hasImages: 4853,
+						hasDeliveryDates: 4853,
+					},
+					looksData: {
+						hasGender: 14,
+						hasTitle: 118,
+						hasTrend: 43,
+						totalLooks: 118,
+					},
 				}
-			};
+			}
+
 		}
 	} catch (error) {
 		console.error("Error fetching data: ", error);
