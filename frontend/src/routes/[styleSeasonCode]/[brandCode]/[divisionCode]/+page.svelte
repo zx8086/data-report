@@ -14,8 +14,8 @@
 	posthog.onFeatureFlags(function() {
 		// feature flags should be available at this point
 		if (posthog.isFeatureEnabled('console-logging') ) {
-			console.log("Looks Data",looksData)
-			console.log("Collection Data",collectionsData)
+			// console.log("Looks Data",looksData)
+			// console.log("Collection Data",collectionsData)
 		}
 	})
 
