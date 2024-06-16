@@ -41,7 +41,8 @@ export default {
           'border-red': '#cb1017', // Border color, red
           'border-dark-blue': '#000c2d', // Border color, dark blue
         }
-      }
+      },
+      aspectRatio: {}
     }
   },
   corePlugins: {
@@ -50,4 +51,5 @@ export default {
   plugins: [
     require('@tailwindcss/aspect-ratio'),
   ],
+  mode: 'jit'
 };

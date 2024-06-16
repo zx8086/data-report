@@ -64,19 +64,19 @@
 			<div class="w-1/2">
 				<div class="card-th">
 					<h2 class="heading-th flex justify-center">COLLECTION DATA COMPLETION</h2>
-					<div>
-							<ProgressBar titleHeading="Active" percentage={Math.round((collectionsData.isActive / collectionsData.totalOptions) * 100)} completed={collectionsData.isActive} total={collectionsData.totalOptions} />
-							<ProgressBar titleHeading="Sold Out" percentage={Math.round((collectionsData.isSoldOut / collectionsData.totalOptions) * 100)} completed={collectionsData.isSoldOut} total={collectionsData.totalOptions} />
-							<ProgressBar titleHeading="Images" percentage={Math.round((collectionsData.hasImages / collectionsData.totalOptions) * 100)} completed={collectionsData.hasImages} total={collectionsData.totalOptions} />
-							<ProgressBar titleHeading="Available" percentage={Math.round((collectionsData.isAvailable / collectionsData.totalOptions) * 100)} completed={collectionsData.isAvailable} total={collectionsData.totalOptions} />
-							<ProgressBar titleHeading="Cancelled" percentage={Math.round((collectionsData.isCancelled / collectionsData.totalOptions) * 100)} completed={collectionsData.isCancelled} total={collectionsData.totalOptions} />
-							<ProgressBar titleHeading="Closed" percentage={Math.round((collectionsData.isClosed / collectionsData.totalOptions) * 100)} completed={collectionsData.isClosed} total={collectionsData.totalOptions} />
-							<ProgressBar titleHeading="Invalid" percentage={Math.round((collectionsData.isInvalid / collectionsData.totalOptions) * 100)} completed={collectionsData.isInvalid} total={collectionsData.totalOptions} />
-							<ProgressBar titleHeading="Licensed" percentage={Math.round((collectionsData.isLicensed / collectionsData.totalOptions) * 100)} completed={collectionsData.isLicensed} total={collectionsData.totalOptions} />
-							<ProgressBar titleHeading="New" percentage={Math.round((collectionsData.isNew / collectionsData.totalOptions) * 100)} completed={collectionsData.isNew} total={collectionsData.totalOptions} />
-							<ProgressBar titleHeading="Updated" percentage={Math.round((collectionsData.isUpdated / collectionsData.totalOptions) * 100)} completed={collectionsData.isUpdated} total={collectionsData.totalOptions} />
-							<ProgressBar titleHeading="Open For Ecom" percentage={Math.round((collectionsData.isOpenForEcom / collectionsData.totalOptions) * 100)} completed={collectionsData.isOpenForEcom} total={collectionsData.totalOptions} />
-							<ProgressBar titleHeading="Delivery Dates" percentage={Math.round((collectionsData.hasDeliveryDates / collectionsData.totalOptions) * 100)} completed={collectionsData.hasDeliveryDates} total={collectionsData.totalOptions} />
+					<div class="justify-center">
+						<ProgressBar titleHeading="Active" percentage={Math.round((collectionsData.isActive / collectionsData.totalOptions) * 100)} completed={collectionsData.isActive} total={collectionsData.totalOptions} />
+						<ProgressBar titleHeading="Available" percentage={Math.round((collectionsData.isAvailable / collectionsData.totalOptions) * 100)} completed={collectionsData.isAvailable} total={collectionsData.totalOptions} />
+						<ProgressBar titleHeading="Delivery Dates" percentage={Math.round((collectionsData.hasDeliveryDates / collectionsData.totalOptions) * 100)} completed={collectionsData.hasDeliveryDates} total={collectionsData.totalOptions} />
+						<ProgressBar titleHeading="Images" percentage={Math.round((collectionsData.hasImages / collectionsData.totalOptions) * 100)} completed={collectionsData.hasImages} total={collectionsData.totalOptions} />
+						<ProgressBar titleHeading="Open For Ecom" percentage={Math.round((collectionsData.isOpenForEcom / collectionsData.totalOptions) * 100)} completed={collectionsData.isOpenForEcom} total={collectionsData.totalOptions} />
+						<ProgressBar titleHeading="Licensed" percentage={Math.round((collectionsData.isLicensed / collectionsData.totalOptions) * 100)} completed={collectionsData.isLicensed} total={collectionsData.totalOptions} />
+						<ProgressBar titleHeading="New" percentage={Math.round((collectionsData.isNew / collectionsData.totalOptions) * 100)} completed={collectionsData.isNew} total={collectionsData.totalOptions} />
+						<ProgressBar titleHeading="Updated" percentage={Math.round((collectionsData.isUpdated / collectionsData.totalOptions) * 100)} completed={collectionsData.isUpdated} total={collectionsData.totalOptions} />
+						<ProgressBar titleHeading="Sold Out" percentage={Math.round((collectionsData.isSoldOut / collectionsData.totalOptions) * 100)} completed={collectionsData.isSoldOut} total={collectionsData.totalOptions} />
+						<ProgressBar titleHeading="Closed" percentage={Math.round((collectionsData.isClosed / collectionsData.totalOptions) * 100)} completed={collectionsData.isClosed} total={collectionsData.totalOptions} />
+						<ProgressBar titleHeading="Cancelled" percentage={Math.round((collectionsData.isCancelled / collectionsData.totalOptions) * 100)} completed={collectionsData.isCancelled} total={collectionsData.totalOptions} />
+						<ProgressBar titleHeading="Invalid" percentage={Math.round((collectionsData.isInvalid / collectionsData.totalOptions) * 100)} completed={collectionsData.isInvalid} total={collectionsData.totalOptions} />
 					</div>
 					<div class="flex justify-center mt-1">
 						<a href={`/${styleSeasonCode}/${brandCode}/${divisionCode}/collection`} class="btn-th-detailed-report border-2">
@@ -92,13 +92,13 @@
 			<div class="w-1/2">
 				<div class="card-th">
 					<h2 class="heading-th flex justify-center">LOOKS DATA COMPLETION</h2>
-					<div>
-							<ProgressBar titleHeading="Gender" percentage={Math.round((looksData.hasGender / looksData.totalLooks) * 100)} completed={looksData.hasGender} total={looksData.totalLooks} />
-							<ProgressBar titleHeading="Tags" percentage={Math.round((looksData.hasTag / looksData.totalLooks) * 100)} completed={looksData.hasTag} total={looksData.totalLooks} />
-							<ProgressBar titleHeading="Description" percentage={Math.round((looksData.hasDescription / looksData.totalLooks) * 100)} completed={looksData.hasDescription} total={looksData.totalLooks} />
-							<ProgressBar titleHeading="Trends" percentage={Math.round((looksData.hasTrend / looksData.totalLooks) * 100)} completed={looksData.hasTrend} total={looksData.totalLooks} />
-							<ProgressBar titleHeading="Related Styles" percentage={Math.round((looksData.hasRelatedStyles / looksData.totalLooks) * 100)} completed={looksData.hasRelatedStyles} total={looksData.totalLooks} />
-							<ProgressBar titleHeading="Title" percentage={Math.round((looksData.hasTitle / looksData.totalLooks) * 100)} completed={looksData.hasTitle} total={looksData.totalLooks} />
+					<div class="justify-center justify-items-center content-center object-center self-center">
+						<ProgressBar titleHeading="Title" percentage={Math.round((looksData.hasTitle / looksData.totalLooks) * 100)} completed={looksData.hasTitle} total={looksData.totalLooks} />
+						<ProgressBar titleHeading="Description" percentage={Math.round((looksData.hasDescription / looksData.totalLooks) * 100)} completed={looksData.hasDescription} total={looksData.totalLooks} />
+						<ProgressBar titleHeading="Related Styles" percentage={Math.round((looksData.hasRelatedStyles / looksData.totalLooks) * 100)} completed={looksData.hasRelatedStyles} total={looksData.totalLooks} />
+						<ProgressBar titleHeading="Trends" percentage={Math.round((looksData.hasTrend / looksData.totalLooks) * 100)} completed={looksData.hasTrend} total={looksData.totalLooks} />
+						<ProgressBar titleHeading="Gender" percentage={Math.round((looksData.hasGender / looksData.totalLooks) * 100)} completed={looksData.hasGender} total={looksData.totalLooks} />
+						<ProgressBar titleHeading="Tags" percentage={Math.round((looksData.hasTag / looksData.totalLooks) * 100)} completed={looksData.hasTag} total={looksData.totalLooks} />
 					</div>
 					<div class="flex justify-center mt-1">
 						<a href={`/${styleSeasonCode}/${brandCode}/${divisionCode}/looks`} class="btn-th-detailed-report border-2">
