@@ -43,6 +43,7 @@
 	let brandCode : any;
 	let divisionCode : any;
 
+
 	$: {
 		if ($page) {
 			const pathParts = $page.url.pathname.split('/');
