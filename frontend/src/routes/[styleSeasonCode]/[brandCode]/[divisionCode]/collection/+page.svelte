@@ -33,10 +33,10 @@
 <div class="bg-white">
 	<div class="max-w-2xl px-4 py-8 mx-auto sm:px-6 sm:py-24 lg:max-w-7xl lg:px-8">
 		{#if data?.optionsProductView}
-			<div class="grid grid-cols-1 sm:grid-cols-3 lg:grid-cols-8 gap-4">
+			<div class="grid grid-cols-1 sm:grid-cols-3 lg:grid-cols-6 gap-5">
 				{#each data.optionsProductView as product (product.optionCode)}
 					<div class="relative group">
-						<div class="overflow-hidden rounded-md aspect-w-1 aspect-h-1 transition-transform duration-300 group-hover:scale-110 group-hover:opacity-100">
+						<div class="overflow-hidden rounded-md mb-3 aspect-w-1 aspect-h-1 transition-transform duration-300 group-hover:scale-110 group-hover:opacity-100">
 							<img
 								src={product.imageUrl ? baseUrl + product.imageUrl : '/img/not-found.png'}
 								alt={product.description}
@@ -44,8 +44,8 @@
 								on:error={handleImageError}
 							/>
 						</div>
-						<div class="option-code text-center">{product.optionCode}</div>
-						<div class="description text-center">{product.description}</div>
+						<div class="option-code font-bold text-sm text-center">{product.optionCode}</div>
+						<div class="description text-xs text-center">{product.description}</div>
 					</div>
 				{/each}
 			</div>
