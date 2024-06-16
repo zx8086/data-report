@@ -36,7 +36,6 @@ export const load = async ({ params }) => {
 	const brand = brandCode ? (brandCodeToBrand[brandCode] || brandCode) : undefined;
 	const salesOrgCode = brandCodeToSalesOrgCode[brandCode] || '';
 
-
 	const looksQuery = gql`
       query looksSummary($brand: String!, $division: String!, $season: String!) {
           looksSummary(brand: $brand, division: $division, season: $season) {
@@ -62,6 +61,7 @@ export const load = async ({ params }) => {
               StyleSeasonCode: $StyleSeasonCode
           ) {
               totalOptions
+              hasFrontImageUrl
               isUpdated
               isSoldOut
               isOpenForEcom

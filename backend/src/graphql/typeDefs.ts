@@ -31,6 +31,7 @@ const typeDefs = gql`
     type OptionSummary {
         totalOptions: Int!
         hasImages: Int!
+        hasFrontImageUrl: Int!
         isActive: Int!
         isAvailable: Int!
         isCancelled: Int!

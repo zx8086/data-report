@@ -36,6 +36,8 @@ const divisionTranslations = {
 	"97": "Nike Underwear"
 } as const;
 
+const NON_DIVISION = 'Non-Division';
+
 const brandTranslations = {
 	"CKEU": "Calvin Klein",
 	"THEU": "Tommy Hilfiger",
@@ -69,8 +71,8 @@ export function generateBreadcrumbs(path: string): Breadcrumb[] {
 			label = seasonTranslations[segment as SeasonKey];
 		} else if (brandTranslations[segment as BrandKey]) {
 			label = brandTranslations[segment as BrandKey];
-		} else if (divisionTranslations[segment as DivisionKey]) {
-			label = divisionTranslations[segment as DivisionKey];
+		} else {
+			label = divisionTranslations[segment as DivisionKey] || NON_DIVISION;
 		}
 		breadcrumbs.push({ label: label.toUpperCase(), href });
 	}

@@ -3,7 +3,6 @@
 import { ApolloClient, gql, InMemoryCache, createHttpLink } from '@apollo/client/core';
 import fetch from 'cross-fetch';
 import type { Load } from '@sveltejs/kit';
-// import posthog from 'posthog-js';
 
 export interface Collection {
 	description: string;
