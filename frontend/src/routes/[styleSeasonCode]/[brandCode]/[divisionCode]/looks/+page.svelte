@@ -1,8 +1,24 @@
 <script lang="ts">
 	import type { Look } from '$lib/types';
 	import posthog from 'posthog-js';
+	import { page } from '$app/stores';
 	posthog.capture('$pageview')
 	export let data: { looks: Look[] | null, status?: number, error?: string };
+
+	let styleSeasonCode : any;
+	let brandCode : any;
+	let divisionCode : any;
+
+	$: {
+		if ($page) {
+			const pathParts = $page.url.pathname.split('/');
+			styleSeasonCode = pathParts[1];
+			brandCode = pathParts[2];
+			divisionCode = pathParts[3];
+			posthog.capture(`Divisional Looks: ${styleSeasonCode}-${brandCode}-${divisionCode}`);
+		}
+	}
+
 </script>
 
 <div class="bg-white">

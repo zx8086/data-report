@@ -1,7 +1,7 @@
 // $types.ts
 import type { LoadEvent } from '@sveltejs/kit';
 
-interface Look {
+export interface Look {
 	assetUrl: string;
 	divisionCode: string;
 	documentKey: string;

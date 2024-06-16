@@ -40,7 +40,12 @@ const createYogaOptions = () => ({
 	]
 });
 
+const healthCheck = new Elysia()
+	.get('/health', () => "HEALTHY")
+
 const app = new Elysia()
+	.onStart(() => console.log("The server has started!"))
+	.use(healthCheck)
 	.use(yoga(createYogaOptions()))
 	.listen(SERVER_PORT);
 

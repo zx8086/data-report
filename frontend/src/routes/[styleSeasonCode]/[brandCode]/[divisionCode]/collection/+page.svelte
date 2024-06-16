@@ -1,11 +1,9 @@
 <script lang="ts">
 	import type { Collection } from './+page.server';
-	import posthog from 'posthog-js';
-	import { browser } from '$app/environment';
 
-	if (browser) {
-		posthog.capture('$pageview');
-	}
+	import posthog from 'posthog-js';
+	import { page } from '$app/stores';
+	posthog.capture('$pageview')
 
 	const baseUrl = 'https://s7g10.scene7.com/is/image/TommyHilfigerEU';
 	export let data: {optionsProductView: Collection[] | null, status?: number, error?: string};
@@ -15,6 +13,21 @@
 		// Prevents the fallback image from triggering an infinite loop if it's also missing
 		event.target.onerror = null;
 	}
+
+	let styleSeasonCode : any;
+	let brandCode : any;
+	let divisionCode : any;
+
+	$: {
+		if ($page) {
+			const pathParts = $page.url.pathname.split('/');
+			styleSeasonCode = pathParts[1];
+			brandCode = pathParts[2];
+			divisionCode = pathParts[3];
+			posthog.capture(`Divisional Collection: ${styleSeasonCode}-${brandCode}-${divisionCode}`);
+		}
+	}
+
 </script>
 
 <div class="bg-white">
