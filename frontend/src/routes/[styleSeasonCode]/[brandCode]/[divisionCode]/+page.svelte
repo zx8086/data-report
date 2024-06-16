@@ -29,9 +29,11 @@
 			'09': `https://s7g10.scene7.com/is/content/TommyHilfigerEU/WSW_FTW-ACC_SP25_1920x1080_C5109`,
 			'61': `https://s7g10.scene7.com/is/content/TommyHilfigerEU/CKSP25_CKMenswear_sizzle_C5161`,
 			'62': `https://s7g10.scene7.com/is/content/TommyHilfigerEU/CKSP25_CKJeans_sizzle_C5162`,
+			'64': `https://s7g10.scene7.com/is/content/TommyHilfigerEU/CKSP25_CKJeans_sizzle_C5162`,
 			'65': `https://s7g10.scene7.com/is/content/TommyHilfigerEU/CKSP25_CKWomenswear_sizzle_C5165`,
 			'67': `https://s7g10.scene7.com/is/content/TommyHilfigerEU/CKSP25_CKUnderwear_sizzle_C5167`,
 			'68': `https://s7g10.scene7.com/is/content/TommyHilfigerEU/CKSP25_CKSport_sizzle_C5168`,
+			'69': `https://s7g10.scene7.com/is/content/TommyHilfigerEU/CKSP25_CKJeans_sizzle_C5162`,
 			'70': `https://s7g10.scene7.com/is/content/TommyHilfigerEU/CKSP25_CKAccessories_sizzle_C5170`,
 			'77': `https://s7g10.scene7.com/is/content/TommyHilfigerEU/CKSP25_CKSwimwear_sizzle_C5177`,
 		};
@@ -68,8 +70,9 @@
 					<div class="flex flex-col items-center">
 						<ProgressBar titleHeading="Active" percentage={Math.round((collectionsData.isActive / collectionsData.totalOptions) * 100)} completed={collectionsData.isActive} total={collectionsData.totalOptions} />
 						<ProgressBar titleHeading="Available" percentage={Math.round((collectionsData.isAvailable / collectionsData.totalOptions) * 100)} completed={collectionsData.isAvailable} total={collectionsData.totalOptions} />
-						<ProgressBar titleHeading="Delivery Dates" percentage={Math.round((collectionsData.hasDeliveryDates / collectionsData.totalOptions) * 100)} completed={collectionsData.hasDeliveryDates} total={collectionsData.totalOptions} />
+						<ProgressBar titleHeading="Front Image" percentage={Math.round((collectionsData.hasFrontImageUrl / collectionsData.totalOptions) * 100)} completed={collectionsData.hasFrontImageUrl} total={collectionsData.totalOptions} />
 						<ProgressBar titleHeading="Images" percentage={Math.round((collectionsData.hasImages / collectionsData.totalOptions) * 100)} completed={collectionsData.hasImages} total={collectionsData.totalOptions} />
+						<ProgressBar titleHeading="Delivery Dates" percentage={Math.round((collectionsData.hasDeliveryDates / collectionsData.totalOptions) * 100)} completed={collectionsData.hasDeliveryDates} total={collectionsData.totalOptions} />
 						<ProgressBar titleHeading="Open For Ecom" percentage={Math.round((collectionsData.isOpenForEcom / collectionsData.totalOptions) * 100)} completed={collectionsData.isOpenForEcom} total={collectionsData.totalOptions} />
 						<ProgressBar titleHeading="Licensed" percentage={Math.round((collectionsData.isLicensed / collectionsData.totalOptions) * 100)} completed={collectionsData.isLicensed} total={collectionsData.totalOptions} />
 						<ProgressBar titleHeading="New" percentage={Math.round((collectionsData.isNew / collectionsData.totalOptions) * 100)} completed={collectionsData.isNew} total={collectionsData.totalOptions} />

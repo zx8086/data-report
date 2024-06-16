@@ -62,6 +62,7 @@ export const load = async ({ params }) => {
               StyleSeasonCode: $StyleSeasonCode
           ) {
               totalOptions
+              hasFrontImageUrl
               isUpdated
               isSoldOut
               isOpenForEcom
