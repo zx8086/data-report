@@ -66,7 +66,7 @@
 		{#if collectionsData}
 			<div class="w-1/2">
 				<div class="card-th">
-					<h2 class="heading-th flex justify-center">COLLECTION DATA COMPLETION</h2>
+					<h2 class="heading-th flex justify-center">COLLECTION</h2>
 					<div class="flex flex-col items-center">
 						<ProgressBar titleHeading="Active" percentage={Math.round((collectionsData.isActive / collectionsData.totalOptions) * 100)} completed={collectionsData.isActive} total={collectionsData.totalOptions} />
 						<ProgressBar titleHeading="Available" percentage={Math.round((collectionsData.isAvailable / collectionsData.totalOptions) * 100)} completed={collectionsData.isAvailable} total={collectionsData.totalOptions} />
@@ -95,7 +95,7 @@
 		{#if looksData}
 			<div class="w-1/2">
 				<div class="card-th">
-					<h2 class="heading-th flex justify-center">LOOKS DATA COMPLETION</h2>
+					<h2 class="heading-th flex justify-center">LOOKS</h2>
 					<div class="flex flex-col items-center">
 						<ProgressBar titleHeading="Title" percentage={Math.round((looksData.hasTitle / looksData.totalLooks) * 100)} completed={looksData.hasTitle} total={looksData.totalLooks} />
 						<ProgressBar titleHeading="Description" percentage={Math.round((looksData.hasDescription / looksData.totalLooks) * 100)} completed={looksData.hasDescription} total={looksData.totalLooks} />

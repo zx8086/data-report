@@ -12,8 +12,8 @@
     <span>{titleHeading}</span>
     <span>{completed} out of {total} - {calcPercentage(completed, total)}%</span>
   </div>
-  <div class="flex h-1 w-full text-xs overflow-hidden rounded-xl bg-slate-100 dark:bg-slate-800" role="progressbar" aria-label="default progress bar" aria-valuenow={completed} aria-valuemin={minVal} aria-valuemax={maxVal}>
-    <div class="h-full rounded-xl bg-blue-700 dark:bg-blue-600" style={`width: ${calcPercentage(completed, total)}%`}>
+  <div class="flex h-2 w-full text-xs overflow-hidden rounded-xl bg-tommy-border-red dark:bg-slate-800" role="progressbar" aria-label="default progress bar" aria-valuenow={completed} aria-valuemin={minVal} aria-valuemax={maxVal}>
+    <div class="h-full rounded-xl bg-tommy-blue dark:bg-blue-600" style={`width: ${calcPercentage(completed, total)}%`}>
     </div>
   </div>
 </div>
