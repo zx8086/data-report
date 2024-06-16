@@ -7,7 +7,7 @@
   let maxVal = 100;
   const calcPercentage = (completed, total) => ((completed / total) * 100).toFixed(2);
 </script>
-<div class="w-4/5 my-4 py-4">
+<div class="w-4/5 my-2 py-1">
   <div class="flex text-xs justify-between gap-2 text-slate-700 dark:text-slate-300">
     <span>{titleHeading}</span>
     <span>{completed} out of {total} - {calcPercentage(completed, total)}%</span>
