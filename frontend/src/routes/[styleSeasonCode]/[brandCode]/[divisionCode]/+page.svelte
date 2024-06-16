@@ -83,7 +83,7 @@
 						<ProgressBar titleHeading="Invalid" percentage={Math.round((collectionsData.isInvalid / collectionsData.totalOptions) * 100)} completed={collectionsData.isInvalid} total={collectionsData.totalOptions} />
 					</div>
 					<div class="flex justify-center mt-1">
-						<a href={`/${styleSeasonCode}/${brandCode}/${divisionCode}/collection`} class="btn-th-detailed-report border-2">
+						<a href={`/${styleSeasonCode}/${brandCode}/${divisionCode}/collection`} class="btn-th-detailed-report border-2 p-2">
 							VIEW COLLECTION
 						</a>
 					</div>
@@ -105,7 +105,7 @@
 						<ProgressBar titleHeading="Tags" percentage={Math.round((looksData.hasTag / looksData.totalLooks) * 100)} completed={looksData.hasTag} total={looksData.totalLooks} />
 					</div>
 					<div class="flex justify-center mt-1">
-						<a href={`/${styleSeasonCode}/${brandCode}/${divisionCode}/looks`} class="btn-th-detailed-report border-2">
+						<a href={`/${styleSeasonCode}/${brandCode}/${divisionCode}/looks`} class="btn-th-detailed-report border-2 p-2">
 							VIEW LOOKS
 						</a>
 					</div>

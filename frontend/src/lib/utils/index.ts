@@ -71,7 +71,7 @@ export function generateBreadcrumbs(path: string): Breadcrumb[] {
 			label = seasonTranslations[segment as SeasonKey];
 		} else if (brandTranslations[segment as BrandKey]) {
 			label = brandTranslations[segment as BrandKey];
-		} else {
+		} else if (i === 2) { // Divisions come at 3rd place (i.e., index 2) in the provided URL pattern
 			label = divisionTranslations[segment as DivisionKey] || NON_DIVISION;
 		}
 		breadcrumbs.push({ label: label.toUpperCase(), href });
