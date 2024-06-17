@@ -30,9 +30,7 @@
 		}
 	}
 
-	let showLeftModal = false;
-	let showRightModal = false;
-	let selectedLookIndex = -1; // Or selectedProductIndex for the Collection page
+
 </script>
 
 <div class="bg-white">
