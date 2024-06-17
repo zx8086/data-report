@@ -48,9 +48,9 @@ export function generateBreadcrumbs(path: string): Breadcrumb[] {
 
 	if (posthog.isFeatureEnabled('console-logging') ) {
 
-		console.log('Generating breadcrumbs for path:', path);
+		// console.log('Generating breadcrumbs for path:', path);
 		const segments = path.split('/').filter(Boolean);
-		console.log('Path segments:', segments);
+		// console.log('Path segments:', segments);
 
 	}
 
@@ -58,7 +58,7 @@ export function generateBreadcrumbs(path: string): Breadcrumb[] {
 
 	if (posthog.isFeatureEnabled('console-logging') ) {
 
-		console.log('Path segments:', segments);
+		// console.log('Path segments:', segments);
 
 	}
 
@@ -79,7 +79,7 @@ export function generateBreadcrumbs(path: string): Breadcrumb[] {
 
 	if (posthog.isFeatureEnabled('console-logging') ) {
 
-		console.log('Final breadcrumbs:', breadcrumbs);
+		// console.log('Final breadcrumbs:', breadcrumbs);
 	}
 	return breadcrumbs;
 }

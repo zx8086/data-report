@@ -1,8 +1,10 @@
+<!--+page.svelte (Collection)-->
 <script lang="ts">
 	import type { Collection } from './+page.server';
-
 	import posthog from 'posthog-js';
 	import { page } from '$app/stores';
+	import Modal from '$lib/components/Modal.svelte';
+
 	posthog.capture('$pageview')
 
 	const baseUrl = 'https://s7g10.scene7.com/is/image/TommyHilfigerEU';
@@ -28,6 +30,9 @@
 		}
 	}
 
+	let showLeftModal = false;
+	let showRightModal = false;
+	let selectedLookIndex = -1; // Or selectedProductIndex for the Collection page
 </script>
 
 <div class="bg-white">
