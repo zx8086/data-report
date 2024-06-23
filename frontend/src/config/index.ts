@@ -1,4 +1,4 @@
 
-import config from './frontend';
+// import config from './frontend';
 
-export default config;
+// export default config;

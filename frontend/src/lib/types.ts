@@ -1,6 +1,41 @@
 // $types.ts
 import type { LoadEvent } from '@sveltejs/kit';
 
+// In selectedItemStore.ts or a separate types file
+export interface SelectedItemType {
+	type: string;
+	data: {
+		optionCode: string;
+		description: string;
+		imageUrl?: string;
+	};
+	meta: {
+		styleSeasonCode: string;
+		brandCode: string;
+		divisionCode: string;
+	};
+}
+
+export interface Collection {
+	description: string;
+	imageUrl: string;
+	optionCode: string;
+	isAvailable: boolean;
+	isCancelled: boolean;
+	isClosed: boolean;
+	isInvalid: boolean;
+	isLicensed: boolean;
+	isNew: boolean;
+	isOpenForEcom: boolean;
+	isSoldOut: boolean;
+	isUpdated: boolean;
+	hasDeliveryDropDate: boolean;
+	activeOption: boolean;
+	brandCode: string;
+	divisionCode: string;
+	images: string[];
+}
+
 export interface Look {
 	assetUrl: string;
 	divisionCode: string;
@@ -13,7 +48,7 @@ export interface Look {
 }
 
 // Define LooksSummary interface
-interface LooksSummary {
+export interface LooksSummary {
 	__typename: string;
 	hasDeliveryName: number;
 	hasDescription: number;
@@ -27,7 +62,7 @@ interface LooksSummary {
 }
 
 // Define CollectionsSummary interface
-interface CollectionsSummary {
+export interface CollectionsSummary {
 	__typename: string;
 	totalOptions: number;
 	hasImages: number;

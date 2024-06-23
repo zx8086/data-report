@@ -1,6 +1,5 @@
 // frontend.ts
 import type { PostHogConfig, FrontendConfig, ElasticConfig } from './types.ts';
-import * as bun from 'bun';
 
 function getOrThrow(envVariable: string | undefined, name: string): string  {
   if (!envVariable) {

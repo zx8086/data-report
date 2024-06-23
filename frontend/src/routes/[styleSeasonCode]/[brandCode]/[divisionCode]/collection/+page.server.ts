@@ -1,28 +1,8 @@
-// +page.server.ts (for optionsProductView)
-
+// +page.server.ts (For Collection from optionsProductView)
 import { ApolloClient, gql, InMemoryCache, createHttpLink } from '@apollo/client/core';
 import fetch from 'cross-fetch';
 import type { Load } from '@sveltejs/kit';
-
-export interface Collection {
-	description: string;
-	imageUrl: string;
-	optionCode: string;
-	isAvailable: boolean;
-	isCancelled: boolean;
-	isClosed: boolean;
-	isInvalid: boolean;
-	isLicensed: boolean;
-	isNew: boolean;
-	isOpenForEcom: boolean;
-	isSoldOut: boolean;
-	isUpdated: boolean;
-	hasDeliveryDropDate: boolean;
-	activeOption: boolean;
-	brandCode: string;
-	divisionCode: string;
-	images: string[];
-}
+import {Collection} from '$lib/types';
 
 const brandCodeToBrand: any = {
 	THEU: 'TH',
@@ -109,14 +89,17 @@ export const load: Load = async ({ params }) => {
 	console.log("Variables",variables)
 
 	try {
+		console.log("Sending GraphQL query with variables:", variables);
 		const response = await client.query({ query: productViewQuery, variables });
+		// console.log("GraphQL response:", response);
 
 		const productData: Collection[] | null = response.data.optionsProductView;
 
 		if (productData && productData.length > 0) {
+			console.log(`Returning ${productData.length} products`);
 			return { optionsProductView: productData };
-
 		} else {
+			console.log("No products found");
 			return {
 				status: 404,
 				error: "No products found for the given parameters.",
