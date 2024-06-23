@@ -3,6 +3,7 @@
   export let titleHeading = "Progress";
   export let completed = 0;
   export let total = 0;
+
   let minVal = 0;
   let maxVal = 100;
   const calcPercentage = (completed, total) => ((completed / total) * 100).toFixed(2);

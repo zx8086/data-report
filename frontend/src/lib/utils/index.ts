@@ -1,5 +1,4 @@
 // src/lib/utils/index.ts
-
 import posthog from 'posthog-js';
 
 interface Breadcrumb {
