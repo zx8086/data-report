@@ -72,18 +72,34 @@
 		if (target) {
 			const value = target.checked;
 			console.log('Filter changed:', filterKey, value);
-			activeFilters.update(filters => ({...filters, [filterKey]: value}));
+			activeFilters.update(filters => {
+				// If 'noImageUrl' is checked, uncheck 'imageUrl' and vice versa
+				if (filterKey === 'noImageUrl' && value) {
+					return {...filters, [filterKey]: value, imageUrl: false};
+				} else if (filterKey === 'imageUrl' && value) {
+					return {...filters, [filterKey]: value, noImageUrl: false};
+				}
+				return {...filters, [filterKey]: value};
+			});
 		}
 	}
 
 	function clearFilters() {
 		activeFilters.set({
-			isMissingImages: false,
+			isAvailable: false,
 			isCancelled: false,
 			isSoldOut: false,
 			isNew: false,
 			isOpenForEcom: false,
 			hasDeliveryDropDate: false,
+			imageUrl: false,
+			noImageUrl: false,
+			isClosed: false,
+			isInvalid: false,
+			isLicensed: false,
+			isUpdated: false,
+			activeOption: false,
+			hasImageDocument: false,
 		});
 	}
 
@@ -93,6 +109,16 @@
 		console.log('filteredAndSearchedCollection length:', $filteredAndSearchedCollection.length);
 	}
 
+	const NOT_FOUND_IMG_URL = '/img/not-found.png';
+	const KEY_ENTER = 'Enter';
+	const KEY_SPACE = ' ';
+
+	function handleKeyDown(product, event) {
+		if (event.key === KEY_ENTER || event.key === KEY_SPACE) {
+			event.preventDefault();
+			handleSelect(product, event);
+		}
+	}
 </script>
 
 <!-- Search and Filter UI -->
@@ -111,54 +137,70 @@
 {#if showFilters}
 	<div class="mb-4 p-4 border rounded">
 		<h3 class="text-lg font-bold mb-2">Filters</h3>
+		<button on:click={clearFilters} class="my-2 p-2 bg-gray-300 rounded">Clear Filters</button>
+
+		<!-- Add these new filters -->
+		<label class="block">
+			<input
+				type="checkbox"
+				checked={$activeFilters.noImageUrl}
+				on:change={(e) => handleFilterChange('noImageUrl', e)}
+			/>
+			No Image
+		</label>
+		<label class="block">
+			<input
+				type="checkbox"
+				checked={$activeFilters.imageUrl}
+				on:change={(e) => handleFilterChange('imageUrl', e)}
+			/>
+			Has Image
+		</label>
+
+		<!-- Keep the existing filters if needed -->
 		{#each Object.entries($activeFilters) as [key, value]}
-			<label class="block">
-				<input
-					type="checkbox"
-					checked={value}
-					on:change={(e) => handleFilterChange(key, e)}
-				/>
-				{key}
-			</label>
+			{#if key !== 'imageUrl' && key !== 'noImageUrl'}
+				<label class="block">
+					<input
+						type="checkbox"
+						checked={value}
+						on:change={(e) => handleFilterChange(key, e)}
+					/>
+					{key}
+				</label>
+			{/if}
 		{/each}
-		<button on:click={clearFilters} class="mt-2 p-2 bg-gray-300 rounded">Clear Filters</button>
 	</div>
 {/if}
 
 <!-- Product Grid -->
+<div><p>Filtered Results: {$filteredAndSearchedCollection.length}</p></div>
 <div class="bg-white">
 	<div class="max-w-2xl px-4 py-8 mx-auto sm:px-6 sm:py-24 lg:max-w-7xl lg:px-8">
-		{#if $collectionStore.length === 0}
-			<div>Loading products...</div>
-		{:else if $filteredAndSearchedCollection.length > 0}
-			<div class="grid grid-cols-1 sm:grid-cols-3 lg:grid-cols-6 gap-5">
-				{#each $filteredAndSearchedCollection as product (product.optionCode)}
-					<div class="relative group">
-						<button
-							class="w-full overflow-hidden rounded-md mb-3 aspect-w-1 aspect-h-1 transition-transform duration-300 group-hover:scale-110 group-hover:opacity-100 cursor-pointer focus:outline-none focus:ring-2 focus:ring-blue-500"
-							on:click={(event) => handleSelect(product, event)}
-							on:keydown={(event) => {
-                if (event.key === 'Enter' || event.key === ' ') {
-                  event.preventDefault();
-                  handleSelect(product, event);
-                }
-              }}
-							aria-label={`Select ${product.description}`}
-						>
-							<img
-								src={product.imageUrl ? baseUrl + product.imageUrl : '/img/not-found.png'}
-								alt={product.description}
-								class="object-contain object-center w-full h-full"
-								on:error={handleImageError}
-							/>
-						</button>
-						<div class="option-code font-bold text-sm text-center">{product.optionCode}</div>
-						<div class="description text-xs text-center">{product.description}</div>
-					</div>
-				{/each}
-			</div>
+		{#if $filteredAndSearchedCollection.length > 0}
+		<div class="grid grid-cols-1 sm:grid-cols-3 lg:grid-cols-6 gap-5">
+			{#each $filteredAndSearchedCollection as product (product.optionCode)}
+				<div class="relative group">
+					<button
+						class="w-full overflow-hidden rounded-md mb-3 aspect-w-1 aspect-h-1 transition-transform duration-300 group-hover:scale-110 group-hover:opacity-100 cursor-pointer focus:outline-none focus:ring-2 focus:ring-blue-500"
+						on:click={(event) => handleSelect(product, event)}
+						on:keydown={(event) => handleKeyDown(product, event)}
+						aria-label={`Select ${product.description}`}
+					>
+						<img
+							src={product.imageUrl ? baseUrl + product.imageUrl : NOT_FOUND_IMG_URL}
+							alt={product.description}
+							class="object-contain object-center w-full h-full"
+							on:error={handleImageError}
+						/>
+					</button>
+					<div class="option-code font-bold text-sm text-center">{product.optionCode}</div>
+					<div class="description text-xs text-center">{product.description}</div>
+				</div>
+			{/each}
+		</div>
 		{:else}
-			<div>No products found matching your criteria.</div>
+		<div>No products found matching your criteria.</div>
 		{/if}
 	</div>
 </div>
