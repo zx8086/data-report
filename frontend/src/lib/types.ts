@@ -1,7 +1,6 @@
 // $types.ts
 import type { LoadEvent } from '@sveltejs/kit';
 
-// In selectedItemStore.ts or a separate types file
 export interface SelectedItemType {
 	type: string;
 	data: {

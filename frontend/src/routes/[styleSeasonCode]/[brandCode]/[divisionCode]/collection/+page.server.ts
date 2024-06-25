@@ -2,7 +2,7 @@
 import { ApolloClient, gql, InMemoryCache, createHttpLink } from '@apollo/client/core';
 import fetch from 'cross-fetch';
 import type { Load } from '@sveltejs/kit';
-import {Collection} from '$lib/types';
+import type { Collection } from '$lib/types';
 
 const brandCodeToBrand: any = {
 	THEU: 'TH',
@@ -73,10 +73,13 @@ export const load: Load = async ({ params }) => {
               brandCode
               divisionCode
               images
+              hasImageDocument
+              styleDescription
+              internal_id
           }
       }
 	`;
-	
+
 	const variables = {
 		brandCode,
 		salesOrganizationCode,

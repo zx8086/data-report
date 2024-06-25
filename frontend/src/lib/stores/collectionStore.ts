@@ -25,12 +25,20 @@ export const collectionStore = createCollectionStore();
 export const searchInput = writable('');
 
 export const activeFilters = writable({
-	isMissingImages: false,
+	isAvailable: false,
 	isCancelled: false,
 	isSoldOut: false,
 	isNew: false,
 	isOpenForEcom: false,
 	hasDeliveryDropDate: false,
+	imageUrl: false,
+	noImageUrl: false,
+	isClosed: false,
+	isInvalid: false,
+	isLicensed: false,
+	isUpdated: false,
+	activeOption: false,
+	hasImageDocument: false,
 });
 
 export const filteredAndSearchedCollection = derived(
@@ -48,7 +56,13 @@ export const filteredAndSearchedCollection = derived(
 		if (activeFilterEntries.length > 0) {
 			console.log('Active filters:', activeFilterEntries);
 			filtered = filtered.filter(item => {
-				return activeFilterEntries.every(([key, _]) => item[key as keyof Collection]);
+				return activeFilterEntries.every(([key, _]) => {
+					if (key === 'noImageUrl') {
+						// Reverse logic for imageUrl
+						return !item.imageUrl;
+					}
+					return item[key as keyof Collection];
+				});
 			});
 		}
 
