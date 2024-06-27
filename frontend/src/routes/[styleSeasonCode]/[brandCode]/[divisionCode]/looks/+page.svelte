@@ -3,14 +3,12 @@
 	import type { PageData } from './$types';
 	import { page } from '$app/stores';
 	import type { Look } from '$lib/types';
-	import posthog from 'posthog-js';
 
-	posthog.capture('$pageview');
 
 	export let data: { looks: Look[] | null, status?: number, error?: string };
 
 	function handleSelect(look: Look) {
-		$page.data.activeLook = look; // Update the store directly
+		$page.data.activeLook = look;
 	}
 </script>
 

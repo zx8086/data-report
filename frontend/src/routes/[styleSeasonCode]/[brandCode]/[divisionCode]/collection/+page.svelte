@@ -1,12 +1,10 @@
 <!--+page.svelte (Collection)-->
 <script lang="ts">
+
 	import type { Collection, SelectedItemType } from '$lib/types';
-	// import posthog from 'posthog-js';
 	import { page } from '$app/stores';
 	import { selectedItem } from '$lib/stores/selectedItemStore';
 	import { collectionStore, searchInput, activeFilters, filteredAndSearchedCollection } from '$lib/stores/collectionStore';
-
-	// posthog.capture('$pageview')
 
 	const baseUrl = 'https://s7g10.scene7.com/is/image/TommyHilfigerEU';
 	export let data: {optionsProductView: Collection[] | null, status?: number, error?: string};
@@ -31,7 +29,6 @@
 			styleSeasonCode = pathParts[1];
 			brandCode = pathParts[2];
 			divisionCode = pathParts[3];
-			// posthog.capture(`Divisional Collection: ${styleSeasonCode}-${brandCode}-${divisionCode}`);
 		}
 	}
 
@@ -53,7 +50,6 @@
 	let showFilters = false;
 
 	function toggleFilters() {
-		debugger
 		console.log('Toggling filters');
 		showFilters = !showFilters;
 		console.log('showFilters:', showFilters);
