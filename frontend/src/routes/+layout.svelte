@@ -1,15 +1,33 @@
 <!--+layout.svelte-->
 <script lang="ts">
 	import "../app.css";
-	// import config from '../config'
-	import posthog from 'posthog-js'
-	// posthog.init(config.postHog.API_KEY, { api_host: config.postHog.API_HOST })
-	// posthog.capture('$pageview')
-
 	import Breadcrumbs from "$lib/components/Breadcumbs.svelte";
 	import LeftSidebar from '$lib/components/LeftSidebar.svelte';
 	import RightSidebar from '$lib/components/RightSidebar.svelte';
-
+	// import { key } from "$lib/context/tracker"
+	// import { onMount, setContext } from "svelte";
+	//
+	// let Tracker;
+	//
+	// onMount(async () => {
+	// 	if (typeof window !== undefined) {
+	// 		Tracker = (await import("$lib/context/tracker")).Tracker;
+	// 	}
+	//
+	// 	let tracker;
+	//
+	// 	if(Tracker) {
+	// 		tracker = new Tracker({
+	// 			projectKey: "XULAx3Gt1QjSuNsrm586",
+	// 			ingestPoint: "ingestPoint"
+	// 		});
+	//
+	// 		setContext(key, tracker);
+	//
+	// 		tracker.start();
+	// 		tracker.setUserID('');
+	// 	}
+	// });
 </script>
 
 <div class="flex flex-col h-screen">
