@@ -30,15 +30,13 @@ export const activeFilters = writable({
 	isSoldOut: false,
 	isNew: false,
 	isOpenForEcom: false,
-	hasDeliveryDropDate: false,
-	imageUrl: false,
-	noImageUrl: false,
+	missingDeliveryDates: false, // renamed
 	isClosed: false,
 	isInvalid: false,
 	isLicensed: false,
 	isUpdated: false,
-	activeOption: false,
-	hasImageDocument: false,
+	missingActiveFlag: false,  // renamed
+	missingFrontImageUrl: false,
 });
 
 export const filteredAndSearchedCollection = derived(
@@ -54,15 +52,26 @@ export const filteredAndSearchedCollection = derived(
 		// Apply filters
 		const activeFilterEntries = Object.entries($activeFilters).filter(([_, value]) => value);
 		if (activeFilterEntries.length > 0) {
-			console.log('Active filters:', activeFilterEntries);
 			filtered = filtered.filter(item => {
 				return activeFilterEntries.every(([key, _]) => {
-					if (key === 'noImageUrl') {
-						// Reverse logic for imageUrl
+					// Add the filters for the properties:
+					if (key === 'missingDeliveryDates') {
+						return item.hasDeliveryDropDate === false;
+					} else if (key === 'missingActiveFlag') {
+						return item.activeOption === false;
+					} else if (key === 'missingFrontImageUrl') {
 						return !item.imageUrl;
 					}
 					return item[key as keyof Collection];
 				});
+			});
+		}
+
+		// Filtering for missingFrontImageUrl
+		if ($activeFilters.missingFrontImageUrl) {
+			filtered = filtered.filter(item => {
+				// Adjust this condition if your logic for determining missing images is different
+				return !item.imageUrl;
 			});
 		}
 

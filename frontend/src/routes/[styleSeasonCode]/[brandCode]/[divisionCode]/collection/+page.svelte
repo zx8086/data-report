@@ -63,6 +63,7 @@
 		}
 	}
 
+
 	function handleFilterChange(filterKey: string, event: Event) {
 		const target = event.target as HTMLInputElement;
 		if (target) {
@@ -87,15 +88,13 @@
 			isSoldOut: false,
 			isNew: false,
 			isOpenForEcom: false,
-			hasDeliveryDropDate: false,
-			imageUrl: false,
-			noImageUrl: false,
+			missingDeliveryDates: false,
 			isClosed: false,
 			isInvalid: false,
 			isLicensed: false,
 			isUpdated: false,
-			activeOption: false,
-			hasImageDocument: false,
+			missingActiveFlag: false,
+			missingFrontImageUrl: false,
 		});
 	}
 
@@ -135,37 +134,30 @@
 		<h3 class="text-lg font-bold mb-2">Filters</h3>
 		<button on:click={clearFilters} class="my-2 p-2 bg-gray-300 rounded">Clear Filters</button>
 
-		<!-- Add these new filters -->
-		<label class="block">
-			<input
-				type="checkbox"
-				checked={$activeFilters.noImageUrl}
-				on:change={(e) => handleFilterChange('noImageUrl', e)}
-			/>
-			No Image
-		</label>
-		<label class="block">
-			<input
-				type="checkbox"
-				checked={$activeFilters.imageUrl}
-				on:change={(e) => handleFilterChange('imageUrl', e)}
-			/>
-			Has Image
-		</label>
-
-		<!-- Keep the existing filters if needed -->
-		{#each Object.entries($activeFilters) as [key, value]}
-			{#if key !== 'imageUrl' && key !== 'noImageUrl'}
-				<label class="block">
-					<input
-						type="checkbox"
-						checked={value}
-						on:change={(e) => handleFilterChange(key, e)}
-					/>
-					{key}
-				</label>
-			{/if}
+		{#each [
+			{"label": "Missing Delivery Dates", "key" : "missingDeliveryDates"},
+			{"label": "Missing Active Flag", "key": "missingActiveFlag"},
+			{"label": "Missing Front Image URL", "key": "missingFrontImageUrl"},
+			{"label": "isAvailable", "key": "isAvailable"},
+			{"label": "isCancelled", "key": "isCancelled"},
+			{"label": "isSoldOut", "key": "isSoldOut"},
+			{"label": "isNew", "key": "isNew"},
+			{"label": "isOpenForEcom", "key": "isOpenForEcom"},
+			{"label": "isClosed", "key": "isClosed"},
+			{"label": "isInvalid", "key": "isInvalid"},
+			{"label": "isLicensed", "key": "isLicensed"},
+			{"label": "isUpdated", "key": "isUpdated"}
+		] as filter}
+			<label class="block">
+				<input
+					type="checkbox"
+					checked={$activeFilters[filter.key]}
+					on:change={(e) => handleFilterChange(filter.key, e)}
+				/>
+				{filter.label}
+			</label>
 		{/each}
+
 	</div>
 {/if}
 
