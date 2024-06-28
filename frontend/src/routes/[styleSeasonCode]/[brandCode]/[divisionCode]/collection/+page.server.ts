@@ -99,7 +99,7 @@ export const load: Load = async ({ params }) => {
 		const productData: Collection[] | null = response.data.optionsProductView;
 
 		if (productData && productData.length > 0) {
-			console.log(`Returning ${productData.length} products`);
+			// console.log(`Returning ${productData.length} products`);
 			return { optionsProductView: productData };
 		} else {
 			console.log("No products found");
