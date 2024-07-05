@@ -1,19 +1,56 @@
 // $types.ts
-import type { LoadEvent } from '@sveltejs/kit';
+// import type { LoadEvent } from '@sveltejs/kit';
 
-export interface SelectedItemType {
-	type: string;
-	data: {
-		optionCode: string;
-		description: string;
-		imageUrl?: string;
-	};
-	meta: {
-		styleSeasonCode: string;
-		brandCode: string;
-		divisionCode: string;
-	};
+export interface CollectionData {
+	optionCode: string;
+	description: string;
+	imageUrl?: string;
 }
+
+export interface ImageDetails {
+	imageKey?: string;
+	backModifiedOn?: string;
+	backUrl?: string;
+	back2ModifiedOn?: string;
+	back2Url?: string;
+	detailModifiedOn?: string;
+	detailUrl?: string;
+	detail2ModifiedOn?: string;
+	detail2Url?: string;
+	detail3ModifiedOn?: string;
+	detail3Url?: string;
+	frontModifiedOn?: string;
+	frontUrl?: string;
+	front2ModifiedOn?: string;
+	front2Url?: string;
+	insideModifiedOn?: string;
+	insideUrl?: string;
+	inside2ModifiedOn?: string
+	inside2Url?: string
+	fabricScanModifiedOn?: string
+	fabricScanUrl?: string
+	i360ModifiedOn?: string
+	i360Url?: string
+	imageModifiedOn?: string
+	imageUrl?: string
+	packageModifiedOn?: string
+	packageUrl?: string
+	sketchModifiedOn?: string
+	sketchUrl?: string
+}
+
+export interface SelectedItemMeta {
+	styleSeasonCode: string;
+	brandCode: string;
+	divisionCode: string;
+}
+
+export type SelectedItemType = {
+	type: 'collection';
+	data: CollectionData;
+	meta: SelectedItemMeta;
+	imageDetails?: ImageDetails;
+};
 
 export interface Collection {
 	description: string;
@@ -87,7 +124,7 @@ export interface CollectionsSummaryResponse {
 }
 
 // Export PageServerLoad type
-export type PageServerLoad = (event: LoadEvent) => Promise<{
-	looksData: LooksSummary;
-	collectionsData: CollectionsSummary;
-}>;
+// export type PageServerLoad = (event: LoadEvent) => Promise<{
+// 	looksData: LooksSummary;
+// 	collectionsData: CollectionsSummary;
+// }>;

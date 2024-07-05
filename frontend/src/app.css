@@ -4,3 +4,8 @@
 @import "tailwindcss/utilities";
 @import "./styling/themes/theme-th.css";
 @import "./styling/themes/theme-ck.css";
+
+html, body {
+    height: 100%;
+    overflow: hidden;
+}

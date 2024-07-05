@@ -1,9 +1,8 @@
 <!--+page.svelte (Collection)-->
 <script lang="ts">
-
 	import type { Collection, SelectedItemType } from '$lib/types';
-	import { page } from '$app/stores';
 	import { selectedItem } from '$lib/stores/selectedItemStore';
+	import { page } from '$app/stores';
 	import { collectionStore, searchInput, activeFilters, filteredAndSearchedCollection } from '$lib/stores/collectionStore';
 
 	const baseUrl = 'https://s7g10.scene7.com/is/image/TommyHilfigerEU';
@@ -32,9 +31,10 @@
 		}
 	}
 
-	function handleSelect(product: Collection, event: Event | KeyboardEvent) {
+	async function handleSelect(product: Collection, event: Event | KeyboardEvent) {
 		event.preventDefault();
 		console.log('handleSelect called with product:', product);
+
 		selectedItem.set({
 			type: 'collection',
 			data: product,
@@ -43,8 +43,47 @@
 				brandCode,
 				divisionCode
 			}
-		} as SelectedItemType);
-		console.log('selectedItem set to:', $selectedItem);
+		});
+
+		console.log('Initial selectedItem set:', $selectedItem);
+
+		const formData = new FormData();
+		formData.append('divisionCode', divisionCode);
+		formData.append('styleCode', product.optionCode);
+		formData.append('styleSeasonCode', styleSeasonCode);
+
+		try {
+			const response = await fetch('?/getImageDetails', {
+				method: 'POST',
+				body: formData
+			});
+			const result = await response.json();
+
+			console.log('Image details fetch result:', result);
+
+			if (result.type === 'success' && result.status === 200) {
+				// Parse the nested JSON data
+				const parsedData = JSON.parse(result.data);
+				// The image details structure is in the third element of the array
+				const imageDetailsStructure = parsedData[2];
+				// The actual values start from the fourth element
+				const values = parsedData.slice(3);
+
+				// Construct the actual image details object
+				const imageDetails = Object.fromEntries(
+					Object.entries(imageDetailsStructure).map(([key, index]) => [key, values[Number(index) - 3] || ''])
+				);
+
+				console.log('Parsed image details:', imageDetails);
+
+				selectedItem.setImageDetails(imageDetails);
+				console.log('selectedItem after setting image details:', $selectedItem);
+			} else {
+				console.error('Failed to fetch image details:', result.error);
+			}
+		} catch (error) {
+			console.error('Error fetching image details:', error);
+		}
 	}
 
 	let showFilters = false;
@@ -62,7 +101,6 @@
 			searchInput.set(target.value);
 		}
 	}
-
 
 	function handleFilterChange(filterKey: string, event: Event) {
 		const target = event.target as HTMLInputElement;
@@ -138,15 +176,15 @@
 			{"label": "Missing Delivery Dates", "key" : "missingDeliveryDates"},
 			{"label": "Missing Active Flag", "key": "missingActiveFlag"},
 			{"label": "Missing Front Image URL", "key": "missingFrontImageUrl"},
-			{"label": "isAvailable", "key": "isAvailable"},
-			{"label": "isCancelled", "key": "isCancelled"},
-			{"label": "isSoldOut", "key": "isSoldOut"},
-			{"label": "isNew", "key": "isNew"},
-			{"label": "isOpenForEcom", "key": "isOpenForEcom"},
-			{"label": "isClosed", "key": "isClosed"},
-			{"label": "isInvalid", "key": "isInvalid"},
-			{"label": "isLicensed", "key": "isLicensed"},
-			{"label": "isUpdated", "key": "isUpdated"}
+			{"label": "Available", "key": "isAvailable"},
+			{"label": "Cancelled", "key": "isCancelled"},
+			{"label": "SoldOut", "key": "isSoldOut"},
+			{"label": "New", "key": "isNew"},
+			{"label": "Open For Ecom", "key": "isOpenForEcom"},
+			{"label": "Closed", "key": "isClosed"},
+			{"label": "Invalid", "key": "isInvalid"},
+			{"label": "Licensed", "key": "isLicensed"},
+			{"label": "Updated", "key": "isUpdated"}
 		] as filter}
 			<label class="block">
 				<input
@@ -157,38 +195,36 @@
 				{filter.label}
 			</label>
 		{/each}
-
 	</div>
 {/if}
 
 <!-- Product Grid -->
-<div><p>Filtered Results: {$filteredAndSearchedCollection.length}</p></div>
 <div class="bg-white">
 	<div class="max-w-2xl px-4 py-8 mx-auto sm:px-6 sm:py-24 lg:max-w-7xl lg:px-8">
 		{#if $filteredAndSearchedCollection.length > 0}
-		<div class="grid grid-cols-1 sm:grid-cols-3 lg:grid-cols-6 gap-5">
-			{#each $filteredAndSearchedCollection as product (product.optionCode)}
-				<div class="relative group">
-					<button
-						class="w-full overflow-hidden rounded-md mb-3 aspect-w-1 aspect-h-1 transition-transform duration-300 group-hover:scale-110 group-hover:opacity-100 cursor-pointer focus:outline-none focus:ring-2 focus:ring-blue-500"
-						on:click={(event) => handleSelect(product, event)}
-						on:keydown={(event) => handleKeyDown(product, event)}
-						aria-label={`Select ${product.description}`}
-					>
-						<img
-							src={product.imageUrl ? baseUrl + product.imageUrl : NOT_FOUND_IMG_URL}
-							alt={product.description}
-							class="object-contain object-center w-full h-full"
-							on:error={handleImageError}
-						/>
-					</button>
-					<div class="option-code font-bold text-sm text-center">{product.optionCode}</div>
-					<div class="description text-xs text-center">{product.description}</div>
-				</div>
-			{/each}
-		</div>
+			<div class="grid grid-cols-1 sm:grid-cols-3 lg:grid-cols-6 gap-5">
+				{#each $filteredAndSearchedCollection as product (product.optionCode)}
+					<div class="relative group">
+						<button
+							class="w-full overflow-hidden rounded-md mb-3 aspect-w-1 aspect-h-1 transition-transform duration-300 group-hover:scale-110 group-hover:opacity-100 cursor-pointer focus:outline-none focus:ring-2 focus:ring-blue-500"
+							on:click={(event) => handleSelect(product, event)}
+							on:keydown={(event) => handleKeyDown(product, event)}
+							aria-label={`Select ${product.description}`}
+						>
+							<img
+								src={product.imageUrl ? baseUrl + product.imageUrl : NOT_FOUND_IMG_URL}
+								alt={product.description}
+								class="object-contain object-center w-full h-full"
+								on:error={handleImageError}
+							/>
+						</button>
+						<div class="option-code font-bold text-sm text-center">{product.optionCode}</div>
+						<div class="description text-xs text-center">{product.description}</div>
+					</div>
+				{/each}
+			</div>
 		{:else}
-		<div>No products found matching your criteria.</div>
+			<div>No products found matching your criteria.</div>
 		{/if}
 	</div>
 </div>
