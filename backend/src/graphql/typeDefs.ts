@@ -216,12 +216,45 @@ const typeDefs = gql`
         theme: Theme
         wash: String
     }
+
+    type ImageDetails {
+        imageKey: String!
+        backModifiedOn: String
+        backUrl: String
+        back2ModifiedOn: String
+        back2Url: String
+        detailModifiedOn: String
+        detailUrl: String
+        detail2ModifiedOn: String
+        detail2Url: String
+        detail3ModifiedOn: String
+        detail3Url: String
+        fabricScanModifiedOn: String
+        fabricScanUrl: String
+        frontModifiedOn: String
+        frontUrl: String
+        front2ModifiedOn: String
+        front2Url: String
+        i360ModifiedOn: String
+        i360Url: String
+        imageModifiedOn: String
+        imageUrl: String
+        insideModifiedOn: String
+        insideUrl: String
+        inside2ModifiedOn: String
+        inside2Url: String
+        packageModifiedOn: String
+        packageUrl: String
+        sketchModifiedOn: String
+        sketchUrl: String
+    }
     
     type Query {
         looksSummary(brand: String, season: String, division: String): LookSummary
         looks(brand: String, season: String, division: String): [Look]
         optionsSummary( SalesOrganizationCode: String!, StyleSeasonCode: String!, DivisionCode: String!, ActiveOption: Boolean!, SalesChannels: [SalesChannel!]!): OptionSummary!
         optionsProductView ( BrandCode: String!, SalesOrganizationCode: String!, StyleSeasonCode: String!, DivisionCode: String!, ActiveOption: Boolean!, SalesChannels: [SalesChannel!]!): [OptionProductView]
+        imageDetails(divisionCode: String!, styleSeasonCode: String!, styleCode: String!): ImageDetails
     }
 `;
 
