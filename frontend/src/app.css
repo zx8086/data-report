@@ -8,4 +8,9 @@
 html, body {
     height: 100%;
     overflow: hidden;
+    accent-color: #080;
+}
+
+img {
+    max-width: 100%;
 }

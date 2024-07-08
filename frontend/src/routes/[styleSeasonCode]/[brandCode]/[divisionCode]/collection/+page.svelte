@@ -4,9 +4,26 @@
 	import { selectedItem } from '$lib/stores/selectedItemStore';
 	import { page } from '$app/stores';
 	import { collectionStore, searchInput, activeFilters, filteredAndSearchedCollection } from '$lib/stores/collectionStore';
+	import { onMount } from 'svelte';
 
 	const baseUrl = 'https://s7g10.scene7.com/is/image/TommyHilfigerEU';
 	export let data: {optionsProductView: Collection[] | null, status?: number, error?: string};
+
+
+	// onMount(() => {
+	// 	const handleClickOutside = (event: any) => {
+	// 		if (!event.target.closest('.product-item')) {
+	// 			selectedItem.reset();
+	// 		}
+	// 	};
+	//
+	// 	document.addEventListener('click', handleClickOutside);
+	//
+	// 	return () => {
+	// 		document.removeEventListener('click', handleClickOutside);
+	// 	};
+	// });
+
 
 	$: if (data?.optionsProductView) {
 		console.log('Setting collection store with:', data.optionsProductView.length, 'items');
@@ -200,7 +217,10 @@
 
 <!-- Product Grid -->
 <div class="bg-white">
+	<div class="m-4">Number of Styles: {$filteredAndSearchedCollection.length}</div>
+
 	<div class="max-w-2xl px-4 py-8 mx-auto sm:px-6 sm:py-24 lg:max-w-7xl lg:px-8">
+
 		{#if $filteredAndSearchedCollection.length > 0}
 			<div class="grid grid-cols-1 sm:grid-cols-3 lg:grid-cols-6 gap-5">
 				{#each $filteredAndSearchedCollection as product (product.optionCode)}
