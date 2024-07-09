@@ -2,7 +2,7 @@
 import { ApolloClient, gql, InMemoryCache, createHttpLink } from '@apollo/client/core';
 import fetch from 'cross-fetch';
 import type { Load } from '@sveltejs/kit';
-import posthog from 'posthog-js';
+import { ApolloError } from 'apollo-client';
 
 interface Look {
 	assetUrl: string;
@@ -30,12 +30,12 @@ const YOUR_GRAPHQL_ENDPOINT = 'http://localhost:4000/graphql';
 export const load: Load = async ({ params }) => {
 	const { styleSeasonCode: season, brandCode, divisionCode: division } = params;
 
-
 	const brand = brandCode ? (brandCodeToBrand[brandCode] || brandCode) : undefined;
 
 	const query = gql`
       query looks($brand: String!, $division: String!, $season: String!) {
           looks(brand: $brand, division: $division, season: $season) {
+							documentKey
               assetUrl
               title
 							trend
@@ -59,10 +59,7 @@ export const load: Load = async ({ params }) => {
 		const response = await client.query<LooksResponse>({ query, variables });
 
 		if (response.data.looks.length > 0) {
-			if (posthog.isFeatureEnabled('console-logging')) {
-				console.log("Data Being Fetched", response.data);
-			}
-
+				// console.log("Data Being Fetched", response.data);
 			return { looks: response.data.looks};
 		} else {
 			return {
@@ -72,7 +69,10 @@ export const load: Load = async ({ params }) => {
 		}
 	} catch (error) {
 		console.error("Error fetching looks:", error);
-
+		if (error instanceof ApolloError) {
+			console.error("GraphQL Errors:", error.graphQLErrors);
+			console.error("Network Error:", error.networkError);
+		}
 		return {
 			status: 500,
 			error: 'Error fetching looks.',
