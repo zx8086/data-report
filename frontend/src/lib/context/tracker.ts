@@ -1,6 +1,13 @@
 // tracker.ts
 
-import OpenReplayTracker from '@openreplay/tracker';
+import type OpenReplayTracker from '@openreplay/tracker';
 
 const trackerKey = Symbol('openreplay tracker symbol');
-export { OpenReplayTracker as Tracker, trackerKey as key };
+
+let Tracker: typeof OpenReplayTracker;
+
+if (typeof window !== 'undefined') {
+	Tracker = (await import('@openreplay/tracker')).default;
+}
+
+export { Tracker, trackerKey as key };

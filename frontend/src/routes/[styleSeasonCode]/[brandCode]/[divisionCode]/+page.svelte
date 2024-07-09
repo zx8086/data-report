@@ -6,11 +6,24 @@
 	import DivisionalVideoPlayer from '$lib/components/DivisionalVideoPlayer.svelte';
 	import { page } from '$app/stores';
 
+	import { key } from '$lib/context/tracker';
+	import { onMount, getContext } from 'svelte';
+
+	const { getTracker } = getContext(key);
+
+	onMount(() => {
+		const tracker = getTracker();
+		if (tracker) {
+			tracker.event('Page_View', {
+				page: 'Divisions',
+				category: 'Navigation',
+				action: 'View'
+			});
+		}
+	});
+
 	export let data: any;
 	const { collectionsData, looksData } = data.divisional;
-
-	// console.log("Looks Data",looksData)
-	// console.log("Collection Data",collectionsData)
 
 	function getVideoForDivision(divisionCode: string): string {
 		let videoMap = {

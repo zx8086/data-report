@@ -4,6 +4,22 @@
 	import { page } from '$app/stores';
 	import type { Look } from '$lib/types';
 
+	import { key } from '$lib/context/tracker';
+	import { onMount, getContext } from 'svelte';
+
+	const { getTracker } = getContext(key);
+
+	onMount(() => {
+		const tracker = getTracker();
+		if (tracker) {
+			tracker.event('Page_View', {
+				page: 'Looks',
+				category: 'Navigation',
+				action: 'View'
+			});
+		}
+	});
+
 
 	export let data: { looks: Look[] | null, status?: number, error?: string };
 
