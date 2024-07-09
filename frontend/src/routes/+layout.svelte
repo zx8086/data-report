@@ -1,8 +1,10 @@
 <script lang="ts">
 	import "../app.css";
+	import { afterNavigate } from '$app/navigation';
 	import Breadcrumbs from "$lib/components/Breadcumbs.svelte";
 	import LeftSidebar from '$lib/components/LeftSidebar.svelte';
 	import RightSidebar from '$lib/components/RightSidebar.svelte';
+	import { selectedItem } from '$lib/stores/selectedItemStore';
 
 	import { onMount, setContext } from 'svelte';
 	import { Tracker, key } from '$lib/context/tracker';
@@ -60,6 +62,10 @@
 	});
 
 	setContext(key, { getTracker });
+
+	afterNavigate(() => {
+		selectedItem.reset();
+	});
 </script>
 
 <div class="flex h-screen overflow-hidden">
