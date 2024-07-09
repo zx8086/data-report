@@ -4,26 +4,14 @@
 	import { selectedItem } from '$lib/stores/selectedItemStore';
 	import { page } from '$app/stores';
 	import { collectionStore, searchInput, activeFilters, filteredAndSearchedCollection } from '$lib/stores/collectionStore';
-	import { onMount } from 'svelte';
+	import { translateCode, translatePath } from '$lib/utils/translations';
+
+	import { key } from '$lib/context/tracker';
+	import { onMount, getContext } from 'svelte';
+	const { getTracker } = getContext(key);
 
 	const baseUrl = 'https://s7g10.scene7.com/is/image/TommyHilfigerEU';
 	export let data: {optionsProductView: Collection[] | null, status?: number, error?: string};
-
-
-	// onMount(() => {
-	// 	const handleClickOutside = (event: any) => {
-	// 		if (!event.target.closest('.product-item')) {
-	// 			selectedItem.reset();
-	// 		}
-	// 	};
-	//
-	// 	document.addEventListener('click', handleClickOutside);
-	//
-	// 	return () => {
-	// 		document.removeEventListener('click', handleClickOutside);
-	// 	};
-	// });
-
 
 	$: if (data?.optionsProductView) {
 		console.log('Setting collection store with:', data.optionsProductView.length, 'items');
@@ -47,6 +35,18 @@
 			divisionCode = pathParts[3];
 		}
 	}
+
+	onMount(() => {
+		const tracker = getTracker();
+		if (tracker) {
+			const translatedDivision = translateCode(divisionCode, 'division');
+			tracker.event('Page_View', {
+				page: `Collection - ${translatedDivision}`,
+				category: 'Navigation',
+				action: 'View'
+			});
+		}
+	});
 
 	async function handleSelect(product: Collection, event: Event | KeyboardEvent) {
 		event.preventDefault();

@@ -4,8 +4,28 @@
 	import ProductImage from './ProductImage.svelte';
 
 	let debugInfo = '';
-	let imageUrlInfo = '';
 	const baseUrl = 'https://s7g10.scene7.com/is/image/TommyHilfigerEU';
+
+	import { onMount, getContext } from 'svelte';
+	import { key } from '$lib/context/tracker';
+
+	const { getTracker } = getContext(key);
+	let showDebugInfo = false;
+
+	onMount(async () => {
+		const tracker = getTracker();
+		if (tracker) {
+			tracker.onFlagsLoad((flags) => {
+				const debugFlag = flags.find(flag => flag.key === 'debug-info-collection');
+				if (debugFlag) {
+					showDebugInfo = debugFlag.value === true;
+				}
+			});
+
+			// Optionally, you can reload flags if needed
+			// await tracker.reloadFlags();
+		}
+	});
 
 	$: {
 		console.log('selectedItem in sidebar:', $selectedItem);
@@ -13,11 +33,9 @@
 			console.log('Collection data:', $selectedItem.data);
 			console.log('Image details:', $selectedItem.imageDetails);
 			debugInfo = JSON.stringify($selectedItem, null, 2);
-			// imageUrlInfo = $selectedItem.imageDetails ? JSON.stringify($selectedItem.imageDetails, null, 2) : 'No image details';
 		} else {
 			console.log('No selected item or not a collection');
 			debugInfo = 'No selected item';
-			// imageUrlInfo = 'No image details';
 		}
 	}
 
@@ -62,13 +80,11 @@
 		<p>Select an item to view details</p>
 	{/if}
 
-	<div class="mt-4 p-2 bg-gray-100 rounded">
-		<h4 class="font-bold">Debug Info:</h4>
-		<pre class="whitespace-pre-wrap text-xs">{debugInfo}</pre>
-	</div>
+	{#if showDebugInfo}
+		<div class="mt-4 p-2 bg-gray-100 rounded">
+			<h4 class="font-bold">Debug Info:</h4>
+			<pre class="whitespace-pre-wrap text-xs">{debugInfo}</pre>
+		</div>
+	{/if}
 
-<!--	<div class="mt-4 p-2 bg-gray-100 rounded">-->
-<!--		<h4 class="font-bold">Image Url Info:</h4>-->
-<!--		<pre class="whitespace-pre-wrap text-xs">{imageUrlInfo}</pre>-->
-<!--	</div>-->
 </aside>
