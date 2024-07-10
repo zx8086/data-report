@@ -27,6 +27,14 @@
 		}
 	});
 
+	function getStyleImageUrl(styleCode: string) {
+		if ($selectedItem) {
+			const { styleSeasonCode, divisionCode } = $selectedItem.meta;
+			return `${baseUrl}/${styleCode}_F_${styleSeasonCode}${divisionCode}`;
+		}
+		return '';
+	}
+
 	$: {
 		console.log('selectedItem in sidebar:', $selectedItem);
 		if ($selectedItem && $selectedItem.type === 'collection') {
@@ -59,22 +67,39 @@
 </script>
 
 <aside class="w-1/5 bg-slate-200 p-4 overflow-y-auto h-screen">
-	{#if $selectedItem && $selectedItem.type === 'collection'}
-		<h2 class="text-xl font-bold mb-2">Collection Item</h2>
-		<p class="mb-2">Option Code: {$selectedItem.data.optionCode}</p>
-		<p class="mb-2">Description: {$selectedItem.data.description}</p>
-		{#if imageUrls.length > 0}
-			<h3 class="text-lg font-bold mt-4 mb-2">Images</h3>
-			{#each imageUrls as { type, url, modifiedDate }}
-				<ProductImage
-					src={`${baseUrl}${url}`}
-					alt={`${type} view`}
-					{type}
-					{modifiedDate}
-				/>
-			{/each}
-		{:else}
-			<p>No image details available</p>
+	{#if $selectedItem}
+		{#if $selectedItem.type === 'collection'}
+			<h2 class="text-xl font-bold mb-2">Collection Item</h2>
+			<p class="mb-2">Option Code: {$selectedItem.data.optionCode}</p>
+			<p class="mb-2">Description: {$selectedItem.data.description}</p>
+			{#if imageUrls.length > 0}
+				<h3 class="text-lg font-bold mt-4 mb-2">Images</h3>
+				{#each imageUrls as { type, url, modifiedDate }}
+					<ProductImage
+						src={`${baseUrl}${url}`}
+						alt={`${type} view`}
+						{type}
+						{modifiedDate}
+					/>
+				{/each}
+			{:else}
+				<p>No image details available</p>
+			{/if}
+		{:else if $selectedItem.type === 'look'}
+			<h2 class="text-xl font-bold mb-2">Related Styles</h2>
+			{#if $selectedItem.data.relatedStyles}
+				<div class="grid grid-cols-2 gap-2">
+					{#each $selectedItem.data.relatedStyles as styleCode}
+						<img
+							src={getStyleImageUrl(styleCode)}
+							alt={styleCode}
+							class="w-full h-auto object-cover"
+						/>
+					{/each}
+				</div>
+			{:else}
+				<p>No related styles available</p>
+			{/if}
 		{/if}
 	{:else}
 		<p>Select an item to view details</p>
@@ -86,5 +111,4 @@
 			<pre class="whitespace-pre-wrap text-xs">{debugInfo}</pre>
 		</div>
 	{/if}
-
 </aside>

@@ -48,6 +48,7 @@
 		}
 	});
 
+
 	async function handleSelect(product: Collection, event: Event | KeyboardEvent) {
 		event.preventDefault();
 		console.log('handleSelect called with product:', product);

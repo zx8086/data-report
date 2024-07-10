@@ -5,6 +5,7 @@ import looks from './looks';
 import optionsSummary from './optionsSummary';
 import optionsProductView from './optionsProductView';
 import imageDetails from './imageDetails';
+import lookDetails from './lookDetails';
 
 const resolvers = {
 	Query: {
@@ -13,6 +14,7 @@ const resolvers = {
 		...optionsSummary.Query,
 		...optionsProductView.Query,
 		...imageDetails.Query,
+		...lookDetails.Query,
 	}
 };
 
