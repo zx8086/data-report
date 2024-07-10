@@ -3,6 +3,8 @@
 	// import type { PageData } from './$types';
 	import { page } from '$app/stores';
 	import type { Look } from '$lib/types';
+	import { selectedItem } from '$lib/stores/selectedItemStore';
+
 
 	import { key } from '$lib/context/tracker';
 	import { onMount, getContext } from 'svelte';
@@ -57,28 +59,72 @@
 
 	export let data: { looks: Look[] | null, status?: number, error?: string };
 
+	async function handleSelect(look: Look, event?: Event | KeyboardEvent) {
+		if (event) {
+			event.preventDefault();
+		}
+		console.log('handleSelect called with look:', look);
+
+		selectedItem.set({
+			type: 'look',
+			data: look,
+			meta: {
+				styleSeasonCode,
+				brandCode,
+				divisionCode
+			}
+		});
+
+		console.log('selectedItem after initial set:', $selectedItem);
+
+		// Fetch additional details
+		try {
+			const formData = new FormData();
+			formData.append('lookDocKey', look.documentKey);
+
+			const response = await fetch('?/getLookDetails', {
+				method: 'POST',
+				body: formData
+			});
+			const result = await response.json();
+
+			if (result.success) {
+				console.log('Fetched additional look details:', result.lookDetails);
+				selectedItem.setLookDetails(result.lookDetails);
+				console.log('selectedItem after setting look details:', $selectedItem);
+			} else {
+				console.error('Failed to fetch look details:', result.error);
+			}
+		} catch (error) {
+			console.error('Error fetching look details:', error);
+		}
+	}
+
+	function handleKeyDown(look: Look, event: KeyboardEvent) {
+		if (event.key === 'Enter' || event.key === ' ') {
+			event.preventDefault();
+			handleSelect(look, event);
+		}
+	}
+
 </script>
 
+<!-- Looks Grid -->
 <div class="bg-white">
 	<div class="max-w-2xl px-4 py-8 mx-auto sm:px-6 sm:py-24 lg:max-w-7xl lg:px-8">
 		{#if data?.looks}
 			<div class="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-4 xl:gap-x-8">
 				{#each data.looks as look, index (look.documentKey)}
-					<div
-						role="button"
-						tabindex="0"
-						class="relative group">
+					<button
+						class="relative group w-full text-left focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
+						on:click={(event) => handleSelect(look, event)}
+						on:keydown={(event) => handleKeyDown(look, event)}
+						aria-label={`Select ${look.title}`}
+					>
 						<div class="overflow-hidden bg-gray-200 rounded-md aspect-w-1 aspect-h-1 lg:aspect-none lg:h-80 transform-gpu transition-transform duration-300 group-hover:scale-110 opacity-85 group-hover:opacity-100">
-							{#if look.lookType === '11'}
-								<video controls autoplay muted loop playsinline>
-									<source src={`${look.assetUrl}`} type="video/mp4" />
-									<track kind="captions" src="path/to/your/captions.vtt" srclang="en" />
-								</video>
-							{:else}
-								<img src={look.assetUrl} alt={look.title} class="object-cover object-top w-full h-full lg:w-full lg:h-full" />
-							{/if}
+							<img src={look.assetUrl} alt={look.title} class="object-cover object-top w-full h-full lg:w-full lg:h-full" />
 						</div>
-					</div>
+					</button>
 				{/each}
 			</div>
 		{:else if data?.status === 404}

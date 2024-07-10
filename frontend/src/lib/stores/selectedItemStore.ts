@@ -1,6 +1,6 @@
 // lib/stores/selectedItemStore.ts
 import { writable } from 'svelte/store';
-import type { SelectedItemType, ImageDetails } from '../types';
+import type { SelectedItemType, ImageDetails, LookDetails } from '../types';
 
 function createSelectedItemStore() {
 	const { subscribe, set, update } = writable<SelectedItemType | null>(null);
@@ -15,6 +15,12 @@ function createSelectedItemStore() {
 		setImageDetails: (imageDetails: ImageDetails) => update(item => {
 			if (item && item.type === 'collection') {
 				return { ...item, imageDetails };
+			}
+			return item;
+		}),
+		setLookDetails: (lookDetails: LookDetails) => update(item => {
+			if (item && item.type === 'look') {
+				return { ...item,  ...lookDetails };
 			}
 			return item;
 		}),

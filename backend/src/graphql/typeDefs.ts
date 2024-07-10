@@ -249,12 +249,40 @@ const typeDefs = gql`
         sketchUrl: String
     }
     
+    type LookDetails {
+        assetUrl: String
+        brand: String
+        channels: [String]
+        createdOn: String
+        createdOnSourceSystem: String
+        deliveryName: String
+        description: String
+        divisionCode: String
+        documentUpdatedBy: String
+        gender: String
+        isDeleted: Boolean
+        lookId: String
+        lookType: Int
+        modifiedOn: String
+        modifiedOnSourceSystem: String
+        nuxeoId: String
+        position: Int
+        processedOn: String
+        relatedStyles: [String]
+        sourceSystem: String
+        styleSeasonCodeAfs: String
+        tag: String
+        title: String
+        trend: String
+    }
+    
     type Query {
         looksSummary(brand: String, season: String, division: String): LookSummary
         looks(brand: String, season: String, division: String): [Look]
         optionsSummary( SalesOrganizationCode: String!, StyleSeasonCode: String!, DivisionCode: String!, ActiveOption: Boolean!, SalesChannels: [SalesChannel!]!): OptionSummary!
         optionsProductView ( BrandCode: String!, SalesOrganizationCode: String!, StyleSeasonCode: String!, DivisionCode: String!, ActiveOption: Boolean!, SalesChannels: [SalesChannel!]!): [OptionProductView]
         imageDetails(divisionCode: String!, styleSeasonCode: String!, styleCode: String!): ImageDetails
+        lookDetails(lookDocKey: String!): LookDetails
     }
 `;
 
