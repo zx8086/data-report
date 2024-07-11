@@ -1,14 +1,14 @@
 <!-- LeftSidebar.svelte -->
 <script lang="ts">
 	import { selectedItem } from '$lib/stores/selectedItemStore';
+	import type { SelectedItemType, ImageDetails, LookDetails } from '../types';
+
 	import ProductImage from './ProductImage.svelte';
-
-	let debugInfo = '';
-	const baseUrl = 'https://s7g10.scene7.com/is/image/TommyHilfigerEU';
-
 	import { onMount, getContext } from 'svelte';
 	import { key } from '$lib/context/tracker';
 
+	let debugInfo = '';
+	const baseUrl = 'https://s7g10.scene7.com/is/image/TommyHilfigerEU';
 	const { getTracker } = getContext(key);
 	let showDebugInfo = false;
 
@@ -21,7 +21,6 @@
 					showDebugInfo = debugFlag.value === true;
 				}
 			});
-
 			// Optionally, you can reload flags if needed
 			// await tracker.reloadFlags();
 		}
@@ -30,9 +29,24 @@
 	function getStyleImageUrl(styleCode: string) {
 		if ($selectedItem) {
 			const { styleSeasonCode, divisionCode } = $selectedItem.meta;
-			return `${baseUrl}/${styleCode}_F_${styleSeasonCode}${divisionCode}`;
+			const parts = styleCode.split('_');
+			const productCode = parts.length > 1 ? parts[parts.length - 1] : styleCode;
+			const url = `${baseUrl}/${productCode}_F_${styleSeasonCode}${divisionCode}`;
+			console.log('Constructed style image URL:', url);
+			return url;
 		}
+		console.log('Unable to construct style image URL: no selected item');
 		return '';
+	}
+
+	$: {
+		console.log('selectedItem in left sidebar:', $selectedItem);
+		if ($selectedItem && $selectedItem.type === 'look') {
+			console.log('Look data:', $selectedItem.data);
+			console.log('Related styles:', $selectedItem.data.relatedStyles);
+			console.log('Related styles type:', typeof $selectedItem.data.relatedStyles);
+			console.log('Related styles length:', $selectedItem.data.relatedStyles?.length);
+		}
 	}
 
 	$: {
@@ -86,25 +100,33 @@
 				<p>No image details available</p>
 			{/if}
 		{:else if $selectedItem.type === 'look'}
-			<h2 class="text-xl font-bold mb-2">Related Styles</h2>
-			{#if $selectedItem.data.relatedStyles}
+			<h2 class="text-xl font-bold mb-2">Look Details</h2>
+			{#if $selectedItem.data.trend}
+				<p class="mb-2">Trend: {$selectedItem.data.trend}</p>
+			{/if}
+			<h3 class="text-lg font-bold mt-4 mb-2">Related Styles</h3>
+			{#if Array.isArray($selectedItem.data.relatedStyles) && $selectedItem.data.relatedStyles.length > 0}
 				<div class="grid grid-cols-2 gap-2">
 					{#each $selectedItem.data.relatedStyles as styleCode}
-						<img
-							src={getStyleImageUrl(styleCode)}
-							alt={styleCode}
-							class="w-full h-auto object-cover"
-						/>
+						{console.log('Processing styleCode:', styleCode)}
+						<div class="text-center">
+							<img
+								src={getStyleImageUrl(styleCode)}
+								alt={styleCode}
+								class="w-full h-auto object-cover mb-1"
+							/>
+							<p class="text-xs">{styleCode.split('_').pop()}</p>
+						</div>
 					{/each}
 				</div>
 			{:else}
 				<p>No related styles available</p>
+				{console.log('No related styles found in selectedItem:', $selectedItem)}
 			{/if}
 		{/if}
 	{:else}
 		<p>Select an item to view details</p>
 	{/if}
-
 	{#if showDebugInfo}
 		<div class="mt-4 p-2 bg-gray-100 rounded">
 			<h4 class="font-bold">Debug Info:</h4>

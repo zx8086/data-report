@@ -40,31 +40,30 @@ export interface ImageDetails {
 }
 
 export interface LookDetails {
-	documentKey: string;
 	assetUrl: string;
 	brand: string;
-	channels?: string[];
-	createdOn?: string;
-	createdOnSourceSystem?: string;
-	deliveryName?: string;
-	description?: string;
+	channels: string[];
+	createdOn: string;
+	createdOnSourceSystem: string;
+	deliveryName: string | null;
+	description: string | null;
 	divisionCode: string;
-	documentUpdatedBy?: string;
-	gender?: string;
+	documentUpdatedBy: string;
+	gender: string | null;
 	isDeleted: boolean;
 	lookId: string;
 	lookType: number;
-	modifiedOn?: string;
-	modifiedOnSourceSystem?: string;
+	modifiedOn: string;
+	modifiedOnSourceSystem: string;
 	nuxeoId: string;
-	position?: number;
-	processedOn?: string;
-	relatedStyles?: string[];
-	sourceSystem: string;
+	position: number;
+	processedOn: string;
+	relatedStyles: string[] | null;
+	sourceSystem: string | null;
 	styleSeasonCodeAfs: string;
-	tag?: string;
-	title: string;
-	trend?: string;
+	tag: string | null;
+	title: string | null;
+	trend: string | null;
 }
 
 export interface SelectedItemMeta {
@@ -74,7 +73,7 @@ export interface SelectedItemMeta {
 }
 
 export type SelectedItemType =
-	| { type: 'collection'; data: CollectionData; meta: SelectedItemMeta; imageDetails?: ImageDetails }
+	| { type: 'collection'; data: CollectionData; meta: SelectedItemMeta }
 	| { type: 'look'; data: LookDetails; meta: SelectedItemMeta };
 
 export interface Collection {

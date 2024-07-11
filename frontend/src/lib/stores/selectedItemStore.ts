@@ -18,9 +18,9 @@ function createSelectedItemStore() {
 			}
 			return item;
 		}),
-		setLookDetails: (lookDetails: LookDetails) => update(item => {
+		setLookDetails: (lookDetails: Partial<LookDetails>) => update(item => {
 			if (item && item.type === 'look') {
-				return { ...item,  ...lookDetails };
+				return { ...item, data: { ...item.data, ...lookDetails } };
 			}
 			return item;
 		}),

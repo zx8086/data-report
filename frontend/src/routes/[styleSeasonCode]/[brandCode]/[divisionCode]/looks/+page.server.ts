@@ -1,9 +1,10 @@
 // +page.server.ts
 import { ApolloClient, ApolloError, gql, InMemoryCache, createHttpLink } from '@apollo/client/core';
+import type { SelectedItemType, ImageDetails, LookDetails } from '$lib/types';
+
 import fetch from 'cross-fetch';
 import type { PageServerLoad, Actions } from './$types';
 import type { Load } from '@sveltejs/kit';
-// import { ApolloError } from 'apollo-client';
 
 interface Look {
 	assetUrl: string;
@@ -93,70 +94,61 @@ export const load: Load = async ({ params }) => {
 
 export const actions: Actions = {
 	getLookDetails: async ({ request }) => {
-		const data = await request.formData();
-		const lookDocKey = data.get('lookDocKey') as string;
-
-		const lookDetailsQuery = gql`
-        query LookDetails($lookDocKey: String!) {
-            lookDetails(
-                lookDocKey: $lookDocKey
-            ) {
-                assetUrl,
-                brand,
-                channels,
-                createdOn,
-                createdOnSourceSystem,
-                deliveryName,
-                description,
-                divisionCode,
-                documentUpdatedBy,
-                gender,
-                isDeleted,
-                lookId,
-                lookType,
-                modifiedOn,
-                modifiedOnSourceSystem,
-                nuxeoId,
-                position,
-                processedOn,
-                relatedStyles,
-                sourceSystem,
-                styleSeasonCodeAfs,
-                tag,
-                title,
-                trend
-            }
-        }
-		`;
-
-		const variables = {
-			lookDocKey
-		};
-
 		try {
-			console.log("Sending GraphQL query for image details with variables:", variables);
-			const response = await client.query({ query: lookDetailsQuery, variables });
+			const data = await request.formData();
+			const lookDocKey = data.get('lookDocKey') as string;
 
+			if (!lookDocKey) {
+				return { success: false, error: "Missing lookDocKey" };
+			}
+
+			const lookDetailsQuery = gql`
+          query LookDetails($lookDocKey: String!) {
+              lookDetails(lookDocKey: $lookDocKey) {
+                  assetUrl
+                  brand
+                  channels
+                  createdOn
+                  createdOnSourceSystem
+                  deliveryName
+                  description
+                  divisionCode
+                  documentUpdatedBy
+                  gender
+                  isDeleted
+                  lookId
+                  lookType
+                  modifiedOn
+                  modifiedOnSourceSystem
+                  nuxeoId
+                  position
+                  processedOn
+                  relatedStyles
+                  sourceSystem
+                  styleSeasonCodeAfs
+                  tag
+                  title
+                  trend
+              }
+          }
+			`;
+
+			const response = await client.query({ query: lookDetailsQuery, variables: { lookDocKey } });
 			const lookData = response.data.lookDetails;
 
 			if (lookData) {
 				const { __typename, ...cleanedLookData } = lookData;
 
-				console.log("Fetched via Action Form Call - deconstructed:", cleanedLookData);
-
-				return { success: true, lookDetails: cleanedLookData };
+				console.log("cleanedLookData...:", cleanedLookData);
+				return cleanedLookData
 			} else {
-				console.log("No look details found");
-				return {
-					success: false,
-					error: "No look details found for the given parameters.",
-				};
+				return { success: false, error: "No look details found for the given parameters." };
 			}
 		} catch (error) {
-			console.error("Error fetching look details:", error);
+			console.error("Error in getLookDetails action:", error);
 			return {
 				success: false,
-				error: "Error fetching look details.",
+				error: error instanceof Error ? error.message : "Unknown error fetching look details"
 			};
 		}
 	}

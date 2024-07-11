@@ -32,9 +32,6 @@
 			{#if $selectedItem.data.channels}
 				<p class="mb-2">Channels: {$selectedItem.data.channels.join(', ')}</p>
 			{/if}
-			{#if $selectedItem.data.trend}
-				<p class="mb-2">Trend: {$selectedItem.data.trend}</p>
-			{/if}
 		{/if}
 	{:else}
 		<p>Select an item to view additional information</p>
