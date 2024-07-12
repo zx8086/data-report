@@ -75,9 +75,9 @@
 				method: 'POST',
 				body: formData
 			});
-			const result = await response.json();
 
-			console.log('Image details fetch result:', result);
+			const result = await response.json();
+			console.log('Result from server:', result);
 
 			if (result.type === 'success' && result.status === 200) {
 				// Parse the nested JSON data

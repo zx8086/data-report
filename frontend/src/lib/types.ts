@@ -72,9 +72,13 @@ export interface SelectedItemMeta {
 	divisionCode: string;
 }
 
+// export type SelectedItemType =
+// 	| { type: 'collection'; data: CollectionData; meta: SelectedItemMeta }
+// 	| { type: 'look'; data: LookDetails; meta: SelectedItemMeta };
+
 export type SelectedItemType =
-	| { type: 'collection'; data: CollectionData; meta: SelectedItemMeta }
-	| { type: 'look'; data: LookDetails; meta: SelectedItemMeta };
+	| { type: 'collection'; data: CollectionData; meta: SelectedItemMeta; imageDetails?: ImageDetails }
+	| { type: 'look'; data: Look; meta: SelectedItemMeta; lookDetails?: LookDetails };
 
 export interface Collection {
 	description: string;
