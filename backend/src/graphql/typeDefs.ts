@@ -223,6 +223,8 @@ const typeDefs = gql`
         backUrl: String
         back2ModifiedOn: String
         back2Url: String
+        back3ModifiedOn: String
+        back3Url: String
         detailModifiedOn: String
         detailUrl: String
         detail2ModifiedOn: String
@@ -235,6 +237,8 @@ const typeDefs = gql`
         frontUrl: String
         front2ModifiedOn: String
         front2Url: String
+        front3ModifiedOn: String
+        front3Url: String
         i360ModifiedOn: String
         i360Url: String
         imageModifiedOn: String
@@ -243,6 +247,10 @@ const typeDefs = gql`
         insideUrl: String
         inside2ModifiedOn: String
         inside2Url: String
+        inside3ModifiedOn: String
+        inside3Url: String
+        gridModifiedOn: String
+        gridUrl: String
         packageModifiedOn: String
         packageUrl: String
         sketchModifiedOn: String

@@ -2,17 +2,15 @@
 <script lang="ts">
 	// import type { PageData } from './$types';
 	import { page } from '$app/stores';
-	import type { Look } from '$lib/types';
+	import type { Look, LookDetails } from '$lib/types';
 	import { selectedItem } from '$lib/stores/selectedItemStore';
-
-
 	import { key } from '$lib/context/tracker';
 	import { onMount, getContext } from 'svelte';
-
 	import { translateCode, translatePath } from '$lib/utils/translations';
 
-	const { getTracker } = getContext(key);
+	export let data: { looks: Look[] | null, status?: number, error?: string };
 
+	const { getTracker } = getContext(key);
 	let styleSeasonCode : string;
 	let brandCode : string;
 	let divisionCode : string;
@@ -39,7 +37,6 @@
 					});
 				} catch (translationError) {
 					console.error('Error translating division code:', translationError);
-					// Optionally, you can still try to send the event without the translated division
 					tracker.event('Page_View', {
 						page: 'Looks',
 						category: 'Navigation',
@@ -52,12 +49,8 @@
 			}
 		} catch (error) {
 			console.error('Error in onMount:', error);
-			// You might want to handle this error in some way,
-			// perhaps by setting an error state in your component
 		}
 	});
-
-	export let data: { looks: Look[] | null, status?: number, error?: string };
 
 	async function handleSelect(look: Look, event?: Event | KeyboardEvent) {
 		if (event) {
@@ -77,26 +70,39 @@
 
 		console.log('selectedItem after initial set:', $selectedItem);
 
-		// Fetch additional details
-		try {
-			const formData = new FormData();
-			formData.append('lookDocKey', look.documentKey);
+		const formData = new FormData();
+		formData.append('lookDocKey', look.documentKey);
 
+		try {
 			const response = await fetch('?/getLookDetails', {
 				method: 'POST',
 				body: formData
 			});
-			const result = await response.json();
 
-			if (result.success) {
-				console.log('Fetched additional look details:', result.lookDetails);
-				selectedItem.setLookDetails(result.lookDetails);
+			const result = await response.json();
+			console.log('Result from server:', result);
+
+			if (result.type === 'success' && result.status === 200) {
+				// Parse the nested JSON data
+				const parsedData = JSON.parse(result.data);
+				// The look details structure is in the third element of the array
+				const lookDetailsStructure = parsedData[2];
+				// The actual values start from the fourth element
+				const values = parsedData.slice(3);
+
+				// Construct the actual look details object
+				const lookDetails = Object.fromEntries(
+					Object.entries(lookDetailsStructure).map(([key, index]) => [key, values[Number(index) - 3] || ''])
+				);
+
+				console.log('Parsed look details:', lookDetails);
+				selectedItem.setLookDetails(lookDetails);
 				console.log('selectedItem after setting look details:', $selectedItem);
 			} else {
 				console.error('Failed to fetch look details:', result.error);
 			}
 		} catch (error) {
-			console.error('Error fetching look details:', error);
+			console.error('Error fetching look details:', error instanceof Error ? error.message : String(error));
 		}
 	}
 

@@ -20,7 +20,7 @@ function createSelectedItemStore() {
 		}),
 		setLookDetails: (lookDetails: LookDetails) => update(item => {
 			if (item && item.type === 'look') {
-				return { ...item,  ...lookDetails };
+				return { ...item, lookDetails };
 			}
 			return item;
 		}),

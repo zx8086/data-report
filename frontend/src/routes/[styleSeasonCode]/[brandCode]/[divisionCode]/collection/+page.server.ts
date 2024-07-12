@@ -129,9 +129,10 @@ export const actions: Actions = {
                 styleCode: $styleCode
                 styleSeasonCode: $styleSeasonCode
             ) {
-                imageKey
                 back2ModifiedOn
                 back2Url
+                back3ModifiedOn
+                back3Url
                 backModifiedOn
                 backUrl
                 detail2ModifiedOn
@@ -144,20 +145,27 @@ export const actions: Actions = {
                 fabricScanUrl
                 front2ModifiedOn
                 front2Url
+                front3ModifiedOn
+                front3Url
                 frontModifiedOn
                 frontUrl
+                gridModifiedOn
+                gridUrl
                 i360ModifiedOn
                 i360Url
+                imageKey
                 imageModifiedOn
                 imageUrl
                 inside2ModifiedOn
                 inside2Url
+                inside3ModifiedOn
+                inside3Url
                 insideModifiedOn
                 insideUrl
                 packageModifiedOn
-                packageUrl
                 sketchModifiedOn
                 sketchUrl
+                packageUrl
             }
         }
 		`;

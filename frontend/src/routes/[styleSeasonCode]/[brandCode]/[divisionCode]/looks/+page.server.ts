@@ -1,9 +1,10 @@
 // +page.server.ts
 import { ApolloClient, ApolloError, gql, InMemoryCache, createHttpLink } from '@apollo/client/core';
+import type { SelectedItemType, ImageDetails, LookDetails } from '$lib/types';
+
 import fetch from 'cross-fetch';
 import type { PageServerLoad, Actions } from './$types';
 import type { Load } from '@sveltejs/kit';
-// import { ApolloError } from 'apollo-client';
 
 interface Look {
 	assetUrl: string;
@@ -98,32 +99,30 @@ export const actions: Actions = {
 
 		const lookDetailsQuery = gql`
         query LookDetails($lookDocKey: String!) {
-            lookDetails(
-                lookDocKey: $lookDocKey
-            ) {
-                assetUrl,
-                brand,
-                channels,
-                createdOn,
-                createdOnSourceSystem,
-                deliveryName,
-                description,
-                divisionCode,
-                documentUpdatedBy,
-                gender,
-                isDeleted,
-                lookId,
-                lookType,
-                modifiedOn,
-                modifiedOnSourceSystem,
-                nuxeoId,
-                position,
-                processedOn,
-                relatedStyles,
-                sourceSystem,
-                styleSeasonCodeAfs,
-                tag,
-                title,
+            lookDetails(lookDocKey: $lookDocKey) {
+                assetUrl
+                brand
+                channels
+                createdOn
+                createdOnSourceSystem
+                deliveryName
+                description
+                divisionCode
+                documentUpdatedBy
+                gender
+                isDeleted
+                lookId
+                lookType
+                modifiedOn
+                modifiedOnSourceSystem
+                nuxeoId
+                position
+                processedOn
+                relatedStyles
+                sourceSystem
+                styleSeasonCodeAfs
+                tag
+                title
                 trend
             }
         }
@@ -134,7 +133,7 @@ export const actions: Actions = {
 		};
 
 		try {
-			console.log("Sending GraphQL query for image details with variables:", variables);
+			console.log("Sending GraphQL query for look details with variables:", variables);
 			const response = await client.query({ query: lookDetailsQuery, variables });
 
 			const lookData = response.data.lookDetails;
