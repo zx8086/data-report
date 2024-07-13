@@ -67,10 +67,8 @@ export const filteredAndSearchedCollection = derived(
 			});
 		}
 
-		// Filtering for missingFrontImageUrl
 		if ($activeFilters.missingFrontImageUrl) {
 			filtered = filtered.filter(item => {
-				// Adjust this condition if your logic for determining missing images is different
 				return !item.imageUrl;
 			});
 		}
