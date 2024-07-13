@@ -39,47 +39,15 @@ export interface ImageDetails {
 	sketchUrl?: string
 }
 
-export interface LookDetails {
-	__typename?: string | null;
-	assetUrl: string;
-	brand: string;
-	channels: string[];
-	createdOn: string;
-	createdOnSourceSystem: string;
-	deliveryName: string | null;
-	description: string | null;
-	divisionCode: string;
-	documentUpdatedBy: string;
-	gender: string | null;
-	isDeleted: boolean;
-	lookId: string;
-	lookType: number;
-	modifiedOn: string;
-	modifiedOnSourceSystem: string;
-	nuxeoId: string;
-	position: number;
-	processedOn: string;
-	relatedStyles: string[] | null;
-	sourceSystem: string | null;
-	styleSeasonCodeAfs: string;
-	tag: string | null;
-	title: string | null;
-	trend: string | null;
-}
-
 export interface SelectedItemMeta {
 	styleSeasonCode: string;
 	brandCode: string;
 	divisionCode: string;
 }
 
-// export type SelectedItemType =
-// 	| { type: 'collection'; data: CollectionData; meta: SelectedItemMeta }
-// 	| { type: 'look'; data: LookDetails; meta: SelectedItemMeta };
-
 export type SelectedItemType =
 	| { type: 'collection'; data: CollectionData; meta: SelectedItemMeta; imageDetails?: ImageDetails }
-	| { type: 'look'; data: Look; meta: SelectedItemMeta; lookDetails?: LookDetails | any };
+	| { type: 'look'; data: Look; meta: SelectedItemMeta; lookDetails?: LookDetails };
 
 export interface Collection {
 	description: string;
@@ -118,6 +86,34 @@ export interface Look {
 	relatedStyles: string[];
 	title: string;
 	trend: string[];
+}
+
+export interface LookDetails {
+	__typename?: string | null;
+	assetUrl: string;
+	brand: string;
+	channels: string[];
+	createdOn: string;
+	createdOnSourceSystem: string;
+	deliveryName: string | null;
+	description: string | null;
+	divisionCode: string;
+	documentUpdatedBy: string;
+	gender: string | null;
+	isDeleted: boolean;
+	lookId: string;
+	lookType: number;
+	modifiedOn: string;
+	modifiedOnSourceSystem: string;
+	nuxeoId: string;
+	position: number;
+	processedOn: string;
+	relatedStyles: string[];
+	sourceSystem: string;
+	styleSeasonCodeAfs: string;
+	tag: string;
+	title: string;
+	trend: string;
 }
 
 export interface LooksResponse {

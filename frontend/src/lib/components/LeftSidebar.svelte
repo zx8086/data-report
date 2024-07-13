@@ -26,11 +26,11 @@
 	function getStyleImageUrl(styleCode: string) {
 		if ($selectedItem && $selectedItem.type === 'look' && $selectedItem.lookDetails) {
 			const { styleSeasonCodeAfs, divisionCode } = $selectedItem.lookDetails;
-			const parts = styleCode.split('_');
-			const productCode = parts.length > 1 ? parts[parts.length - 1] : styleCode;
-			const url = `${baseUrl}/${productCode}_F_${styleSeasonCodeAfs}${divisionCode}`;
-			console.log('Constructed style image URL:', url);
-			return url;
+			// const parts = styleCode.split('_');
+			// const productCode = parts.length > 1 ? parts[parts.length - 1] : styleCode;
+			// const url = `${baseUrl}/${productCode}_F_${styleSeasonCodeAfs}${divisionCode}`;
+			// console.log('Constructed style image URL:', url);
+			return divisionCode;
 		}
 		console.log('Unable to construct style image URL: no selected item or look details');
 		return '';
@@ -93,16 +93,10 @@
 		{:else if $selectedItem.type === 'look'}
 			<h2 class="text-xl font-bold mb-2">Look Details</h2>
 			<p class="mb-2">Title: {$selectedItem.data.title}</p>
-			<p class="mb-2">Look Type: {$selectedItem.data.lookType}</p>
 			{#if $selectedItem.data.trend}
 				<p class="mb-2">Trend: {$selectedItem.data.trend}</p>
 			{/if}
 			{#if $selectedItem.lookDetails}
-				<h3 class="text-lg font-bold mt-4 mb-2">Additional Details</h3>
-				<p class="mb-2">Brand: {$selectedItem.lookDetails.brand}</p>
-				<p class="mb-2">Division Code: {$selectedItem.lookDetails.divisionCode}</p>
-				<p class="mb-2">Created On: {$selectedItem.lookDetails.createdOn}</p>
-				<p class="mb-2">Modified On: {$selectedItem.lookDetails.modifiedOn}</p>
 				{#if $selectedItem.lookDetails.gender}
 					<p class="mb-2">Gender: {$selectedItem.lookDetails.gender}</p>
 				{/if}

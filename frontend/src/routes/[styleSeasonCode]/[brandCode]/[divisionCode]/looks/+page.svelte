@@ -6,10 +6,22 @@
 	import { key } from '$lib/context/tracker';
 	import { onMount, getContext } from 'svelte';
 	import { translateCode, translatePath } from '$lib/utils/translations';
+	import { collectionStore } from '$lib/stores/collectionStore';
 
 	export let data: { looks: Look[] | null, status?: number, error?: string };
 
 	const { getTracker } = getContext(key);
+
+	$: if (data?.looks) {
+		console.log('Setting collection store with:', data.looks.length, 'items');
+		// collectionStore.set(data.looks);
+	}
+
+	function handleImageError(event: any) {
+		event.target.src = '/img/not-found.png';
+		event.target.onerror = null;
+	}
+
 	let styleSeasonCode : string;
 	let brandCode : string;
 	let divisionCode : string;
@@ -51,10 +63,8 @@
 		}
 	});
 
-	async function handleSelect(look: Look, event?: Event | KeyboardEvent) {
-		if (event) {
-			event.preventDefault();
-		}
+	async function handleSelect(look: Look, event: Event | KeyboardEvent) {
+		event.preventDefault();
 		console.log('handleSelect called with look:', look);
 
 		// Set initial look data
@@ -70,11 +80,10 @@
 
 		console.log('selectedItem after initial set:', $selectedItem);
 
-		// Fetch additional details
-		try {
-			const formData = new FormData();
-			formData.append('lookDocKey', look.documentKey);
+		const formData = new FormData();
+		formData.append('lookDocKey', look.documentKey);
 
+		try {
 			const response = await fetch('?/getLookDetails', {
 				method: 'POST',
 				body: formData
@@ -88,8 +97,12 @@
 			console.log('Result from server:', result);
 
 			if (result.type === 'success' && result.status === 200) {
+
+				// Parse the nested JSON data
 				const parsedData = JSON.parse(result.data);
+				// The image details structure is in the third element of the array
 				const lookDetailsStructure = parsedData[2];
+				// The actual values start from the fourth element
 				const values = parsedData.slice(3);
 
 				const lookDetails = Object.fromEntries(
@@ -97,12 +110,10 @@
 				);
 
 				console.log('Parsed look details:', lookDetails);
-				selectedItem.update(item => {
-					if (item && item.type === 'look') {
-						return { ...item, lookDetails };
-					}
-					return item;
-				});
+
+				// debugger
+				selectedItem.setLookDetails(lookDetails);
+
 				console.log('selectedItem after setting look details:', $selectedItem);
 			} else {
 				console.error('Failed to fetch look details:', result.error || 'Unknown error');

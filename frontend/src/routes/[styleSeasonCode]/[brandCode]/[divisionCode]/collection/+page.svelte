@@ -37,22 +37,38 @@
 	}
 
 	onMount(() => {
-		const tracker = getTracker();
-		if (tracker) {
-			const translatedDivision = translateCode(divisionCode, 'division');
-			tracker.event('Page_View', {
-				page: `Collection - ${translatedDivision}`,
-				category: 'Navigation',
-				action: 'View'
-			});
+		try {
+			const tracker = getTracker();
+			if (tracker) {
+				try {
+					const translatedDivision = translateCode(divisionCode, 'division');
+					tracker.event('Page_View', {
+						page: `Collection - ${translatedDivision}`,
+						category: 'Navigation',
+						action: 'View'
+					});
+				} catch (translationError) {
+					console.error('Error translating division code:', translationError);
+					tracker.event('Page_View', {
+						page: 'Collection',
+						category: 'Navigation',
+						action: 'View',
+						error: 'Translation failed'
+					});
+				}
+			} else {
+				console.warn('Tracker not available');
+			}
+		} catch (error) {
+			console.error('Error in onMount:', error);
 		}
 	});
-
 
 	async function handleSelect(product: Collection, event: Event | KeyboardEvent) {
 		event.preventDefault();
 		console.log('handleSelect called with product:', product);
 
+		// Set initial look data
 		selectedItem.set({
 			type: 'collection',
 			data: product,
@@ -63,7 +79,7 @@
 			}
 		});
 
-		console.log('Initial selectedItem set:', $selectedItem);
+		console.log('selectedItem after initial set:', $selectedItem);
 
 		const formData = new FormData();
 		formData.append('divisionCode', divisionCode);
@@ -76,10 +92,15 @@
 				body: formData
 			});
 
+			if (!response.ok) {
+				throw new Error(`HTTP error! status: ${response.status}`);
+			}
+
 			const result = await response.json();
 			console.log('Result from server:', result);
 
 			if (result.type === 'success' && result.status === 200) {
+
 				// Parse the nested JSON data
 				const parsedData = JSON.parse(result.data);
 				// The image details structure is in the third element of the array
@@ -95,6 +116,7 @@
 				console.log('Parsed image details:', imageDetails);
 
 				selectedItem.setImageDetails(imageDetails);
+
 				console.log('selectedItem after setting image details:', $selectedItem);
 			} else {
 				console.error('Failed to fetch image details:', result.error);
