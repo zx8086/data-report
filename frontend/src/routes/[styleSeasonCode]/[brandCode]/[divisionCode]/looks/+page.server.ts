@@ -123,15 +123,26 @@ export const actions: Actions = {
 
 			const lookData = response.data.lookDetails;
 
+			console.log("Raw GraphQL response:", response.data.lookDetails);
 
 			if (lookData) {
 				const { __typename, ...cleanedLookData } = lookData;
 
+				// Ensure relatedStyles is always an array
+				if (cleanedLookData.relatedStyles && typeof cleanedLookData.relatedStyles === 'string') {
+					try {
+						cleanedLookData.relatedStyles = JSON.parse(cleanedLookData.relatedStyles);
+					} catch (e) {
+						console.error("Error parsing relatedStyles:", e);
+						cleanedLookData.relatedStyles = [];
+					}
+				} else if (!Array.isArray(cleanedLookData.relatedStyles)) {
+					cleanedLookData.relatedStyles = [];
+				}
+
 				console.log("Fetched via Action Form Call - deconstructed:", cleanedLookData);
 
 				return { success: true, lookDetails: cleanedLookData };
-				// return { lookData };
-
 			} else {
 				console.log("No look details found");
 				return {

@@ -20,6 +20,8 @@ function createSelectedItemStore() {
 		}),
 		setLookDetails: (lookDetails: LookDetails) => update(item => {
 			if (item && item.type === 'look') {
+				console.log('Setting look details:', lookDetails);
+				console.log('relatedStyles:', lookDetails.relatedStyles);
 				return { ...item, lookDetails };
 			}
 			return item;
