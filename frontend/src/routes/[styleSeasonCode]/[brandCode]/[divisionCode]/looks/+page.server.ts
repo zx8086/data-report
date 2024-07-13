@@ -1,25 +1,10 @@
 // +page.server.ts
 import { ApolloClient, ApolloError, gql, InMemoryCache, createHttpLink } from '@apollo/client/core';
-import type { SelectedItemType, ImageDetails, LookDetails } from '$lib/types';
+import type { SelectedItemType, ImageDetails, Look, LookDetails, LooksResponse } from '$lib/types';
 
 import fetch from 'cross-fetch';
 import type { PageServerLoad, Actions } from './$types';
 import type { Load } from '@sveltejs/kit';
-
-interface Look {
-	assetUrl: string;
-	divisionCode: string;
-	documentKey: string;
-	isDeleted: boolean;
-	lookType: number;
-	relatedStyles: string[];
-	title: string;
-	trend: string[];
-}
-
-interface LooksResponse {
-	looks: Look[];
-}
 
 const brandCodeToBrand: any = {
 	THEU: 'TH',
@@ -138,12 +123,15 @@ export const actions: Actions = {
 
 			const lookData = response.data.lookDetails;
 
+
 			if (lookData) {
 				const { __typename, ...cleanedLookData } = lookData;
 
 				console.log("Fetched via Action Form Call - deconstructed:", cleanedLookData);
 
 				return { success: true, lookDetails: cleanedLookData };
+				// return { lookData };
+
 			} else {
 				console.log("No look details found");
 				return {

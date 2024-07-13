@@ -1,6 +1,5 @@
 <!--+page.svelte(Looks)-->
 <script lang="ts">
-	// import type { PageData } from './$types';
 	import { page } from '$app/stores';
 	import type { Look, LookDetails } from '$lib/types';
 	import { selectedItem } from '$lib/stores/selectedItemStore';
@@ -58,6 +57,7 @@
 		}
 		console.log('handleSelect called with look:', look);
 
+		// Set initial look data
 		selectedItem.set({
 			type: 'look',
 			data: look,
@@ -70,36 +70,42 @@
 
 		console.log('selectedItem after initial set:', $selectedItem);
 
-		const formData = new FormData();
-		formData.append('lookDocKey', look.documentKey);
-
+		// Fetch additional details
 		try {
+			const formData = new FormData();
+			formData.append('lookDocKey', look.documentKey);
+
 			const response = await fetch('?/getLookDetails', {
 				method: 'POST',
 				body: formData
 			});
 
+			if (!response.ok) {
+				throw new Error(`HTTP error! status: ${response.status}`);
+			}
+
 			const result = await response.json();
 			console.log('Result from server:', result);
 
 			if (result.type === 'success' && result.status === 200) {
-				// Parse the nested JSON data
 				const parsedData = JSON.parse(result.data);
-				// The look details structure is in the third element of the array
 				const lookDetailsStructure = parsedData[2];
-				// The actual values start from the fourth element
 				const values = parsedData.slice(3);
 
-				// Construct the actual look details object
 				const lookDetails = Object.fromEntries(
-					Object.entries(lookDetailsStructure).map(([key, index]) => [key, values[Number(index) - 3] || ''])
+					Object.entries(lookDetailsStructure).map(([key, index]) => [key, values[Number(index as any) - 3]])
 				);
 
 				console.log('Parsed look details:', lookDetails);
-				selectedItem.setLookDetails(lookDetails);
+				selectedItem.update(item => {
+					if (item && item.type === 'look') {
+						return { ...item, lookDetails };
+					}
+					return item;
+				});
 				console.log('selectedItem after setting look details:', $selectedItem);
 			} else {
-				console.error('Failed to fetch look details:', result.error);
+				console.error('Failed to fetch look details:', result.error || 'Unknown error');
 			}
 		} catch (error) {
 			console.error('Error fetching look details:', error instanceof Error ? error.message : String(error));
@@ -112,7 +118,6 @@
 			handleSelect(look, event);
 		}
 	}
-
 </script>
 
 <!-- Looks Grid -->
@@ -120,7 +125,7 @@
 	<div class="max-w-2xl px-4 py-8 mx-auto sm:px-6 sm:py-24 lg:max-w-7xl lg:px-8">
 		{#if data?.looks}
 			<div class="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-4 xl:gap-x-8">
-				{#each data.looks as look, index (look.documentKey)}
+				{#each data.looks as look (look.documentKey)}
 					<button
 						class="relative group w-full text-left focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
 						on:click={(event) => handleSelect(look, event)}

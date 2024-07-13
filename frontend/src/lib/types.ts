@@ -40,6 +40,7 @@ export interface ImageDetails {
 }
 
 export interface LookDetails {
+	__typename?: string | null;
 	assetUrl: string;
 	brand: string;
 	channels: string[];
@@ -78,7 +79,7 @@ export interface SelectedItemMeta {
 
 export type SelectedItemType =
 	| { type: 'collection'; data: CollectionData; meta: SelectedItemMeta; imageDetails?: ImageDetails }
-	| { type: 'look'; data: Look; meta: SelectedItemMeta; lookDetails?: LookDetails };
+	| { type: 'look'; data: Look; meta: SelectedItemMeta; lookDetails?: LookDetails | any };
 
 export interface Collection {
 	description: string;
@@ -104,11 +105,23 @@ export interface Look {
 	assetUrl: string;
 	divisionCode: string;
 	documentKey: string;
+	nuxeoId?: string;
 	isDeleted: boolean;
 	lookType: string;
+	gender?: string;
+	createdOn?: string;
+	createdOnSourceSystem?: string;
+	modifiedOn?: string;
+	channels?: string[];
+	deliveryName?: string | null;
+	description?: string | null;
 	relatedStyles: string[];
 	title: string;
 	trend: string[];
+}
+
+export interface LooksResponse {
+	looks: Look[];
 }
 
 // Define LooksSummary interface

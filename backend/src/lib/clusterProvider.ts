@@ -1,3 +1,5 @@
+// src/lib/clusterProvider.ts
+
 import { clusterConn, type capellaConn } from './couchbaseConnector';
 
 let connection: capellaConn | null = null;

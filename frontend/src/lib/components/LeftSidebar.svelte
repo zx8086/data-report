@@ -2,7 +2,6 @@
 <script lang="ts">
 	import { selectedItem } from '$lib/stores/selectedItemStore';
 	import type { SelectedItemType, ImageDetails, LookDetails } from '../types';
-
 	import ProductImage from './ProductImage.svelte';
 	import { onMount, getContext } from 'svelte';
 	import { key } from '$lib/context/tracker';
@@ -21,42 +20,34 @@
 					showDebugInfo = debugFlag.value === true;
 				}
 			});
-			// Optionally, you can reload flags if needed
-			// await tracker.reloadFlags();
 		}
 	});
 
 	function getStyleImageUrl(styleCode: string) {
-		if ($selectedItem) {
-			const { styleSeasonCode, divisionCode } = $selectedItem.meta;
+		if ($selectedItem && $selectedItem.type === 'look' && $selectedItem.lookDetails) {
+			const { styleSeasonCodeAfs, divisionCode } = $selectedItem.lookDetails;
 			const parts = styleCode.split('_');
 			const productCode = parts.length > 1 ? parts[parts.length - 1] : styleCode;
-			const url = `${baseUrl}/${productCode}_F_${styleSeasonCode}${divisionCode}`;
+			const url = `${baseUrl}/${productCode}_F_${styleSeasonCodeAfs}${divisionCode}`;
 			console.log('Constructed style image URL:', url);
 			return url;
 		}
-		console.log('Unable to construct style image URL: no selected item');
+		console.log('Unable to construct style image URL: no selected item or look details');
 		return '';
 	}
 
 	$: {
-		console.log('selectedItem in left sidebar:', $selectedItem);
+		console.log('selectedItem in LeftSidebar:', $selectedItem);
 		if ($selectedItem && $selectedItem.type === 'look') {
 			console.log('Look data:', $selectedItem.data);
-			console.log('Related styles:', $selectedItem.data.relatedStyles);
-			console.log('Related styles type:', typeof $selectedItem.data.relatedStyles);
-			console.log('Related styles length:', $selectedItem.data.relatedStyles?.length);
-		}
-	}
-
-	$: {
-		console.log('selectedItem in sidebar:', $selectedItem);
-		if ($selectedItem && $selectedItem.type === 'collection') {
+			console.log('Look details:', $selectedItem.lookDetails);
+			debugInfo = JSON.stringify($selectedItem, null, 2);
+		} else if ($selectedItem && $selectedItem.type === 'collection') {
 			console.log('Collection data:', $selectedItem.data);
 			console.log('Image details:', $selectedItem.imageDetails);
 			debugInfo = JSON.stringify($selectedItem, null, 2);
 		} else {
-			console.log('No selected item or not a collection');
+			console.log('No selected item');
 			debugInfo = 'No selected item';
 		}
 	}
@@ -101,27 +92,39 @@
 			{/if}
 		{:else if $selectedItem.type === 'look'}
 			<h2 class="text-xl font-bold mb-2">Look Details</h2>
+			<p class="mb-2">Title: {$selectedItem.data.title}</p>
+			<p class="mb-2">Look Type: {$selectedItem.data.lookType}</p>
 			{#if $selectedItem.data.trend}
 				<p class="mb-2">Trend: {$selectedItem.data.trend}</p>
 			{/if}
-			<h3 class="text-lg font-bold mt-4 mb-2">Related Styles</h3>
-			{#if Array.isArray($selectedItem.data.relatedStyles) && $selectedItem.data.relatedStyles.length > 0}
-				<div class="grid grid-cols-2 gap-2">
-					{#each $selectedItem.data.relatedStyles as styleCode}
-						{console.log('Processing styleCode:', styleCode)}
-						<div class="text-center">
-							<img
-								src={getStyleImageUrl(styleCode)}
-								alt={styleCode}
-								class="w-full h-auto object-cover mb-1"
-							/>
-							<p class="text-xs">{styleCode.split('_').pop()}</p>
+			{#if $selectedItem.lookDetails}
+				<h3 class="text-lg font-bold mt-4 mb-2">Additional Details</h3>
+				<p class="mb-2">Brand: {$selectedItem.lookDetails.brand}</p>
+				<p class="mb-2">Division Code: {$selectedItem.lookDetails.divisionCode}</p>
+				<p class="mb-2">Created On: {$selectedItem.lookDetails.createdOn}</p>
+				<p class="mb-2">Modified On: {$selectedItem.lookDetails.modifiedOn}</p>
+				{#if $selectedItem.lookDetails.gender}
+					<p class="mb-2">Gender: {$selectedItem.lookDetails.gender}</p>
+				{/if}
+				{#if $selectedItem && $selectedItem.type === 'look' && $selectedItem.lookDetails}
+					<h3 class="text-lg font-bold mt-4 mb-2">Related Styles</h3>
+					{#if $selectedItem.lookDetails.relatedStyles && $selectedItem.lookDetails.relatedStyles.length > 0}
+						<div class="grid grid-cols-2 gap-2">
+							{#each $selectedItem.lookDetails.relatedStyles as styleCode}
+								<div class="text-center">
+									<img
+										src={getStyleImageUrl(styleCode)}
+										alt={styleCode}
+										class="w-full h-auto object-cover mb-1"
+									/>
+									<p class="text-xs">{styleCode}</p>
+								</div>
+							{/each}
 						</div>
-					{/each}
-				</div>
-			{:else}
-				<p>No related styles available</p>
-				{console.log('No related styles found in selectedItem:', $selectedItem)}
+					{:else}
+						<p>No related styles available</p>
+					{/if}
+				{/if}
 			{/if}
 		{/if}
 	{:else}
