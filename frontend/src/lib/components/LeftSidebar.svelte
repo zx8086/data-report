@@ -3,6 +3,7 @@
 	import { selectedItem } from '$lib/stores/selectedItemStore';
 	import type { SelectedItemType, ImageDetails, LookDetails } from '../types';
 	import ProductImage from './ProductImage.svelte';
+	import RelatedStylesImage from './RelatedStylesImage.svelte';
 	import { onMount, getContext } from 'svelte';
 	import { key } from '$lib/context/tracker';
 
@@ -26,13 +27,10 @@
 	function getStyleImageUrl(styleCode: string) {
 		if ($selectedItem && $selectedItem.type === 'look' && $selectedItem.lookDetails) {
 			const { styleSeasonCodeAfs, divisionCode } = $selectedItem.lookDetails;
-			// const parts = styleCode.split('_');
-			// const productCode = parts.length > 1 ? parts[parts.length - 1] : styleCode;
-			// const url = `${baseUrl}/${productCode}_F_${styleSeasonCodeAfs}${divisionCode}`;
-			// console.log('Constructed style image URL:', url);
-			return divisionCode;
+			const parts = styleCode.split('_');
+			const productCode = parts.length > 1 ? parts[parts.length - 1] : styleCode;
+			return `${baseUrl}/${productCode}_F_${styleSeasonCodeAfs}${divisionCode}`;
 		}
-		console.log('Unable to construct style image URL: no selected item or look details');
 		return '';
 	}
 
@@ -97,27 +95,19 @@
 				<p class="mb-2">Trend: {$selectedItem.data.trend}</p>
 			{/if}
 			{#if $selectedItem.lookDetails}
-				{#if $selectedItem.lookDetails.gender}
-					<p class="mb-2">Gender: {$selectedItem.lookDetails.gender}</p>
-				{/if}
-				{#if $selectedItem && $selectedItem.type === 'look' && $selectedItem.lookDetails}
+				{#if $selectedItem.lookDetails.relatedStyles && $selectedItem.lookDetails.relatedStyles.length > 0}
 					<h3 class="text-lg font-bold mt-4 mb-2">Related Styles</h3>
-					{#if $selectedItem.lookDetails.relatedStyles && $selectedItem.lookDetails.relatedStyles.length > 0}
-						<div class="grid grid-cols-2 gap-2">
-							{#each $selectedItem.lookDetails.relatedStyles as styleCode}
-								<div class="text-center">
-									<img
-										src={getStyleImageUrl(styleCode)}
-										alt={styleCode}
-										class="w-full h-auto object-cover mb-1"
-									/>
-									<p class="text-xs">{styleCode}</p>
-								</div>
-							{/each}
-						</div>
-					{:else}
-						<p>No related styles available</p>
-					{/if}
+					<div class="space-y-4">
+						{#each $selectedItem.lookDetails.relatedStyles as styleCode}
+							<RelatedStylesImage
+								src={getStyleImageUrl(styleCode)}
+								alt={`Related style ${styleCode}`}
+								{styleCode}
+							/>
+						{/each}
+					</div>
+				{:else}
+					<p>No related styles available</p>
 				{/if}
 			{/if}
 		{/if}

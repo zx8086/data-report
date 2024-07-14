@@ -7,7 +7,7 @@ function createSelectedItemStore() {
 
 	return {
 		subscribe,
-		set: (value: SelectedItemType | null) => {
+		set: (value: SelectedItemType) => {
 			console.log('Setting selectedItem:', value);
 			set(value);
 		},
