@@ -8,19 +8,38 @@
 
 	import { key } from '$lib/context/tracker';
 	import { onMount, getContext } from 'svelte';
+	import { translateCode } from '$lib/utils/translations';
 
 	const { getTracker } = getContext(key);
 
 	onMount(() => {
-		const tracker = getTracker();
-		if (tracker) {
-			tracker.event('Page_View', {
-				page: 'Divisions',
-				category: 'Navigation',
-				action: 'View'
-			});
+		try {
+			const tracker = getTracker();
+			if (tracker) {
+				try {
+					const translatedDivision = translateCode(divisionCode, 'division');
+					tracker.event('Page_View', {
+						page: `Divisions - ${translatedDivision}`,
+						category: 'Navigation',
+						action: 'View'
+					});
+				} catch (translationError) {
+					console.error('Error translating division code:', translationError);
+					tracker.event('Page_View', {
+						page: 'Divisions',
+						category: 'Navigation',
+						action: 'View',
+						error: 'Translation failed'
+					});
+				}
+			} else {
+				console.warn('Tracker not available');
+			}
+		} catch (error) {
+			console.error('Error in onMount:', error);
 		}
 	});
+
 
 	export let data: any;
 	const { collectionsData, looksData } = data.divisional;
