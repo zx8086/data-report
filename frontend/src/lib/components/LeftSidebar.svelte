@@ -115,9 +115,9 @@
 		<p>Select an item to view details</p>
 	{/if}
 	{#if showDebugInfo}
-		<div class="mt-4 p-2 bg-gray-100 rounded">
+		<div class="mt-4 p-2 bg-gray-100 rounded max-w-full overflow-x-auto">
 			<h4 class="font-bold">Debug Info:</h4>
-			<pre class="whitespace-pre-wrap text-xs">{debugInfo}</pre>
+			<pre class="whitespace-pre-wrap text-xs break-words">{debugInfo}</pre>
 		</div>
 	{/if}
 </aside>
