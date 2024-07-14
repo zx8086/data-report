@@ -1,6 +1,5 @@
 <script lang="ts">
 	import { enhance } from '$app/forms';
-	import { onMount } from 'svelte';
 	import type { ActionData } from './$types';
 	import { translateCode } from '$lib/utils/translations';
 
@@ -23,7 +22,7 @@
 	const seasons = Object.entries({ "C51": "Spring 2025", "C52": "Summer 2025" });
 	const divisions = Object.entries({
 		"01": "TH Menswear", "02": "Tommy Jeans", "03": "TH Licensees", "04": "TH Kids",
-		"05": "TH Womenswear", "07": "TH Close to Body", "09": "TH Footwear", "10": "TH Acessories",
+		"05": "TH Womenswear", "07": "TH Close to Body", "09": "TH Footwear", "10": "TH Accessories",
 		"61": "CK Menswear", "62": "CK Jeans", "64": "CKJ Kids", "65": "CK Womenswear",
 		"67": "CK Underwear", "68": "CK Sport", "69": "CK Footwear", "70": "CK Accessories",
 		"77": "CK Swimwear", "97": "Nike Underwear"
@@ -56,43 +55,33 @@
 
 			const result = await response.json();
 
-			console.log("Server response:", JSON.stringify(result, null, 2));
-
 			if (result && result.type === 'success' && result.data) {
 				try {
 					const parsedOuterData = JSON.parse(result.data);
 					if (Array.isArray(parsedOuterData) && parsedOuterData.length === 3 && parsedOuterData[1] === 'success') {
 						const parsedInnerData = JSON.parse(parsedOuterData[2]);
-						console.log("Parsed data:", JSON.stringify(parsedInnerData, null, 2));
 
 						if (Array.isArray(parsedInnerData) && parsedInnerData.length > 0 && parsedInnerData[0].urls) {
 							urlSuffixes = parsedInnerData[0].urls;
-							console.log("Extracted URL suffixes:", urlSuffixes);
 
 							if (urlSuffixes.length > 0) {
 								await checkUrls();
 							} else {
-								console.log("No URLs to check");
 								errorMessage = "No URLs found to check. Please try different selection criteria.";
 							}
 						} else {
-							console.error("Unexpected inner data structure:", parsedInnerData);
 							errorMessage = "Received unexpected data structure from server.";
 						}
 					} else {
-						console.error("Unexpected outer data structure:", parsedOuterData);
 						errorMessage = "Received unexpected data structure from server.";
 					}
 				} catch (parseError) {
-					console.error("Error parsing result data:", parseError);
 					errorMessage = "Error parsing server response.";
 				}
 			} else {
-				console.error("Unexpected response structure:", result);
 				errorMessage = "Received unexpected response from server.";
 			}
 		} catch (error) {
-			console.error('Error:', error);
 			errorMessage = "An error occurred while communicating with the server.";
 		}
 
@@ -101,16 +90,11 @@
 
 	async function checkUrls() {
 		if (!Array.isArray(urlSuffixes) || urlSuffixes.length === 0) {
-			console.log("No URLs to check");
 			return;
 		}
 
 		for (let i = 0; i < urlSuffixes.length; i += concurrency) {
 			const batch = urlSuffixes.slice(i, i + concurrency);
-			if (!Array.isArray(batch)) {
-				console.error("Batch is not an array:", batch);
-				continue;
-			}
 			const promises = batch.map(suffix => checkUrlWithRetry(`${baseUrl}${suffix}`, selectedDivisions[0]));
 			const results = await Promise.all(promises);
 
@@ -140,37 +124,38 @@
 		}
 	}
 
-	async function checkUrl(url: string): Promise<{isReachable: boolean, status: string}> {
+	async function checkUrl(url: string): Promise<{ isReachable: boolean, status: string }> {
 		const controller = new AbortController();
 		const timeoutId = setTimeout(() => controller.abort(), timeout);
 
 		try {
 			const response = await fetch(url, {
-				method: 'GET',  // Change to HEAD request to reduce data transfer
-				mode: 'no-cors', // Prevent CORS errors
-				cache: 'no-cache',
+				method: 'HEAD',
+				mode: 'cors',
 				headers: {
-					'Pragma': 'no-cache',
-					'Cache-Control': 'no-cache',
+					'User-Agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/126.0.0.0 Safari/537.36'
 				},
 				signal: controller.signal
 			});
 
 			clearTimeout(timeoutId);
 
-			// Due to 'no-cors' mode, we can't access response properties
-			// We assume the image exists if we get here without an error
-			return { isReachable: true, status: 'Image likely exists' };
+			if (!response.ok) {
+				return { isReachable: false, status: `Error: ${response.status} - ${response.statusText}` };
+			}
 
+			return { isReachable: true, status: 'Image likely exists' };
 		} catch (error) {
 			clearTimeout(timeoutId);
 			if (error.name === 'AbortError') {
 				return { isReachable: false, status: 'Request timed out' };
 			}
-			// For other errors, we assume the image doesn't exist or is not accessible
 			return { isReachable: false, status: `Error: ${error.message}` };
 		}
 	}
+
+
+
 
 </script>
 
@@ -260,31 +245,32 @@
         background-color: #007bff;
         color: white;
         border: none;
-        border-radius: 5px;
+        border-radius: 4px;
         cursor: pointer;
-        display: flex;
-        justify-content: center;
-        align-items: center;
     }
 
     button:disabled {
-        background-color: #cccccc;
+        background-color: #6c757d;
         cursor: not-allowed;
     }
 
     .spinner {
+        margin-left: 10px;
         width: 20px;
         height: 20px;
-        border: 2px solid #ffffff;
-        border-top: 2px solid transparent;
+        border: 2px solid rgba(255, 255, 255, 0.2);
+        border-top-color: #fff;
         border-radius: 50%;
-        animation: spin 1s linear infinite;
-        margin-left: 10px;
+        animation: spin 0.6s linear infinite;
     }
 
     @keyframes spin {
-        0% { transform: rotate(0deg); }
-        100% { transform: rotate(360deg); }
+        to { transform: rotate(360deg); }
+    }
+
+    .error {
+        color: red;
+        margin-top: 10px;
     }
 
     ul {
@@ -294,10 +280,5 @@
 
     li {
         margin-bottom: 5px;
-    }
-
-    .error {
-        color: red;
-        font-weight: bold;
     }
 </style>
