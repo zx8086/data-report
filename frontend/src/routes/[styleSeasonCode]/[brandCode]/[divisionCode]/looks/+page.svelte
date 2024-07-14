@@ -22,6 +22,17 @@
 		event.target.onerror = null;
 	}
 
+	// Add this function at the top of your script
+	function normalizeArray(value: any[] | any | null): any[] {
+		if (Array.isArray(value)) {
+			return value;
+		} else if (value !== null && value !== undefined) {
+			return [value];
+		} else {
+			return [];
+		}
+	}
+
 	let styleSeasonCode : string;
 	let brandCode : string;
 	let divisionCode : string;
@@ -97,19 +108,29 @@
 			console.log('Result from server:', result);
 
 			if (result.type === 'success' && result.status === 200) {
-
 				// Parse the nested JSON data
 				const parsedData = JSON.parse(result.data);
-				// The image details structure is in the third element of the array
+				// The look details structure is in the third element of the array
 				const lookDetailsStructure = parsedData[2];
 				// The actual values start from the fourth element
 				const values = parsedData.slice(3);
 
 				const lookDetails = Object.fromEntries(
-					Object.entries(lookDetailsStructure).map(([key, index]) => [key, values[Number(index as any) - 3]])
+					Object.entries(lookDetailsStructure).map(([key, index]) => {
+						if (key === 'relatedStyles' || key === 'channels') {
+							// Extract the actual values for relatedStyles and channels
+							const indices = values[Number(index as any) - 3];
+							return [key, Array.isArray(indices) ? indices.map((idx: number) => values[idx - 3]) : []];
+						}
+						return [key, values[Number(index as any) - 3]];
+					})
 				);
 
 				console.log('Parsed look details:', lookDetails);
+
+				// Use the normalization function for both relatedStyles and channels
+				lookDetails.relatedStyles = normalizeArray(lookDetails.relatedStyles);
+				lookDetails.channels = normalizeArray(lookDetails.channels);
 
 				// debugger
 				selectedItem.setLookDetails(lookDetails);

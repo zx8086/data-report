@@ -96,8 +96,8 @@ export interface LookDetails {
 	createdOn: string;
 	createdOnSourceSystem: string;
 	deliveryName: string | null;
-	description: string | null;
 	divisionCode: string;
+	description: string | null;
 	documentUpdatedBy: string;
 	gender: string | null;
 	isDeleted: boolean;
@@ -108,12 +108,12 @@ export interface LookDetails {
 	nuxeoId: string;
 	position: number;
 	processedOn: string;
-	relatedStyles: string[];
+	relatedStyles: string[] | string | null;
 	sourceSystem: string;
 	styleSeasonCodeAfs: string;
-	tag: string;
+	tag: string | null;
 	title: string;
-	trend: string;
+	trend: string | null;
 }
 
 export interface LooksResponse {
