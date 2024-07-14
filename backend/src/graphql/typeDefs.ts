@@ -283,6 +283,11 @@ const typeDefs = gql`
         title: String
         trend: String
     }
+
+    type UrlSuffixesResult {
+        divisionCode: String!
+        urls: [String!]!
+    }
     
     type Query {
         looksSummary(brand: String, season: String, division: String): LookSummary
@@ -291,6 +296,7 @@ const typeDefs = gql`
         optionsProductView ( BrandCode: String!, SalesOrganizationCode: String!, StyleSeasonCode: String!, DivisionCode: String!, ActiveOption: Boolean!, SalesChannels: [SalesChannel!]!): [OptionProductView]
         imageDetails(divisionCode: String!, styleSeasonCode: String!, styleCode: String!): ImageDetails
         lookDetails(lookDocKey: String!): LookDetails
+        getImageUrlCheck(divisions: [String!]!, season: String!): [UrlSuffixesResult!]!
     }
 `;
 
