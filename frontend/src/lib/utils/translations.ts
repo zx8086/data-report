@@ -2,7 +2,7 @@
 
 const seasonTranslations = {
 	"C51": "Spring 2025",
-	// Add more seasons as needed
+	"C52": "Summer 2025",
 } as const;
 
 const divisionTranslations = {
