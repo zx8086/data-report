@@ -1,3 +1,4 @@
+<!--+page.svelte-->
 <script lang="ts">
 	import { enhance } from '$app/forms';
 	import type { ActionData } from './$types';
@@ -21,7 +22,6 @@
 
 	const seasons = Object.entries({ "C51": "Spring 2025", "C52": "Summer 2025" });
 
-	// Define divisions as an array of objects for sorted display
 	const divisions = [
 		{ code: "01", name: "TH Menswear" },
 		{ code: "02", name: "Tommy Jeans" },
@@ -43,7 +43,6 @@
 		{ code: "97", name: "Nike Underwear" }
 	];
 
-	// Calculate totalUrls based on urlSuffixes length
 	$: totalUrls = urlSuffixes.length;
 
 	function toggleDivision(divisionCode: string) {
@@ -73,19 +72,19 @@
 
 			if (result && result.type === 'success' && result.data) {
 				try {
-					const parsedOuterData = JSON.parse(result.data);
+					const outerData = JSON.parse(result.data);
+					if (Array.isArray(outerData) && outerData.length === 3 && outerData[1] === 'success') {
+						const innerData = JSON.parse(outerData[2]);
+						if (Array.isArray(innerData) && innerData.length > 0) {
+							const parsedData = innerData.map(item => ({
+								divisionCode: item.divisionCode,
+								urls: item.urls
+							}));
 
-					console.log("Parsed Outer Data", parsedOuterData)
-					debugger
-
-					if (Array.isArray(parsedOuterData) && parsedOuterData.length === 3 && parsedOuterData[1] === 'success') {
-						const parsedInnerData = JSON.parse(parsedOuterData[2]);
-
-						if (Array.isArray(parsedInnerData) && parsedInnerData.length > 0 && parsedInnerData[0].urls) {
-							urlSuffixes = parsedInnerData[0].urls;
+							urlSuffixes = parsedData.flatMap(item => item.urls);
 
 							if (urlSuffixes.length > 0) {
-								await checkUrls();
+								await checkUrls(parsedData);
 							} else {
 								errorMessage = "No URLs found to check. Please try different selection criteria.";
 							}
@@ -96,37 +95,45 @@
 						errorMessage = "Received unexpected data structure from server.";
 					}
 				} catch (parseError) {
+					console.error("Parse error:", parseError);
 					errorMessage = "Error parsing server response.";
 				}
 			} else {
 				errorMessage = "Received unexpected response from server.";
 			}
 		} catch (error) {
+			console.error("Fetch error:", error);
 			errorMessage = "An error occurred while communicating with the server.";
 		}
 
 		processing = false;
 	}
 
-	async function checkUrls() {
-		if (!Array.isArray(urlSuffixes) || urlSuffixes.length === 0) {
-			return;
-		}
+	async function checkUrls(data: { divisionCode: string, urls: string[] }[]) {
+		failedUrls = [];
+		progress = 0;
+		let processedUrls = 0;
+		const totalUrls = data.reduce((sum, division) => sum + division.urls.length, 0);
 
-		for (let i = 0; i < urlSuffixes.length; i += concurrency) {
-			const batch = urlSuffixes.slice(i, i + concurrency);
-			const promises = batch.map(suffix => checkUrlWithRetry(`${baseUrl}${suffix}`, selectedDivisions[0]));
-			const results = await Promise.all(promises);
+		for (const division of data) {
+			const { divisionCode, urls } = division;
 
-			results.forEach((result, index) => {
-				const fullUrl = `${baseUrl}${batch[index]}`;
-				if (!result.isReachable) {
-					failedUrls = [...failedUrls, { url: fullUrl, divisionCode: selectedDivisions[0] }];
-				}
-			});
+			for (let i = 0; i < urls.length; i += concurrency) {
+				const batch = urls.slice(i, i + concurrency);
+				const promises = batch.map(suffix => checkUrlWithRetry(`${baseUrl}${suffix}`, divisionCode));
+				const results = await Promise.all(promises);
 
-			progress = Math.round((i + concurrency) / urlSuffixes.length * 100);
-			await new Promise(resolve => setTimeout(resolve, delayMs));
+				results.forEach((result, index) => {
+					const fullUrl = `${baseUrl}${batch[index]}`;
+					if (!result.isReachable) {
+						failedUrls = [...failedUrls, { url: fullUrl, divisionCode }];
+					}
+				});
+
+				processedUrls += batch.length;
+				progress = Math.round((processedUrls / totalUrls) * 100);
+				await new Promise(resolve => setTimeout(resolve, delayMs));
+			}
 		}
 	}
 
