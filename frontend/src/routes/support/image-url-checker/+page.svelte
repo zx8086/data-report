@@ -14,20 +14,36 @@
 	let selectedDivisions: string[] = [];
 	let selectedSeason = '';
 	let urlSuffixes: string[] = [];
-	let failedUrls: {url: string, divisionCode: string}[] = [];
+	let failedUrls: { url: string, divisionCode: string }[] = [];
 	let processing = false;
 	let progress = 0;
 	let errorMessage = '';
 
 	const seasons = Object.entries({ "C51": "Spring 2025", "C52": "Summer 2025" });
-	const divisions = Object.entries({
-		"01": "TH Menswear", "02": "Tommy Jeans", "03": "TH Licensees", "04": "TH Kids",
-		"05": "TH Womenswear", "07": "TH Close to Body", "09": "TH Footwear", "10": "TH Accessories",
-		"61": "CK Menswear", "62": "CK Jeans", "64": "CKJ Kids", "65": "CK Womenswear",
-		"67": "CK Underwear", "68": "CK Sport", "69": "CK Footwear", "70": "CK Accessories",
-		"77": "CK Swimwear", "97": "Nike Underwear"
-	});
 
+	// Define divisions as an array of objects for sorted display
+	const divisions = [
+		{ code: "01", name: "TH Menswear" },
+		{ code: "02", name: "Tommy Jeans" },
+		{ code: "03", name: "TH Licensees" },
+		{ code: "04", name: "TH Kids" },
+		{ code: "05", name: "TH Womenswear" },
+		{ code: "07", name: "TH Close to Body" },
+		{ code: "09", name: "TH Footwear" },
+		{ code: "10", name: "TH Accessories" },
+		{ code: "61", name: "CK Menswear" },
+		{ code: "62", name: "CK Jeans" },
+		{ code: "64", name: "CKJ Kids" },
+		{ code: "65", name: "CK Womenswear" },
+		{ code: "67", name: "CK Underwear" },
+		{ code: "68", name: "CK Sport" },
+		{ code: "69", name: "CK Footwear" },
+		{ code: "70", name: "CK Accessories" },
+		{ code: "77", name: "CK Swimwear" },
+		{ code: "97", name: "Nike Underwear" }
+	];
+
+	// Calculate totalUrls based on urlSuffixes length
 	$: totalUrls = urlSuffixes.length;
 
 	function toggleDivision(divisionCode: string) {
@@ -58,6 +74,10 @@
 			if (result && result.type === 'success' && result.data) {
 				try {
 					const parsedOuterData = JSON.parse(result.data);
+
+					console.log("Parsed Outer Data", parsedOuterData)
+					debugger
+
 					if (Array.isArray(parsedOuterData) && parsedOuterData.length === 3 && parsedOuterData[1] === 'success') {
 						const parsedInnerData = JSON.parse(parsedOuterData[2]);
 
@@ -110,7 +130,7 @@
 		}
 	}
 
-	async function checkUrlWithRetry(url: string, divisionCode: string, retries = 0): Promise<{isReachable: boolean, status: string}> {
+	async function checkUrlWithRetry(url: string, divisionCode: string, retries = 0): Promise<{ isReachable: boolean, status: string }> {
 		try {
 			const result = await checkUrl(url);
 			return result;
@@ -153,132 +173,54 @@
 			return { isReachable: false, status: `Error: ${error.message}` };
 		}
 	}
-
-
-
-
 </script>
 
-<form on:submit|preventDefault={handleSubmit} class="url-checker-form">
-	<div class="form-grid">
-		<div class="season-column">
+<form on:submit|preventDefault={handleSubmit} class="max-w-3xl mx-auto">
+	<div class="grid grid-cols-2 gap-4 mb-4">
+		<div class="flex flex-col">
 			<h3>Season</h3>
 			{#each seasons as [code, name]}
-				<label class="radio-label">
-					<input type="radio" name="season" value={code} bind:group={selectedSeason}>
+				<label class="flex items-center mb-2">
+					<input type="radio" name="season" value={code} bind:group={selectedSeason} class="mr-2">
 					{name}
 				</label>
 			{/each}
 		</div>
-		<div class="division-column">
+		<div class="flex flex-col">
 			<h3>Divisions</h3>
-			{#each divisions as [code, name]}
-				<label class="checkbox-label">
-					<input type="checkbox" name="divisions" value={code} on:change={() => toggleDivision(code)} checked={Array.isArray(selectedDivisions) && selectedDivisions.includes(code)}>
-					{name}
+			{#each divisions.sort((a, b) => parseInt(a.code) - parseInt(b.code)) as division}
+				<label class="flex items-center mb-2">
+					<input type="checkbox" name="divisions" value={division.code} on:change={() => toggleDivision(division.code)} checked={selectedDivisions.includes(division.code)} class="mr-2">
+					{division.name}
 				</label>
 			{/each}
 		</div>
 	</div>
-	<button type="submit" disabled={processing || !selectedSeason || selectedDivisions.length === 0}>
+	<button type="submit" disabled={processing || !selectedSeason || selectedDivisions.length === 0} class="w-full py-2 px-4 bg-blue-500 text-white rounded-md cursor-pointer">
 		{processing ? 'Processing...' : 'Check URLs'}
 		{#if processing}
-			<span class="spinner"></span>
+			<span class="spinner inline-block ml-2 border-2 border-white border-opacity-25 rounded-full animate-spin h-4 w-4"></span>
 		{/if}
 	</button>
 </form>
 
 {#if errorMessage}
-	<p class="error">{errorMessage}</p>
+	<p class="text-red-600 mt-4">{errorMessage}</p>
 {/if}
 
 {#if processing}
-	<p>Progress: {progress}% ({failedUrls.length} failed out of {totalUrls})</p>
+	<p class="mt-4">Progress: {progress}% ({failedUrls.length} failed out of {totalUrls})</p>
 {/if}
 
 {#if !processing && urlSuffixes.length === 0}
-	<p>No URLs found to check. Please try different selection criteria.</p>
+	<p class="mt-4">No URLs found to check. Please try different selection criteria.</p>
 {/if}
 
-<h3>Failed URLs ({failedUrls.length}):</h3>
-<ul>
+<h3 class="mt-4">Failed URLs ({failedUrls.length}):</h3>
+<ul class="mt-2">
 	{#each failedUrls as item}
-		<li>{item.url} (Division: {translateCode(item.divisionCode, 'division')})</li>
+		<li class="mb-2">
+			<a href={item.url} target="_blank" class="text-blue-500">{item.url}</a> (Division: {translateCode(item.divisionCode, 'division')})
+		</li>
 	{/each}
 </ul>
-
-<style>
-    .url-checker-form {
-        max-width: 800px;
-        margin: 0 auto;
-    }
-
-    .form-grid {
-        display: grid;
-        grid-template-columns: 1fr 1fr;
-        gap: 20px;
-        margin-bottom: 20px;
-    }
-
-    .season-column, .division-column {
-        display: flex;
-        flex-direction: column;
-    }
-
-    h3 {
-        margin-bottom: 10px;
-    }
-
-    .radio-label, .checkbox-label {
-        display: flex;
-        align-items: center;
-        margin-bottom: 5px;
-    }
-
-    input[type="radio"], input[type="checkbox"] {
-        margin-right: 10px;
-    }
-
-    button {
-        width: 100%;
-        padding: 10px;
-        background-color: #007bff;
-        color: white;
-        border: none;
-        border-radius: 4px;
-        cursor: pointer;
-    }
-
-    button:disabled {
-        background-color: #6c757d;
-        cursor: not-allowed;
-    }
-
-    .spinner {
-        margin-left: 10px;
-        width: 20px;
-        height: 20px;
-        border: 2px solid rgba(255, 255, 255, 0.2);
-        border-top-color: #fff;
-        border-radius: 50%;
-        animation: spin 0.6s linear infinite;
-    }
-
-    @keyframes spin {
-        to { transform: rotate(360deg); }
-    }
-
-    .error {
-        color: red;
-        margin-top: 10px;
-    }
-
-    ul {
-        list-style-type: none;
-        padding: 0;
-    }
-
-    li {
-        margin-bottom: 5px;
-    }
-</style>
