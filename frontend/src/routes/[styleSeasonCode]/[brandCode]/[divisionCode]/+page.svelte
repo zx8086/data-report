@@ -82,7 +82,7 @@
 </script>
 
 <div class="container mx-auto p-0">
-	<div class="flex items-center justify-center mb-4">
+	<div class="mb-8">
 		<DivisionalVideoPlayer src={video}/>
 	</div>
 	<div class="flex flex-row justify-between">

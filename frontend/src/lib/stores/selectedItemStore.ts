@@ -26,6 +26,12 @@ function createSelectedItemStore() {
 			}
 			return item;
 		}),
+		setIsVideo: (isVideo: boolean) => update(item => {
+			if (item && item.type === 'look') {
+				return { ...item, isVideo };
+			}
+			return item;
+		}),
 		reset: () => {
 			console.log('Resetting selectedItem');
 			set(null);
