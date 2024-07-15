@@ -17,12 +17,22 @@
 		// collectionStore.set(data.looks);
 	}
 
+	function initializeVideoJS(element: HTMLVideoElement) {
+		if (typeof videojs !== 'undefined') {
+			videojs(element, {
+				controls: true,
+				autoplay: true,
+				muted: true,
+				preload: 'auto'
+			});
+		}
+	}
+
 	function handleImageError(event: any) {
 		event.target.src = '/img/not-found.png';
 		event.target.onerror = null;
 	}
 
-	// Add this function at the top of your script
 	function normalizeArray(value: any[] | any | null): any[] {
 		if (Array.isArray(value)) {
 			return value;
@@ -72,6 +82,11 @@
 		} catch (error) {
 			console.error('Error in onMount:', error);
 		}
+
+		// Initialize Video.js for all video elements
+		document.querySelectorAll('.video-js').forEach((videoElement) => {
+			initializeVideoJS(videoElement as HTMLVideoElement);
+		});
 	});
 
 	async function handleSelect(look: Look, event: Event | KeyboardEvent) {
@@ -86,7 +101,8 @@
 				styleSeasonCode,
 				brandCode,
 				divisionCode
-			}
+			},
+			isVideo: [9, 10, 11, 12, 13, 14, 16].includes(Number(look.lookType))
 		});
 
 		console.log('selectedItem after initial set:', $selectedItem);
@@ -165,7 +181,33 @@
 						aria-label={`Select ${look.title}`}
 					>
 						<div class="overflow-hidden bg-gray-200 rounded-md aspect-w-1 aspect-h-1 lg:aspect-none lg:h-80 transform-gpu transition-transform duration-300 group-hover:scale-110 opacity-85 group-hover:opacity-100">
-							<img src={look.assetUrl} alt={look.title} class="object-cover object-top w-full h-full lg:w-full lg:h-full" />
+							{#if [9, 10, 11, 12, 13, 14, 16].includes(Number(look.lookType))}
+								<video
+									class="video-js vjs-default-skin object-cover object-top w-full h-full lg:w-full lg:h-full"
+									controls
+									autoplay
+									muted
+									preload="auto"
+									width="100%"
+									height="100%"
+									poster={look.assetUrl}
+									data-setup="{{}}"
+								>
+									<source src={look.assetUrl} type="video/mp4" />
+									<p class="vjs-no-js">
+										To view this video please enable JavaScript, and consider upgrading to a
+										web browser that
+										<a href="https://videojs.com/html5-video-support/" target="_blank">supports HTML5 video</a>
+									</p>
+								</video>
+							{:else}
+								<img
+									src={look.assetUrl}
+									alt={look.title}
+									class="object-cover object-top w-full h-full lg:w-full lg:h-full"
+									on:error={handleImageError}
+								/>
+							{/if}
 						</div>
 					</button>
 				{/each}

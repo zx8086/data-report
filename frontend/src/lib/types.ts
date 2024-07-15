@@ -47,7 +47,7 @@ export interface SelectedItemMeta {
 
 export type SelectedItemType =
 	| { type: 'collection'; data: CollectionData; meta: SelectedItemMeta; imageDetails?: ImageDetails }
-	| { type: 'look'; data: Look; meta: SelectedItemMeta; lookDetails?: LookDetails };
+	| { type: 'look'; data: Look; meta: SelectedItemMeta; lookDetails?: LookDetails; isVideo: boolean };
 
 export interface Collection {
 	description: string;

@@ -3,10 +3,14 @@
 	import { enhance } from '$app/forms';
 	import type { ActionData } from './$types';
 	import { translateCode } from '$lib/utils/translations';
-	import { onMount } from 'svelte';
 	import { writable } from 'svelte/store';
 
 	export let form: ActionData;
+
+	import { key } from '$lib/context/tracker';
+	import { onMount, getContext } from 'svelte';
+	const { getTracker } = getContext(key);
+
 
 	const baseUrl = 'https://s7g10.scene7.com/is/image/TommyHilfigerEU';
 	const delayMs = 2000;
@@ -27,6 +31,30 @@
 	let logBox: HTMLDivElement;
 
 	onMount(() => {
+		try {
+			const tracker = getTracker();
+			if (tracker) {
+				try {
+					tracker.event('Page_View', {
+						page: 'Image Url Checker',
+						category: 'Navigation',
+						action: 'View'
+					});
+				} catch (e) {
+					tracker.event('Page_View', {
+						page: 'Image Url Checker',
+						category: 'Navigation',
+						action: 'View',
+						error: `Translation failed - ${e}`
+					});
+				}
+			} else {
+				console.warn('Tracker not available');
+			}
+		} catch (error) {
+			console.error('Error in onMount:', error);
+		}
+
 		logStore.subscribe(() => {
 			if (logBox) {
 				logBox.scrollTop = logBox.scrollHeight;
