@@ -288,6 +288,22 @@ const typeDefs = gql`
         divisionCode: String!
         urls: [String!]!
     }
+
+    scalar JSON
+
+    input BucketScopeCollection {
+        bucket: String!
+        scope: String!
+        collection: String!
+    }
+
+    type DocumentResult {
+        bucket: String!
+        scope: String!
+        collection: String!
+        data: JSON
+        timeTaken: Float!
+    }
     
     type Query {
         looksSummary(brand: String, season: String, division: String): LookSummary
@@ -297,6 +313,7 @@ const typeDefs = gql`
         imageDetails(divisionCode: String!, styleSeasonCode: String!, styleCode: String!): ImageDetails
         lookDetails(lookDocKey: String!): LookDetails
         getImageUrlCheck(divisions: [String!]!, season: String!): [UrlSuffixesResult!]!
+        searchDocuments(collections: [BucketScopeCollection!]!, keys: [String!]!): [DocumentResult!]!
     }
 `;
 
