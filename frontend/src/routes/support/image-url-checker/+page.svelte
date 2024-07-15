@@ -1,24 +1,38 @@
-<!--+page.svelte-->
+<!--+page.svelte for image-url-checker-->
 <script lang="ts">
 	import { enhance } from '$app/forms';
 	import type { ActionData } from './$types';
 	import { translateCode } from '$lib/utils/translations';
+	import { onMount } from 'svelte';
+	import { writable } from 'svelte/store';
 
 	export let form: ActionData;
 
 	const baseUrl = 'https://s7g10.scene7.com/is/image/TommyHilfigerEU';
 	const delayMs = 2000;
-	const concurrency = 50;
+	const concurrency = 75;
 	const maxRetries = 3;
 	const timeout = 10000;
 
 	let selectedDivisions: string[] = [];
 	let selectedSeason = '';
 	let urlSuffixes: string[] = [];
-	let failedUrls: { url: string, divisionCode: string }[] = [];
+	let failedUrls: { url: string, divisionCode: string, status: string, retries: number }[] = [];
 	let processing = false;
 	let progress = 0;
 	let errorMessage = '';
+	let divisionProgress: { [key: string]: { total: number, processed: number } } = {};
+
+	const logStore = writable<{message: string, status: 'success' | 'error' | 'info'}[]>([]);
+	let logBox: HTMLDivElement;
+
+	onMount(() => {
+		logStore.subscribe(() => {
+			if (logBox) {
+				logBox.scrollTop = logBox.scrollHeight;
+			}
+		});
+	});
 
 	const seasons = Object.entries({ "C51": "Spring 2025", "C52": "Summer 2025" });
 
@@ -51,13 +65,25 @@
 			: [...selectedDivisions, divisionCode];
 	}
 
+	let processComplete = false;
+
+	function addLog(message: string, status: 'success' | 'error' | 'info' = 'info') {
+		logStore.update(logs => {
+			logs.push({message, status});
+			return logs.slice(-100);  // Keep only the last 100 logs
+		});
+	}
+
 	async function handleSubmit(event: Event) {
 		event.preventDefault();
 		processing = true;
+		processComplete = false;
 		failedUrls = [];
 		progress = 0;
 		errorMessage = '';
 		urlSuffixes = [];
+		divisionProgress = {};
+		logStore.set([]);
 
 		const form = event.target as HTMLFormElement;
 		const formData = new FormData(form);
@@ -107,16 +133,18 @@
 		}
 
 		processing = false;
+		processComplete = true;
 	}
 
 	async function checkUrls(data: { divisionCode: string, urls: string[] }[]) {
 		failedUrls = [];
 		progress = 0;
-		let processedUrls = 0;
-		const totalUrls = data.reduce((sum, division) => sum + division.urls.length, 0);
+		divisionProgress = {};
 
 		for (const division of data) {
 			const { divisionCode, urls } = division;
+			divisionProgress[divisionCode] = { total: urls.length, processed: 0 };
+			addLog(`Processing division: ${divisionCode}`, 'info');
 
 			for (let i = 0; i < urls.length; i += concurrency) {
 				const batch = urls.slice(i, i + concurrency);
@@ -126,26 +154,36 @@
 				results.forEach((result, index) => {
 					const fullUrl = `${baseUrl}${batch[index]}`;
 					if (!result.isReachable) {
-						failedUrls = [...failedUrls, { url: fullUrl, divisionCode }];
+						failedUrls = [...failedUrls, { url: fullUrl, divisionCode, status: result.status, retries: 0 }];
 					}
 				});
 
-				processedUrls += batch.length;
-				progress = Math.round((processedUrls / totalUrls) * 100);
+				divisionProgress[divisionCode].processed += batch.length;
+				updateTotalProgress();
 				await new Promise(resolve => setTimeout(resolve, delayMs));
 			}
 		}
 	}
 
+	function updateTotalProgress() {
+		const totalProcessed = Object.values(divisionProgress).reduce((sum, div) => sum + div.processed, 0);
+		const totalUrls = Object.values(divisionProgress).reduce((sum, div) => sum + div.total, 0);
+		progress = Math.round((totalProcessed / totalUrls) * 100);
+	}
+
 	async function checkUrlWithRetry(url: string, divisionCode: string, retries = 0): Promise<{ isReachable: boolean, status: string }> {
 		try {
+			addLog(`Checking URL (attempt ${retries + 1}): ${url} (Division: ${divisionCode})`, 'info');
 			const result = await checkUrl(url);
+			addLog(`Result for ${url}: ${result.isReachable ? 'Reachable' : 'Not Reachable'} (${result.status})`, result.isReachable ? 'success' : 'error');
 			return result;
 		} catch (error) {
 			if (retries < maxRetries - 1) {
+				addLog(`Retrying ${url} (attempt ${retries + 2})`, 'info');
 				await new Promise(resolve => setTimeout(resolve, 1000));
 				return checkUrlWithRetry(url, divisionCode, retries + 1);
 			} else {
+				addLog(`Max retries reached for ${url}`, 'error');
 				return { isReachable: false, status: `Max retries reached: ${error.message}` };
 			}
 		}
@@ -167,11 +205,18 @@
 
 			clearTimeout(timeoutId);
 
-			if (!response.ok) {
-				return { isReachable: false, status: `Error: ${response.status} - ${response.statusText}` };
+			switch (response.status) {
+				case 200:
+					return { isReachable: true, status: 'Image exists' };
+				case 404:
+					return { isReachable: false, status: 'Image not found' };
+				case 403:
+					return { isReachable: false, status: 'Access forbidden' };
+				case 500:
+					return { isReachable: false, status: 'Server error' };
+				default:
+					return { isReachable: false, status: `Error: ${response.status} - ${response.statusText}` };
 			}
-
-			return { isReachable: true, status: 'Image likely exists' };
 		} catch (error) {
 			clearTimeout(timeoutId);
 			if (error.name === 'AbortError') {
@@ -179,6 +224,33 @@
 			}
 			return { isReachable: false, status: `Error: ${error.message}` };
 		}
+	}
+
+	async function retryFailedUrls() {
+		const urlsToRetry = failedUrls.filter(item => item.retries < maxRetries);
+		for (const item of urlsToRetry) {
+			const result = await checkUrl(item.url);
+			if (result.isReachable) {
+				failedUrls = failedUrls.filter(u => u.url !== item.url);
+			} else {
+				item.retries++;
+				item.status = result.status;
+			}
+		}
+	}
+
+	function exportFailedUrls() {
+		const csvContent = "data:text/csv;charset=utf-8,"
+			+ "URL,Division,Status\n"
+			+ failedUrls.map(item => `${item.url},${translateCode(item.divisionCode, 'division')},${item.status}`).join("\n");
+
+		const encodedUri = encodeURI(csvContent);
+		const link = document.createElement("a");
+		link.setAttribute("href", encodedUri);
+		link.setAttribute("download", "failed_urls.csv");
+		document.body.appendChild(link);
+		link.click();
+		document.body.removeChild(link);
 	}
 </script>
 
@@ -215,11 +287,26 @@
 	<p class="text-red-600 mt-4">{errorMessage}</p>
 {/if}
 
-{#if processing}
-	<p class="mt-4">Progress: {progress}% ({failedUrls.length} failed out of {totalUrls})</p>
+{#if processing || processComplete}
+	<p class="mt-4">Overall Progress: {progress}% ({failedUrls.length} failed out of {totalUrls})</p>
+	{#each Object.entries(divisionProgress) as [divisionCode, { total, processed }]}
+		<p>
+			{translateCode(divisionCode, 'division')}:
+			{Math.round((processed / total) * 100)}%
+			({processed} / {total})
+		</p>
+	{/each}
+
+	<div class="mt-4 border border-gray-300 rounded-md p-4 h-64 overflow-y-auto" bind:this={logBox}>
+		{#each $logStore as log}
+			<p class="text-sm" class:text-green-500={log.status === 'success'} class:text-red-500={log.status === 'error'}>
+				{log.message}
+			</p>
+		{/each}
+	</div>
 {/if}
 
-{#if !processing && urlSuffixes.length === 0}
+{#if !processing && urlSuffixes.length === 0 && !processComplete}
 	<p class="mt-4">No URLs found to check. Please try different selection criteria.</p>
 {/if}
 
@@ -227,7 +314,16 @@
 <ul class="mt-2">
 	{#each failedUrls as item}
 		<li class="mb-2">
-			<a href={item.url} target="_blank" class="text-blue-500">{item.url}</a> (Division: {translateCode(item.divisionCode, 'division')})
+			<a href={item.url} target="_blank" class="text-blue-500">{item.url}</a>
+			(Division: {translateCode(item.divisionCode, 'division')}, Status: {item.status})
 		</li>
 	{/each}
 </ul>
+
+<button on:click={retryFailedUrls} disabled={!failedUrls.length || processing} class="mt-4 py-2 px-4 bg-green-500 text-white rounded-md cursor-pointer">
+	Retry Failed URLs
+</button>
+
+<button on:click={exportFailedUrls} disabled={!failedUrls.length} class="mt-4 ml-4 py-2 px-4 bg-yellow-500 text-white rounded-md cursor-pointer">
+	Export Failed URLs
+</button>
