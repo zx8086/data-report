@@ -7,6 +7,7 @@ import optionsProductView from './optionsProductView';
 import imageDetails from './imageDetails';
 import lookDetails from './lookDetails';
 import imageUrlCheck from './imageUrlCheck';
+import documentSearch from './documentSearch';
 
 const resolvers = {
 	Query: {
@@ -17,6 +18,7 @@ const resolvers = {
 		...imageDetails.Query,
 		...lookDetails.Query,
 		...imageUrlCheck.Query,
+		...documentSearch.Query
 	}
 };
 
