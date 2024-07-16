@@ -1,14 +1,40 @@
 <script lang="ts">
 	import { enhance } from '$app/forms';
-	import type { ActionData } from './$types';
-	import { writable } from 'svelte/store';
+	import { page } from '$app/stores';
 	import DocumentDisplay from '$lib/components/DocumentDisplay.svelte';
 	import { onMount, getContext } from 'svelte';
-
 	import { key } from '$lib/context/tracker';
 	const { getTracker } = getContext(key);
+	let showDebugInfo = false;
+	let debugInfo = '';
 
-	export let form: ActionData;
+	onMount(async () => {
+		const tracker = getTracker();
+		if (tracker) {
+			tracker.onFlagsLoad((flags) => {
+				const debugFlag = flags.find(flag => flag.key === 'debug-info-collection');
+				if (debugFlag) {
+					showDebugInfo = debugFlag.value === true;
+				}
+			});
+			try {
+				tracker.event('Page_View', {
+					page: `Document Search`,
+					category: 'Navigation',
+					action: 'View'
+				});
+			} catch (e) {
+				console.error('Error:', e);
+				tracker.event('Page_View', {
+					page: `Document Search`,
+
+					category: 'Navigation',
+					action: 'View',
+					error: 'failed'
+				});
+			}
+		}
+	});
 
 	let documentKey = '';
 	let searchResults = [];
@@ -22,6 +48,7 @@
 		{ bucket: "default", scope: "seasons", collection: "delivery_dates" },
 		{ bucket: "default", scope: "brands_divisions", collection: "brands_divisions" },
 		{ bucket: "default", scope: "media_assets", collection: "look_items" },
+		{ bucket: "default", scope: "media_assets", collection: "images" },
 		{ bucket: "default", scope: "styles", collection: "article" },
 		{ bucket: "default", scope: "styles", collection: "variant" },
 		{ bucket: "default", scope: "styles", collection: "prepacks" },
@@ -32,130 +59,62 @@
 		{ bucket: "default", scope: "customer", collection: "customers" },
 		{ bucket: "default", scope: "_default", collection: "_default" },
 		{ bucket: "default", scope: "_default", collection: "data_merge_check" },
+		{ bucket: "default", scope: "prices", collection: "prices" },
 		{ bucket: "prices", scope: "_default", collection: "_default" }
 	];
 
-	let selectedCollections = writable(allCollections);
+	let selectedCollections = allCollections;
 
-	onMount(() => {
-		try {
-			const tracker = getTracker();
-			if (tracker) {
-				try {
-					tracker.event('Page_View', {
-						page: 'Document Search',
-						category: 'Navigation',
-						action: 'View'
-					});
-				} catch (e) {
-					tracker.event('Page_View', {
-						page: 'Document Search',
-						category: 'Navigation',
-						action: 'View',
-						error: `Translation failed - ${e}`
-					});
-				}
-			} else {
-				console.warn('Tracker not available');
-			}
-		} catch (error) {
-			console.error('Error in onMount:', error);
-		}
-	});
-
-	function toggleCollection(collection) {
-		selectedCollections.update(cols => {
-			const index = cols.findIndex(c =>
-				c.bucket === collection.bucket &&
-				c.scope === collection.scope &&
-				c.collection === collection.collection
-			);
-			if (index > -1) {
-				cols.splice(index, 1);
-			} else {
-				cols.push(collection);
-			}
-			return cols;
-		});
-	}
-
-	function selectAllCollections() {
-		selectedCollections.set([...allCollections]);
-	}
-
-	function deselectAllCollections() {
-		selectedCollections.set([]);
-	}
-
-	async function handleSubmit(event) {
+	function handleSubmit(event) {
 		processing = true;
 		errorMessage = '';
 		searchResults = [];
 
-		const form = event.target;
-		const formData = new FormData(form);
-		formData.set('collections', JSON.stringify($selectedCollections));
-		formData.set('keys', JSON.stringify([documentKey]));
-
-		try {
-			const response = await fetch('?/searchDocuments', {
-				method: 'POST',
-				body: formData
-			});
-
-			const result = await response.json();
-
-			console.log("Response from action", result);
-
-			if (result && result.type === 'success' && result.data) {
-				const parsedData = JSON.parse(result.data);
-				if (Array.isArray(parsedData) && parsedData.length > 2 && parsedData[1] === 'success') {
-					const dataArray = parsedData.slice(2);
-					const indices = dataArray[0];
-					const dictionary = dataArray.slice(1);
-
-					console.log("Parsed data:", parsedData);
-					console.log("Indices:", indices);
-					console.log("Dictionary:", dictionary);
-
-					searchResults = indices.map(index => {
-						const item = dictionary[index - 3]; // Adjust index to account for the slicing
-						if (typeof item !== 'object' || item === null) {
-							return null; // Skip this item if it's not an object
-						}
-						return {
-							__typename: item.__typename !== undefined ? dictionary[item.__typename - 3] : 'Unknown',
-							bucket: item.bucket !== undefined ? dictionary[item.bucket - 3] : 'Unknown',
-							scope: item.scope !== undefined ? dictionary[item.scope - 3] : 'Unknown',
-							collection: item.collection !== undefined ? dictionary[item.collection - 3] : 'Unknown',
-							data: item.data === 8 ? null : (item.data !== undefined ? dictionary[item.data - 3] : null),
-							timeTaken: item.timeTaken !== undefined ? dictionary[item.timeTaken - 3] : 0
-						};
-					}).filter(item => item !== null); // Remove any null items
-
-					console.log("Parsed search results:", searchResults);
-				} else {
-					errorMessage = "Unexpected data structure in response";
+		return async ({ result }) => {
+			console.log("Form submission result:", result);
+			if (result.type === 'success') {
+				try {
+					const data = result.data;
+					console.log("Received data:", data);
+					if (data && data.data && data.data.searchDocuments) {
+						searchResults = data.data.searchDocuments;
+						console.log("Search results:", searchResults);
+					} else {
+						errorMessage = "Unexpected response structure";
+					}
+				} catch (e) {
+					console.error("Error processing server response:", e);
+					errorMessage = "Error processing server response: " + e.message;
 				}
-			} else {
-				errorMessage = result.error || "An error occurred during the search";
+			} else if (result.type === 'error') {
+				errorMessage = result.error;
 			}
-		} catch (error) {
-			console.error("Search error:", error);
-			errorMessage = "An error occurred while communicating with the server.";
-		} finally {
 			processing = false;
-		}
+		};
 	}
 
+	function toggleCollection(collection) {
+		selectedCollections = selectedCollections.includes(collection)
+			? selectedCollections.filter(c => c !== collection)
+			: [...selectedCollections, collection];
+	}
+
+	function selectAllCollections() {
+		selectedCollections = [...allCollections];
+	}
+
+	function deselectAllCollections() {
+		selectedCollections = [];
+	}
 </script>
 
-<form on:submit|preventDefault={handleSubmit} class="max-w-3xl mx-auto">
+<form use:enhance={handleSubmit} method="POST" action="?/searchDocuments" class="max-w-3xl mx-auto">
 	<div class="mb-4">
 		<label for="documentKey" class="block mb-2">Document Key:</label>
 		<input
 			type="text"
 			id="documentKey"
+			name="documentKey"
 			bind:value={documentKey}
 			class="w-full p-2 border rounded"
 		/>
@@ -169,17 +128,15 @@
 			<label class="block">
 				<input
 					type="checkbox"
-					checked={$selectedCollections.some(c =>
-                        c.bucket === collection.bucket &&
-                        c.scope === collection.scope &&
-                        c.collection === collection.collection
-                    )}
+					checked={selectedCollections.includes(collection)}
 					on:change={() => toggleCollection(collection)}
 				/>
 				{collection.bucket}.{collection.scope}.{collection.collection}
 			</label>
 		{/each}
 	</div>
+
+	<input type="hidden" name="collections" value={JSON.stringify(selectedCollections)} />
 
 	<button type="submit" disabled={processing} class="w-full py-2 px-4 bg-blue-500 text-white rounded-md cursor-pointer">
 		{processing ? 'Searching...' : 'Search'}
@@ -203,4 +160,11 @@
 	{/each}
 {:else if !processing && documentKey}
 	<p class="mt-4">No results found for the given document key.</p>
+{/if}
+
+{#if showDebugInfo}
+<div class="mt-4">
+	<h3>Debug Information:</h3>
+	<pre>{JSON.stringify({ processing, errorMessage, searchResults }, null, 2)}</pre>
+</div>
 {/if}

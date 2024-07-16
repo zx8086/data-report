@@ -6,11 +6,11 @@
 	import RelatedStylesImage from './RelatedStylesImage.svelte';
 	import { onMount, getContext } from 'svelte';
 	import { key } from '$lib/context/tracker';
-
-	let debugInfo = '';
-	const baseUrl = 'https://s7g10.scene7.com/is/image/TommyHilfigerEU';
 	const { getTracker } = getContext(key);
 	let showDebugInfo = false;
+	let debugInfo = '';
+
+
 
 	onMount(async () => {
 		const tracker = getTracker();
@@ -23,6 +23,9 @@
 			});
 		}
 	});
+
+	const baseUrl = 'https://s7g10.scene7.com/is/image/TommyHilfigerEU';
+
 
 	function getStyleImageUrl(styleCode: string) {
 		if ($selectedItem && $selectedItem.type === 'look' && $selectedItem.lookDetails) {
