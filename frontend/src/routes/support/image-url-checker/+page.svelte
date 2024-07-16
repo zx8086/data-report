@@ -11,7 +11,6 @@
 	import { onMount, getContext } from 'svelte';
 	const { getTracker } = getContext(key);
 
-
 	const baseUrl = 'https://s7g10.scene7.com/is/image/TommyHilfigerEU';
 	const delayMs = 2000;
 	const concurrency = 75;
