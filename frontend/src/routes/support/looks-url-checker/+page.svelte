@@ -35,13 +35,13 @@
 			if (tracker) {
 				try {
 					tracker.event('Page_View', {
-						page: 'Image Url Checker',
+						page: 'Looks Url Checker',
 						category: 'Navigation',
 						action: 'View'
 					});
 				} catch (e) {
 					tracker.event('Page_View', {
-						page: 'Image Url Checker',
+						page: 'Looks Url Checker',
 						category: 'Navigation',
 						action: 'View',
 						error: `Translation failed - ${e}`
@@ -222,7 +222,7 @@
 
 		try {
 			const response = await fetch(url, {
-				method: 'HEAD',
+				method: 'GET',
 				mode: 'cors',
 				headers: {
 					'User-Agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/126.0.0.0 Safari/537.36'
@@ -234,9 +234,9 @@
 
 			switch (response.status) {
 				case 200:
-					return { isReachable: true, status: 'Image exists' };
+					return { isReachable: true, status: 'Look exists' };
 				case 404:
-					return { isReachable: false, status: 'Image not found' };
+					return { isReachable: false, status: 'Look not found' };
 				case 403:
 					return { isReachable: false, status: 'Access forbidden' };
 				case 500:
@@ -274,7 +274,7 @@
 		const encodedUri = encodeURI(csvContent);
 		const link = document.createElement("a");
 		link.setAttribute("href", encodedUri);
-		link.setAttribute("download", "failed_image_urls.csv");
+		link.setAttribute("download", "failed_looks_urls.csv");
 		document.body.appendChild(link);
 		link.click();
 		document.body.removeChild(link);
