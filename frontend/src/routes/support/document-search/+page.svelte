@@ -3,6 +3,10 @@
 	import type { ActionData } from './$types';
 	import { writable } from 'svelte/store';
 	import DocumentDisplay from '$lib/components/DocumentDisplay.svelte';
+	import { onMount, getContext } from 'svelte';
+
+	import { key } from '$lib/context/tracker';
+	const { getTracker } = getContext(key);
 
 	export let form: ActionData;
 
@@ -32,6 +36,32 @@
 	];
 
 	let selectedCollections = writable(allCollections);
+
+	onMount(() => {
+		try {
+			const tracker = getTracker();
+			if (tracker) {
+				try {
+					tracker.event('Page_View', {
+						page: 'Document Search',
+						category: 'Navigation',
+						action: 'View'
+					});
+				} catch (e) {
+					tracker.event('Page_View', {
+						page: 'Document Search',
+						category: 'Navigation',
+						action: 'View',
+						error: `Translation failed - ${e}`
+					});
+				}
+			} else {
+				console.warn('Tracker not available');
+			}
+		} catch (error) {
+			console.error('Error in onMount:', error);
+		}
+	});
 
 	function toggleCollection(collection) {
 		selectedCollections.update(cols => {

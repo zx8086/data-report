@@ -313,6 +313,7 @@ const typeDefs = gql`
         imageDetails(divisionCode: String!, styleSeasonCode: String!, styleCode: String!): ImageDetails
         lookDetails(lookDocKey: String!): LookDetails
         getImageUrlCheck(divisions: [String!]!, season: String!): [UrlSuffixesResult!]!
+        getLooksUrlCheck(divisions: [String!]!, season: String!): [UrlSuffixesResult!]!
         searchDocuments(collections: [BucketScopeCollection!]!, keys: [String!]!): [DocumentResult!]!
     }
 `;

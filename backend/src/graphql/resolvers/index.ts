@@ -7,6 +7,7 @@ import optionsProductView from './optionsProductView';
 import imageDetails from './imageDetails';
 import lookDetails from './lookDetails';
 import imageUrlCheck from './imageUrlCheck';
+import looksUrlCheck from './looksUrlCheck';
 import documentSearch from './documentSearch';
 
 const resolvers = {
@@ -18,6 +19,7 @@ const resolvers = {
 		...imageDetails.Query,
 		...lookDetails.Query,
 		...imageUrlCheck.Query,
+		...looksUrlCheck.Query,
 		...documentSearch.Query
 	}
 };
