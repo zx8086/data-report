@@ -11,9 +11,8 @@
 	import { onMount, getContext } from 'svelte';
 	const { getTracker } = getContext(key);
 
-	const baseUrl = 'https://s7g10.scene7.com/is/image/TommyHilfigerEU';
 	const delayMs = 2000;
-	const concurrency = 75;
+	const concurrency = 50;
 	const maxRetries = 3;
 	const timeout = 10000;
 
@@ -97,7 +96,7 @@
 	function addLog(message: string, status: 'success' | 'error' | 'info' = 'info') {
 		logStore.update(logs => {
 			logs.push({message, status});
-			return logs.slice(-100);  // Keep only the last 100 logs
+			return logs.slice(-5000);  // Keep only the last 5000 logs
 		});
 	}
 
@@ -175,11 +174,11 @@
 
 			for (let i = 0; i < urls.length; i += concurrency) {
 				const batch = urls.slice(i, i + concurrency);
-				const promises = batch.map(suffix => checkUrlWithRetry(`${baseUrl}${suffix}`, divisionCode));
+				const promises = batch.map(url => checkUrlWithRetry(url, divisionCode));
 				const results = await Promise.all(promises);
 
 				results.forEach((result, index) => {
-					const fullUrl = `${baseUrl}${batch[index]}`;
+					const fullUrl = batch[index];
 					if (!result.isReachable) {
 						failedUrls = [...failedUrls, { url: fullUrl, divisionCode, status: result.status, retries: 0 }];
 					}
@@ -222,7 +221,7 @@
 
 		try {
 			const response = await fetch(url, {
-				method: 'GET',
+				method: 'HEAD',
 				mode: 'cors',
 				headers: {
 					'User-Agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/126.0.0.0 Safari/537.36'
@@ -232,11 +231,26 @@
 
 			clearTimeout(timeoutId);
 
+			const contentType = response.headers.get('Content-Type');
+			let contentTypeStatus = '';
+
+			if (contentType) {
+				if (contentType.includes('image')) {
+					contentTypeStatus = 'Image';
+				} else if (contentType.includes('video')) {
+					contentTypeStatus = 'Video';
+				} else if (contentType.includes('application/octet-stream')) {
+					contentTypeStatus = 'GIF';  // Often GIFs are served as octet-stream
+				} else {
+					contentTypeStatus = 'Other';
+				}
+			}
+
 			switch (response.status) {
 				case 200:
-					return { isReachable: true, status: 'Look exists' };
+					return { isReachable: true, status: `${contentTypeStatus} exists` };
 				case 404:
-					return { isReachable: false, status: 'Look not found' };
+					return { isReachable: false, status: `${contentTypeStatus} not found` };
 				case 403:
 					return { isReachable: false, status: 'Access forbidden' };
 				case 500:
