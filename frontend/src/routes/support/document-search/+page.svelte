@@ -1,4 +1,3 @@
-<!-- +page.svelte -->
 <script lang="ts">
 	import { enhance } from '$app/forms';
 	import type { ActionData } from './$types';
@@ -76,10 +75,38 @@
 
 			const result = await response.json();
 
-			console.log("Fetched Results from action", result)
+			console.log("Response from action", result);
 
-			if (result) {
-				searchResults = JSON.parse(result.data);
+			if (result && result.type === 'success' && result.data) {
+				const parsedData = JSON.parse(result.data);
+				if (Array.isArray(parsedData) && parsedData.length > 2 && parsedData[1] === 'success') {
+					const dataArray = parsedData.slice(2);
+					const indices = dataArray[0];
+					const dictionary = dataArray.slice(1);
+
+					console.log("Parsed data:", parsedData);
+					console.log("Indices:", indices);
+					console.log("Dictionary:", dictionary);
+
+					searchResults = indices.map(index => {
+						const item = dictionary[index - 3]; // Adjust index to account for the slicing
+						if (typeof item !== 'object' || item === null) {
+							return null; // Skip this item if it's not an object
+						}
+						return {
+							__typename: item.__typename !== undefined ? dictionary[item.__typename - 3] : 'Unknown',
+							bucket: item.bucket !== undefined ? dictionary[item.bucket - 3] : 'Unknown',
+							scope: item.scope !== undefined ? dictionary[item.scope - 3] : 'Unknown',
+							collection: item.collection !== undefined ? dictionary[item.collection - 3] : 'Unknown',
+							data: item.data === 8 ? null : (item.data !== undefined ? dictionary[item.data - 3] : null),
+							timeTaken: item.timeTaken !== undefined ? dictionary[item.timeTaken - 3] : 0
+						};
+					}).filter(item => item !== null); // Remove any null items
+
+					console.log("Parsed search results:", searchResults);
+				} else {
+					errorMessage = "Unexpected data structure in response";
+				}
 			} else {
 				errorMessage = result.error || "An error occurred during the search";
 			}
@@ -90,6 +117,7 @@
 			processing = false;
 		}
 	}
+
 </script>
 
 <form on:submit|preventDefault={handleSubmit} class="max-w-3xl mx-auto">
@@ -112,10 +140,10 @@
 				<input
 					type="checkbox"
 					checked={$selectedCollections.some(c =>
-            c.bucket === collection.bucket &&
-            c.scope === collection.scope &&
-            c.collection === collection.collection
-          )}
+                        c.bucket === collection.bucket &&
+                        c.scope === collection.scope &&
+                        c.collection === collection.collection
+                    )}
 					on:change={() => toggleCollection(collection)}
 				/>
 				{collection.bucket}.{collection.scope}.{collection.collection}
@@ -143,4 +171,6 @@
 			timeTaken={result.timeTaken}
 		/>
 	{/each}
+{:else if !processing && documentKey}
+	<p class="mt-4">No results found for the given document key.</p>
 {/if}
