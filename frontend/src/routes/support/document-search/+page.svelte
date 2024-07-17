@@ -156,6 +156,7 @@
 			collection={result.collection}
 			data={result.data}
 			timeTaken={result.timeTaken}
+			{documentKey}
 		/>
 	{/each}
 {:else if !processing && documentKey}

@@ -1,11 +1,11 @@
 // src/lib/utils/translations.ts
 
-const seasonTranslations = {
+export const seasonTranslations = {
 	"C51": "Spring 2025",
 	"C52": "Summer 2025",
 } as const;
 
-const divisionTranslations = {
+export const divisionTranslations = {
 	"01": "TH Menswear",
 	"02": "Tommy Jeans",
 	"03": "TH Licensees",
@@ -26,7 +26,7 @@ const divisionTranslations = {
 	"97": "Nike Underwear"
 } as const;
 
-const brandTranslations = {
+export const brandTranslations = {
 	"CKEU": "Calvin Klein",
 	"THEU": "Tommy Hilfiger",
 	"NIKE": "Nike"
