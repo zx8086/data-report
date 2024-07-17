@@ -2,7 +2,7 @@
 <script lang="ts">
 	import { enhance } from '$app/forms';
 	import type { ActionData } from './$types';
-	import { translateCode } from '$lib/utils/translations';
+	import { translateCode, seasonTranslations, divisionTranslations } from '$lib/utils/translations';
 	import { writable } from 'svelte/store';
 
 	export let form: ActionData;
@@ -61,29 +61,10 @@
 		});
 	});
 
-	const seasons = Object.entries({ "C51": "Spring 2025", "C52": "Summer 2025" });
+	const seasons = Object.entries(seasonTranslations);
 
-	const divisions = [
-		{ code: "01", name: "TH Menswear" },
-		{ code: "02", name: "Tommy Jeans" },
-		{ code: "03", name: "TH Licensees" },
-		{ code: "04", name: "TH Kids" },
-		{ code: "05", name: "TH Womenswear" },
-		{ code: "07", name: "TH Close to Body" },
-		{ code: "09", name: "TH Footwear" },
-		{ code: "10", name: "TH Accessories" },
-		{ code: "61", name: "CK Menswear" },
-		{ code: "62", name: "CK Jeans" },
-		{ code: "64", name: "CKJ Kids" },
-		{ code: "65", name: "CK Womenswear" },
-		{ code: "67", name: "CK Underwear" },
-		{ code: "68", name: "CK Sport" },
-		{ code: "69", name: "CK Footwear" },
-		{ code: "70", name: "CK Accessories" },
-		{ code: "77", name: "CK Swimwear" },
-		{ code: "97", name: "Nike Underwear" }
-	];
-
+	const divisions = Object.entries(divisionTranslations).map(([code, name]) => ({ code, name }));
+	
 	$: totalUrls = urlSuffixes.length;
 
 	function toggleDivision(divisionCode: string) {
