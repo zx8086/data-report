@@ -2,16 +2,14 @@
 import { ApolloClient, gql, InMemoryCache, createHttpLink } from '@apollo/client/core';
 import fetch from 'cross-fetch';
 import type { PageServerLoad, Actions } from './$types';
-import type { Collection } from '$lib/types';
+import type { Collection, Settings } from '$lib/types';
+import { getSettings } from '$lib/server/settingsDB';
 
 const brandCodeToBrand: any = {
 	THEU: 'TH',
 	CKEU: 'CK',
 	NIKE: 'NIKE',
 };
-
-const activeOption = true;
-const salesChannels = ['SELLIN', 'B2B'];
 
 // interface ProductResponse {
 // 	collections: Collection[];
@@ -31,6 +29,8 @@ const client = new ApolloClient({
 
 export const load: PageServerLoad = async ({ params }) => {
 	const { brandCode, divisionCode, styleSeasonCode } = params;
+	const currentSettings : Settings = getSettings();
+	console.log("Current Setting from getSettings", currentSettings)
 
 	const brand = brandCode ? (brandCodeToBrand[brandCode] || brandCode) : undefined;
 
@@ -85,8 +85,8 @@ export const load: PageServerLoad = async ({ params }) => {
 		salesOrganizationCode,
 		styleSeasonCode,
 		divisionCode,
-		activeOption,
-		salesChannels
+		activeOption: currentSettings.activeOption,
+		salesChannels: currentSettings.salesChannels
 	};
 
 	console.log("Variables", variables)

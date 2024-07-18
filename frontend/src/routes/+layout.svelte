@@ -8,12 +8,15 @@
 	import Slideover from '$lib/components/common/slideover/Slideover.svelte';
 	import Button from '$lib/components/common/button/Button.svelte';
 	import { selectedItem } from '$lib/stores/selectedItemStore';
-
+	import { settings } from '$lib/stores/settingsStore';
 	import { onMount, setContext } from 'svelte';
 	import { Tracker, key } from '$lib/context/tracker';
 	import type { Options } from '@openreplay/tracker';
 
+	$: console.log("Current settings in layout - Loading from settingsStore:", settings);
+
 	let tracker: any | null = null;
+	let slideoverOpen = false;
 
 	function initializeTracker() {
 		if (typeof window !== 'undefined' && !tracker && Tracker) {
@@ -48,6 +51,14 @@
 
 	onMount(async () => {
 		try {
+			await settings.loadSettings();
+			console.log("Settings loaded successfully from layout.svelte");
+		} catch (error) {
+			console.error("Error loading settings from +layout.svelte:", error);
+			// Handle the error, maybe set default values or show an error message
+		}
+		// Initialize OpenReplay tracker
+		try {
 			const trackerInstance = getTracker();
 			if (trackerInstance) {
 				await trackerInstance.start({
@@ -70,15 +81,13 @@
 		selectedItem.reset();
 	});
 
-	let slideoverOpen = false;
-
 	function handleSave() {
-		console.log('Save action');
+		console.log('Settings saved from +layout.svelte');
 		slideoverOpen = false;
 	}
 
 	function handleCancel() {
-		console.log('Cancel action');
+		console.log('Settings canceled from +layout.svelte');
 		slideoverOpen = false;
 	}
 </script>
@@ -104,7 +113,6 @@
 		on:save={handleSave}
 		on:cancel={handleCancel}
 		cancelText="Close"
-		submitText="Save Changes">
-		<p>This is where you can add your settings options.</p>
-	</Slideover>
+		submitText="Save Changes"
+	/>
 </div>

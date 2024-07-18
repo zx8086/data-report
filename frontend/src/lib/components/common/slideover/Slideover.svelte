@@ -4,6 +4,8 @@
 	import { createEventDispatcher } from 'svelte';
 	import Button from '$lib/components/common/button/Button.svelte';
 	import { Icon, XMark } from 'svelte-hero-icons';
+	import { settings } from '$lib/stores/settingsStore';
+	import type { Settings } from '$lib/types';
 
 	export let open: boolean;
 	export let title: string;
@@ -13,6 +15,41 @@
 	export let showButtons: boolean = true;
 
 	const dispatch = createEventDispatcher();
+
+	let localSettings: Settings;
+
+	$: if (open) {
+		localSettings = { ...$settings };
+		console.log("Slideover opened, current settings:", localSettings);
+	}
+
+	function handleActiveOptionChange() {
+		localSettings.activeOption = !localSettings.activeOption;
+		localSettings = { ...localSettings };
+		console.log("Active option changed:", localSettings.activeOption);
+	}
+
+	function handleSalesChannelChange(channel: string) {
+		if (localSettings.salesChannels.includes(channel)) {
+			localSettings.salesChannels = localSettings.salesChannels.filter(c => c !== channel);
+		} else {
+			localSettings.salesChannels = [...localSettings.salesChannels, channel];
+		}
+		localSettings = { ...localSettings };
+		console.log("Sales channels changed:", localSettings.salesChannels);
+	}
+
+	async function handleSave() {
+		try {
+			console.log("Slideover: Attempting to save settings:", localSettings);
+			const updatedSettings = await settings.updateSettings(localSettings);
+			console.log("Slideover: Settings saved successfully:", updatedSettings);
+			dispatch('save');
+			open = false;
+		} catch (error) {
+			console.error("Slideover: Error saving settings:", error);
+		}
+	}
 </script>
 
 {#if open}
@@ -37,7 +74,29 @@
 							</div>
 						</div>
 						<div class="relative flex-1 px-4 py-6 sm:px-6">
-							<slot />
+							{#if localSettings}
+								<label>
+									<input
+										type="checkbox"
+										checked={localSettings.activeOption}
+										on:change={handleActiveOptionChange}
+									/>
+									Active Option
+								</label>
+								<div>
+									Sales Channels:
+									{#each ['SELLIN', 'B2B'] as channel}
+										<label>
+											<input
+												type="checkbox"
+												checked={localSettings.salesChannels.includes(channel)}
+												on:change={() => handleSalesChannelChange(channel)}
+											/>
+											{channel}
+										</label>
+									{/each}
+								</div>
+							{/if}
 						</div>
 						{#if showButtons}
 							<div class="flex flex-shrink-0 justify-end gap-2 px-4 py-4">
@@ -45,15 +104,15 @@
 									type="button"
 									class="btn-outline border-base-300"
 									on:click={() => {
-                    open = false;
-                    dispatch('cancel');
-                  }}>
+                                        open = false;
+                                        dispatch('cancel');
+                                    }}>
 									{cancelText}
 								</Button>
 								<Button
 									type="submit"
 									class="btn-primary"
-									on:click={() => dispatch('save')}>
+									on:click={handleSave}>
 									{submitText}
 								</Button>
 							</div>
