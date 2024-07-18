@@ -75,8 +75,6 @@ export const actions: Actions = {
 			}
 			console.log("GraphQL response:", JSON.stringify(response.data.getImageUrlCheck, null, 2));
 
-			debugger
-
 			return {
 				type: 'success',
 				data: JSON.stringify(response.data.getImageUrlCheck)

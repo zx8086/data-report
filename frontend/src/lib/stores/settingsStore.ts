@@ -1,4 +1,4 @@
-// src/lib/stores/settingsStore.ts
+// settingsStore.ts
 import { writable } from 'svelte/store';
 
 export interface Settings {
@@ -6,50 +6,48 @@ export interface Settings {
 	salesChannels: string[];
 }
 
+const DEFAULT_SETTINGS: Settings = {
+	activeOption: false,
+	salesChannels: ['SELLIN']
+};
+
 function createSettingsStore() {
-	const { subscribe, set, update } = writable<Settings>({ activeOption: false, salesChannels: [] });
+	const { subscribe, set, update } = writable<Settings>(DEFAULT_SETTINGS);
 
 	return {
 		subscribe,
-		updateSettings: async (newSettings: Partial<Settings>) => {
-			try {
-				console.log("Attempting to update settings with:", newSettings);
-				const response = await fetch('/api/settings', {
-					method: 'POST',
-					body: JSON.stringify(newSettings),
-					headers: { 'Content-Type': 'application/json' }
-				});
-				if (!response.ok) {
-					throw new Error('Failed to update settings');
-				}
-				const result = await response.json();
-				console.log("Received updated settings from server:", result);
-				if (result.success && result.settings) {
-					set(result.settings);
-					return result.settings;
-				} else {
-					throw new Error('Invalid response from server');
-				}
-			} catch (error) {
-				console.error("Error updating settings:", error);
-				throw error;
-			}
-		},
 		loadSettings: async () => {
 			try {
 				const response = await fetch('/api/settings');
 				if (!response.ok) {
 					throw new Error('Failed to load settings');
 				}
+				const settings = await response.json();
+				console.log("Loaded settings:", settings);
+				set(settings);
+			} catch (error) {
+				console.error("Error loading settings:", error);
+				set(DEFAULT_SETTINGS);  // Use default settings if there's an error
+			}
+		},
+		updateSettings: async (newSettings: Partial<Settings>) => {
+			try {
+				const response = await fetch('/api/settings', {
+					method: 'POST',
+					headers: { 'Content-Type': 'application/json' },
+					body: JSON.stringify(newSettings)
+				});
+				if (!response.ok) {
+					throw new Error('Failed to update settings');
+				}
 				const result = await response.json();
-				console.log("Loaded settings:", result);
-				if (result.settings) {
+				if (result.success && result.settings) {
 					set(result.settings);
 				} else {
 					throw new Error('Invalid response from server');
 				}
 			} catch (error) {
-				console.error("Error loading settings:", error);
+				console.error("Error updating settings:", error);
 				throw error;
 			}
 		}

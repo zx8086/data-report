@@ -17,38 +17,29 @@
 	const dispatch = createEventDispatcher();
 
 	let localSettings: Settings;
+	let activeOption = false;
+	let selectedSalesChannels: string[] = [];
 
 	$: if (open) {
 		localSettings = { ...$settings };
+		activeOption = localSettings.activeOption;
+		selectedSalesChannels = [...localSettings.salesChannels];
 		console.log("Slideover opened, current settings:", localSettings);
 	}
 
-	function handleActiveOptionChange() {
-		localSettings.activeOption = !localSettings.activeOption;
-		localSettings = { ...localSettings };
-		console.log("Active option changed:", localSettings.activeOption);
-	}
+	function handleSubmit(event: Event) {
+		event.preventDefault();
+		const formData = new FormData(event.target as HTMLFormElement);
 
-	function handleSalesChannelChange(channel: string) {
-		if (localSettings.salesChannels.includes(channel)) {
-			localSettings.salesChannels = localSettings.salesChannels.filter(c => c !== channel);
-		} else {
-			localSettings.salesChannels = [...localSettings.salesChannels, channel];
-		}
-		localSettings = { ...localSettings };
-		console.log("Sales channels changed:", localSettings.salesChannels);
-	}
+		const newSettings: Settings = {
+			activeOption: formData.get('activeOption') === 'on',
+			salesChannels: formData.getAll('salesChannels') as string[]
+		};
 
-	async function handleSave() {
-		try {
-			console.log("Slideover: Attempting to save settings:", localSettings);
-			const updatedSettings = await settings.updateSettings(localSettings);
-			console.log("Slideover: Settings saved successfully:", updatedSettings);
-			dispatch('save');
-			open = false;
-		} catch (error) {
-			console.error("Slideover: Error saving settings:", error);
-		}
+		console.log("Submitting settings:", newSettings);
+		settings.updateSettings(newSettings);
+		dispatch('save');
+		open = false;
 	}
 </script>
 
@@ -73,50 +64,48 @@
 								<p class="text-sm text-primary-content text-opacity-80">{subtitle}</p>
 							</div>
 						</div>
-						<div class="relative flex-1 px-4 py-6 sm:px-6">
-							{#if localSettings}
-								<label>
-									<input
-										type="checkbox"
-										checked={localSettings.activeOption}
-										on:change={handleActiveOptionChange}
-									/>
-									Active Option
-								</label>
-								<div>
-									Sales Channels:
-									{#each ['SELLIN', 'B2B'] as channel}
-										<label>
-											<input
-												type="checkbox"
-												checked={localSettings.salesChannels.includes(channel)}
-												on:change={() => handleSalesChannelChange(channel)}
-											/>
-											{channel}
-										</label>
-									{/each}
+						<form on:submit|preventDefault={handleSubmit} class="relative flex-1 px-4 py-6 sm:px-6">
+							<label>
+								<input
+									type="checkbox"
+									name="activeOption"
+									checked={activeOption}
+								/>
+								Active Option
+							</label>
+							<div>
+								Sales Channels:
+								{#each ['SELLIN', 'B2B'] as channel}
+									<label>
+										<input
+											type="checkbox"
+											name="salesChannels"
+											value={channel}
+											checked={selectedSalesChannels.includes(channel)}
+										/>
+										{channel}
+									</label>
+								{/each}
+							</div>
+							{#if showButtons}
+								<div class="flex flex-shrink-0 justify-end gap-2 px-4 py-4">
+									<Button
+										type="button"
+										class="btn-outline border-base-300"
+										on:click={() => {
+                                            open = false;
+                                            dispatch('cancel');
+                                        }}>
+										{cancelText}
+									</Button>
+									<Button
+										type="submit"
+										class="btn-primary">
+										{submitText}
+									</Button>
 								</div>
 							{/if}
-						</div>
-						{#if showButtons}
-							<div class="flex flex-shrink-0 justify-end gap-2 px-4 py-4">
-								<Button
-									type="button"
-									class="btn-outline border-base-300"
-									on:click={() => {
-                                        open = false;
-                                        dispatch('cancel');
-                                    }}>
-									{cancelText}
-								</Button>
-								<Button
-									type="submit"
-									class="btn-primary"
-									on:click={handleSave}>
-									{submitText}
-								</Button>
-							</div>
-						{/if}
+						</form>
 					</div>
 				</div>
 			</div>

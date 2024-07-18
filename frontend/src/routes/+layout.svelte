@@ -13,7 +13,7 @@
 	import { Tracker, key } from '$lib/context/tracker';
 	import type { Options } from '@openreplay/tracker';
 
-	$: console.log("Current settings in layout - Loading from settingsStore:", settings);
+	$: console.log("Current settings in layout:", $settings);
 
 	let tracker: any | null = null;
 	let slideoverOpen = false;
@@ -57,6 +57,7 @@
 			console.error("Error loading settings from +layout.svelte:", error);
 			// Handle the error, maybe set default values or show an error message
 		}
+
 		// Initialize OpenReplay tracker
 		try {
 			const trackerInstance = getTracker();
