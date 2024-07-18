@@ -23,12 +23,16 @@ export const divisionTranslations = {
 	"69": "CK Footwear",
 	"70": "CK Accessories",
 	"77": "CK Swimwear",
+	"91" : "Michael Kors",
+	"92" : "IZOD",
 	"97": "Nike Underwear"
 } as const;
 
 export const brandTranslations = {
 	"CKEU": "Calvin Klein",
 	"THEU": "Tommy Hilfiger",
+	"MKEU" : "Michael Kors",
+	"IZEU" : "IZOD",
 	"NIKE": "Nike"
 } as const;
 

@@ -27,10 +27,9 @@
 				console.error('Error:', e);
 				tracker.event('Page_View', {
 					page: `Document Search`,
-
 					category: 'Navigation',
 					action: 'View',
-					error: 'failed'
+					error: `Failed -${e}`
 				});
 			}
 		}

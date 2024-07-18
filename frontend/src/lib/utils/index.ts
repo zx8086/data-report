@@ -1,5 +1,4 @@
 // src/lib/utils/index.ts
-import posthog from 'posthog-js';
 import { seasonTranslations, divisionTranslations, brandTranslations, translateCode } from './translations';
 
 interface Breadcrumb {
@@ -14,15 +13,8 @@ type BrandKey = keyof typeof brandTranslations;
 const NON_DIVISION = 'Non-Division';
 
 export function generateBreadcrumbs(path: string): Breadcrumb[] {
-	if (posthog.isFeatureEnabled('console-logging')) {
-		console.log('Generating breadcrumbs for path:', path);
-	}
 
 	const segments = path.split('/').filter(Boolean);
-
-	if (posthog.isFeatureEnabled('console-logging')) {
-		console.log('Path segments:', segments);
-	}
 
 	const breadcrumbs = [{ label: 'HOME', href: '/' }];
 
@@ -46,10 +38,6 @@ export function generateBreadcrumbs(path: string): Breadcrumb[] {
 		}
 
 		breadcrumbs.push({ label: label.toUpperCase(), href });
-	}
-
-	if (posthog.isFeatureEnabled('console-logging')) {
-		console.log('Final breadcrumbs:', breadcrumbs);
 	}
 
 	return breadcrumbs;
