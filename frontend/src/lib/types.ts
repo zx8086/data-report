@@ -7,6 +7,11 @@ export interface CollectionData {
 	imageUrl?: string;
 }
 
+export interface Settings {
+	activeOption: boolean;
+	salesChannels: string[];
+}
+
 export interface ImageDetails {
 	imageKey?: string;
 	backModifiedOn?: string;

@@ -1,6 +1,6 @@
 <script lang="ts">
 	/** @type {import('./$types').PageData} */
-	export let data;
+	// export let data;
 
 	import { goto } from '$app/navigation';
 	import { onMount, getContext } from 'svelte';

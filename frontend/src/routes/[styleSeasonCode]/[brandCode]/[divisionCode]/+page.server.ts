@@ -4,6 +4,7 @@
 import { ApolloClient, createHttpLink, gql, InMemoryCache } from '@apollo/client/core';
 import fetch from 'cross-fetch';
 import type { CollectionsSummaryResponse, LooksSummaryResponse } from '$lib/types';
+import { getSettings } from '$lib/server/settingsDB';
 
 const brandCodeToBrand: any = {
 	THEU: 'TH',
@@ -30,6 +31,8 @@ const createApolloClient = () => {
 };
 
 export const load = async ({ params }) => {
+	const currentSettings = getSettings();
+	console.log("Current Setting from getSettings", currentSettings)
 
 	const { styleSeasonCode: season, brandCode, divisionCode: division } = params;
 
@@ -85,11 +88,11 @@ export const load = async ({ params }) => {
 		const looksResponse = await client.query<LooksSummaryResponse>({ query: looksQuery, variables: looksVariables });
 
 		const collectionsVariables = {
-			ActiveOption: true,
 			DivisionCode: division,
-			SalesChannels: ["SELLIN", "B2B"],
 			SalesOrganizationCode: salesOrgCode,
-			StyleSeasonCode: season
+			StyleSeasonCode: season,
+			ActiveOption: currentSettings.activeOption,
+			SalesChannels: currentSettings.salesChannels
 		};
 
 		const collectionsResponse = await client.query<CollectionsSummaryResponse>({
