@@ -76,9 +76,6 @@
 	{/each}
 </div>
 
-<h2>Charts -> Divisional</h2>
-<!-- Add your divisional charts here -->
-
 <pre>
   Current Path: {JSON.stringify(translatedPath, null, 2)}
 </pre>
