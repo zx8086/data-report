@@ -1,7 +1,13 @@
 // +server.ts
 import { json } from '@sveltejs/kit';
 import type { RequestHandler } from './$types';
+import type { Settings } from '$lib/types';
 import { updateSettings, getSettings } from '$lib/server/settingsDB';
+
+const DEFAULT_SETTINGS: Settings = {
+	activeOption: true,
+	salesChannels: ['SELLIN']
+};
 
 export const GET: RequestHandler = async () => {
 	try {
@@ -10,7 +16,7 @@ export const GET: RequestHandler = async () => {
 		return json(settings);
 	} catch (error) {
 		console.error("API GET: Error fetching settings:", error);
-		return json({ error: "Failed to fetch settings" }, { status: 500 });
+		return json(DEFAULT_SETTINGS, { status: 200 });  // Return default settings instead of an error
 	}
 };
 
