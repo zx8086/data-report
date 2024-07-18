@@ -1,9 +1,12 @@
+<!--+layout.svelte (Main Site)-->
 <script lang="ts">
 	import "../app.css";
 	import { afterNavigate } from '$app/navigation';
 	import Breadcrumbs from "$lib/components/Breadcumbs.svelte";
 	import LeftSidebar from '$lib/components/LeftSidebar.svelte';
 	import RightSidebar from '$lib/components/RightSidebar.svelte';
+	import Slideover from '$lib/components/common/slideover/Slideover.svelte';
+	import Button from '$lib/components/common/button/Button.svelte';
 	import { selectedItem } from '$lib/stores/selectedItemStore';
 
 	import { onMount, setContext } from 'svelte';
@@ -66,6 +69,18 @@
 	afterNavigate(() => {
 		selectedItem.reset();
 	});
+
+	let slideoverOpen = false;
+
+	function handleSave() {
+		console.log('Save action');
+		slideoverOpen = false;
+	}
+
+	function handleCancel() {
+		console.log('Cancel action');
+		slideoverOpen = false;
+	}
 </script>
 
 <div class="flex h-screen overflow-hidden">
@@ -77,4 +92,19 @@
 	</main>
 
 	<RightSidebar />
+
+	<div class="fixed bottom-4 left-4 z-40">
+		<Button on:click={() => slideoverOpen = true}>Settings</Button>
+	</div>
+
+	<Slideover
+		bind:open={slideoverOpen}
+		title="Settings"
+		subtitle="Adjust your preferences"
+		on:save={handleSave}
+		on:cancel={handleCancel}
+		cancelText="Close"
+		submitText="Save Changes">
+		<p>This is where you can add your settings options.</p>
+	</Slideover>
 </div>
