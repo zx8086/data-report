@@ -1,0 +1,74 @@
+syntax = "proto3";
+package seasonalassignments;
+
+service SeasonalAssignments {
+  rpc GetAllSeasonalAssignments (AllSeasonalAssignmentsRequest) returns (AllSeasonalAssignmentsResponse) {}
+  rpc GetSeasonalAssignment (SeasonalAssignmentRequest) returns (SeasonalAssignmentResponse) {}
+  rpc GetDivisionAssignment (DivisionAssignmentRequest) returns (DivisionAssignmentResponse) {}
+}
+
+message AllSeasonalAssignmentsRequest {
+  string styleSeasonCode = 1;
+  optional string companyCode = 2;
+  optional bool isActive = 3;
+}
+
+message AllSeasonalAssignmentsResponse {
+  repeated SeasonalAssignmentResponse assignments = 1;
+}
+
+message SeasonalAssignmentRequest {
+  string styleSeasonCode = 1;
+  string companyCode = 2;
+  optional bool isActive = 3;
+}
+
+message SeasonalAssignmentResponse {
+  string companyCode = 1;
+  string name = 2;
+  string brand = 3;
+  string brandName = 4;
+  string styleSeasonCode = 5;
+  repeated string channels = 6;
+  repeated Division divisions = 7;
+  FMS fms = 8;
+  repeated string salesOrganizationCodes = 9;
+  string createdOn = 10;
+  string modifiedOn = 11;
+}
+
+message DivisionAssignmentRequest {
+  string styleSeasonCode = 1;
+  string companyCode = 2;
+  string divisionCode = 3;
+}
+
+message DivisionAssignmentResponse {
+  string companyCode = 1;
+  string name = 2;
+  string brand = 3;
+  string brandName = 4;
+  string styleSeasonCode = 5;
+  repeated string channels = 6;
+  Division division = 7;
+  FMS fms = 8;
+  repeated string salesOrganizationCodes = 9;
+  string createdOn = 10;
+  string modifiedOn = 11;
+}
+
+message Division {
+  string name = 1;
+  string code = 2;
+  bool isActive = 3;
+}
+
+message FMS {
+  repeated Season season = 1;
+  string year = 2;
+}
+
+message Season {
+  string code = 1;
+  string name = 2;
+}
