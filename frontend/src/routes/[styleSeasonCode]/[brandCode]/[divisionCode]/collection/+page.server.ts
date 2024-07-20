@@ -1,4 +1,4 @@
-// +page.server.ts (collection)
+// +page.+server.ts (collection)
 import { ApolloClient, gql, InMemoryCache, createHttpLink } from '@apollo/client/core';
 import fetch from 'cross-fetch';
 import type { PageServerLoad, Actions } from './$types';

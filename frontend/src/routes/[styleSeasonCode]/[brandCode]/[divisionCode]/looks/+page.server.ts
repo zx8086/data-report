@@ -1,4 +1,4 @@
-// +page.server.ts
+// +page.+server.ts
 import { ApolloClient, ApolloError, gql, InMemoryCache, createHttpLink } from '@apollo/client/core';
 import type { SelectedItemType, ImageDetails, Look, LookDetails, LooksResponse } from '$lib/types';
 

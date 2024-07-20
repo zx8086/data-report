@@ -1,4 +1,4 @@
-// +page.server.ts
+// +page.+server.ts
 /** @type {import('./$types').PageLoad} */
 
 import { ApolloClient, createHttpLink, gql, InMemoryCache } from '@apollo/client/core';

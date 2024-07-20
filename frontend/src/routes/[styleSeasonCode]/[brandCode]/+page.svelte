@@ -11,6 +11,7 @@
 	let styleSeasonCode: string;
 	let brandCode: string;
 	let divisionCode: string;
+	let divisions: { code: string; name: string; isActive: boolean }[] = [];
 
 	$: {
 		if ($page) {
@@ -21,18 +22,37 @@
 		}
 	}
 
-	// Define divisions for each brand using the translation utility
-	const brandDivisions = {
-		THEU: ['01', '02', '03', '04', '05', '07', '09', '10'],
-		CKEU: ['61', '62', '64', '65', '67', '68', '69', '70', '77'],
-		NIKE: ['97']
-	};
+	async function fetchSeasonalAssignments(styleSeasonCode: string, brandCode: string) {
+		try {
+			const response = await fetch(`/api/seasonalAssignments?styleSeasonCode=${styleSeasonCode}&companyCode=${brandCode}&isActive=true`);
+			if (!response.ok) {
+				throw new Error('Failed to fetch seasonal assignments');
+			}
+			const data = await response.json();
+			return data.assignments[0]; // Return the first (and only) assignment
+		} catch (error) {
+			console.error('Error fetching seasonal assignments:', error);
+			return null;
+		}
+	}
 
-	// Get the correct divisions based on the current brand
-	$: divisions = (brandDivisions[brandCode as keyof typeof brandDivisions] || []).map(code => ({
-		code,
-		name: translateCode(code, 'division')
-	}));
+	$: {
+		if (styleSeasonCode && brandCode) {
+			fetchSeasonalAssignments(styleSeasonCode, brandCode).then(assignment => {
+				if (assignment && assignment.divisions) {
+					divisions = assignment.divisions
+						.filter(div => div.isActive)
+						.map(div => ({
+							code: div.code,
+							name: translateCode(div.code, 'division'),
+							isActive: div.isActive
+						}));
+				} else {
+					divisions = [];
+				}
+			});
+		}
+	}
 
 	function navigateToDivision(divisionCode: string) {
 		if (styleSeasonCode && brandCode) {

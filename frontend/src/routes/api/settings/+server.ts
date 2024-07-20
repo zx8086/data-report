@@ -1,4 +1,4 @@
-// +server.ts
+// ++server.ts
 import { json } from '@sveltejs/kit';
 import type { RequestHandler } from './$types';
 import type { Settings } from '$lib/types';
