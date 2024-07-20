@@ -1,8 +1,9 @@
 // src/lib/utils/translations.ts
 
 export const seasonTranslations = {
-	"C51": "Spring 2025",
 	"C52": "Summer 2025",
+	"C51": "Spring 2025",
+	"C44": "Winter 2024",
 } as const;
 
 export const divisionTranslations = {

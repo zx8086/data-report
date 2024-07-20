@@ -6,9 +6,7 @@
 
 	const breadcrumbs = derived(page, $page => {
 		const path = $page.url.pathname;
-		// console.log('Current path:', path);
 		const result = generateBreadcrumbs(path);
-		// console.log('Generated breadcrumbs:', result);
 		return result;
 	});
 </script>

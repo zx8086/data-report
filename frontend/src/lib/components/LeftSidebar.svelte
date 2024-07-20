@@ -10,8 +10,6 @@
 	let showDebugInfo = false;
 	let debugInfo = '';
 
-
-
 	onMount(async () => {
 		const tracker = getTracker();
 		if (tracker) {
@@ -25,7 +23,6 @@
 	});
 
 	const baseUrl = 'https://s7g10.scene7.com/is/image/TommyHilfigerEU';
-
 
 	function getStyleImageUrl(styleCode: string) {
 		if ($selectedItem && $selectedItem.type === 'look' && $selectedItem.lookDetails) {

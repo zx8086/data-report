@@ -103,7 +103,7 @@
 
 	<RightSidebar />
 
-	<div class="fixed bottom-4 left-4 z-40">
+	<div class="fixed bottom-6 left-6 z-40">
 		<Button on:click={() => slideoverOpen = true}>Settings</Button>
 	</div>
 
