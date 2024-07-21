@@ -1,4 +1,5 @@
-<script>
+<!-- +page.svelte (For PVH Brands)-->
+<script lang="ts">
 	/** @type {import('./$types').PageData} */
 
 	import { goto } from '$app/navigation';
@@ -8,10 +9,10 @@
 
 	const { getTracker } = getContext(key);
 
-	// Get the current styleSeasonCode from the page store
 	$: currentSeasonCode = $page.params.styleSeasonCode;
 
 	let seasonalAssignments = [];
+	let loading = true;
 
 	async function fetchSeasonalAssignments(styleSeasonCode) {
 		try {
@@ -24,6 +25,8 @@
 		} catch (error) {
 			console.error('Error fetching seasonal assignments:', error);
 			return [];
+		} finally {
+			loading = false;
 		}
 	}
 
@@ -55,18 +58,24 @@
 	function hasActiveDivisions(assignment) {
 		return assignment.divisions.some(d => d.isActive);
 	}
+
+	$: activeAssignments = seasonalAssignments.filter(hasActiveDivisions);
 </script>
 
 <h1>PVH Brands</h1>
 <div class="flex flex-col space-y-4 my-4">
-	{#each seasonalAssignments as assignment}
-		{#if hasActiveDivisions(assignment)}
+	{#if loading}
+		<p>Loading...</p>
+	{:else if activeAssignments.length === 0}
+		<p>No active assignments found for this season.</p>
+	{:else}
+		{#each activeAssignments as assignment}
 			<button
 				class="px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600 w-64"
 				on:click={() => navigateToBrand(assignment.companyCode)}
 			>
 				{assignment.brandName}
 			</button>
-		{/if}
-	{/each}
+		{/each}
+	{/if}
 </div>

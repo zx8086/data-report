@@ -5,7 +5,7 @@ const typeDefs = gql`
         SELLIN
         B2B
     }
-    
+
     type Look {
         documentKey: String
         divisionCode: String
@@ -16,7 +16,7 @@ const typeDefs = gql`
         relatedStyles: [String]
         isDeleted: Boolean
     }
-    
+
     type LookSummary {
         hasDeliveryName: Int
         hasDescription: Int
@@ -27,7 +27,7 @@ const typeDefs = gql`
         hasTrend: Int
         totalLooks: Int
     }
-    
+
     type OptionSummary {
         totalOptions: Int!
         hasImages: Int!
@@ -44,6 +44,7 @@ const typeDefs = gql`
         isOpenForEcom: Int!
         hasDeliveryDates: Int!
     }
+
     type Status {
         code: String
         description: String
@@ -127,7 +128,7 @@ const typeDefs = gql`
         hasDeliveryDropDate: Boolean
         hasImageDocument: Boolean
     }
-    
+
     type OptionFull {
         activeOption: Boolean
         brandCode: String
@@ -256,7 +257,7 @@ const typeDefs = gql`
         sketchModifiedOn: String
         sketchUrl: String
     }
-    
+
     type LookDetails {
         assetUrl: String
         brand: String
@@ -304,17 +305,64 @@ const typeDefs = gql`
         data: JSON
         timeTaken: Float!
     }
+
+    type SeasonalAssignment {
+        channels: [String!]!
+        divisions: [Division!]!
+        salesOrganizationCodes: [String!]!
+        companyCode: String!
+        name: String!
+        brand: String!
+        brandName: String!
+        styleSeasonCode: String!
+        fms: FMS!
+        createdOn: String!
+        modifiedOn: String!
+    }
+
+    type SeasonalDivisionalAssignment {
+        channels: [String!]!
+        division: Division
+        salesOrganizationCodes: [String!]!
+        companyCode: String!
+        name: String!
+        brand: String!
+        brandName: String!
+        styleSeasonCode: String!
+        fms: FMS!
+        createdOn: String!
+        modifiedOn: String!
+    }
     
+    type Division {
+        name: String!
+        code: String!
+        isActive: Boolean!
+    }
+
+    type FMSSeason {
+        code: String!
+        name: String!
+    }
+
+    type FMS {
+        season: [FMSSeason!]!
+        year: String!
+    }
+
     type Query {
         looksSummary(brand: String, season: String, division: String): LookSummary
         looks(brand: String, season: String, division: String): [Look]
-        optionsSummary( SalesOrganizationCode: String!, StyleSeasonCode: String!, DivisionCode: String!, ActiveOption: Boolean!, SalesChannels: [SalesChannel!]!): OptionSummary!
-        optionsProductView ( BrandCode: String!, SalesOrganizationCode: String!, StyleSeasonCode: String!, DivisionCode: String!, ActiveOption: Boolean!, SalesChannels: [SalesChannel!]!): [OptionProductView]
+        optionsSummary(SalesOrganizationCode: String!, StyleSeasonCode: String!, DivisionCode: String!, ActiveOption: Boolean!, SalesChannels: [SalesChannel!]!): OptionSummary!
+        optionsProductView(BrandCode: String!, SalesOrganizationCode: String!, StyleSeasonCode: String!, DivisionCode: String!, ActiveOption: Boolean!, SalesChannels: [SalesChannel!]!): [OptionProductView]
         imageDetails(divisionCode: String!, styleSeasonCode: String!, styleCode: String!): ImageDetails
         lookDetails(lookDocKey: String!): LookDetails
         getImageUrlCheck(divisions: [String!]!, season: String!): [UrlSuffixesResult!]!
         getLooksUrlCheck(divisions: [String!]!, season: String!): [UrlSuffixesResult!]!
         searchDocuments(collections: [BucketScopeCollection!]!, keys: [String!]!): [DocumentResult!]!
+        getAllSeasonalAssignments(styleSeasonCode: String!, companyCode: String, isActive: Boolean): [SeasonalAssignment!]!
+#        getSeasonalAssignment(styleSeasonCode: String!, companyCode: String!, isActive: Boolean): SeasonalAssignment
+        getDivisionAssignment(styleSeasonCode: String!, companyCode: String!, divisionCode: String!): SeasonalDivisionalAssignment
     }
 `;
 

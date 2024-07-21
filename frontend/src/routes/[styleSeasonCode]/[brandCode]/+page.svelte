@@ -12,6 +12,7 @@
 	let brandCode: string;
 	let divisionCode: string;
 	let divisions: { code: string; name: string; isActive: boolean }[] = [];
+	let loading = true;
 
 	$: {
 		if ($page) {
@@ -33,11 +34,14 @@
 		} catch (error) {
 			console.error('Error fetching seasonal assignments:', error);
 			return null;
+		} finally {
+			loading = false;
 		}
 	}
 
 	$: {
 		if (styleSeasonCode && brandCode) {
+			loading = true;
 			fetchSeasonalAssignments(styleSeasonCode, brandCode).then(assignment => {
 				if (assignment && assignment.divisions) {
 					divisions = assignment.divisions
@@ -86,16 +90,18 @@
 <h1>{translateCode(brandCode, 'brand')} Divisions</h1>
 <h2>{translateCode(styleSeasonCode, 'season')}</h2>
 <div class="flex flex-col space-y-4 my-4">
-	{#each divisions as division}
-		<button
-			class="px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600 w-64"
-			on:click={() => navigateToDivision(division.code)}
-		>
-			{division.name}
-		</button>
-	{/each}
+	{#if loading}
+		<p>Loading...</p>
+	{:else if divisions.length === 0}
+		<p>No active divisions found for this brand and season.</p>
+	{:else}
+		{#each divisions as division}
+			<button
+				class="px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600 w-64"
+				on:click={() => navigateToDivision(division.code)}
+			>
+				{division.name}
+			</button>
+		{/each}
+	{/if}
 </div>
-
-<pre>
-  Current Path: {JSON.stringify(translatedPath, null, 2)}
-</pre>

@@ -9,6 +9,8 @@ import lookDetails from './lookDetails';
 import imageUrlCheck from './imageUrlCheck';
 import looksUrlCheck from './looksUrlCheck';
 import documentSearch from './documentSearch';
+import getDivisionAssignment from './getDivisionalAssignment'
+import getAllSeasonalAssignments from './getAllSeasonalAssignments';
 
 const resolvers = {
 	Query: {
@@ -20,7 +22,9 @@ const resolvers = {
 		...lookDetails.Query,
 		...imageUrlCheck.Query,
 		...looksUrlCheck.Query,
-		...documentSearch.Query
+		...documentSearch.Query,
+		...getDivisionAssignment.Query,
+		...getAllSeasonalAssignments.Query
 	}
 };
 
