@@ -17,9 +17,10 @@ export const divisionTranslations = {
 	"09": "TH Footwear",
 	"10": "TH Acessories",
 	"11": "TH Tailored",
-	"18": "TH Runway",
+	"18": "TH Collection",
 	"61": "CK Menswear",
 	"62": "CK Jeans",
+	"63": "CK Licensees",
 	"64": "CKJ Kids",
 	"65": "CK Womenswear",
 	"67": "CK Underwear",
@@ -27,9 +28,11 @@ export const divisionTranslations = {
 	"69": "CK Footwear",
 	"70": "CK Accessories",
 	"71": "CK Dress Furnishing",
+	"72": "CKJ Established 1978",
 	"77": "CK Swimwear",
 	"91" : "Michael Kors",
 	"92" : "IZOD",
+	"96" : "CK Legwear",
 	"97": "Nike Underwear"
 } as const;
 
