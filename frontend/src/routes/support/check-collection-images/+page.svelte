@@ -68,6 +68,14 @@
 	$: totalUrls = urlSuffixes.length;
 	$: failedUrlsCount = failedUrls.length;
 
+	function selectAllDivisions() {
+		selectedDivisions = divisions.map(d => d.code);
+	}
+
+	function deselectAllDivisions() {
+		selectedDivisions = [];
+	}
+
 	function toggleDivision(divisionCode: string) {
 		selectedDivisions = selectedDivisions.includes(divisionCode)
 			? selectedDivisions.filter(d => d !== divisionCode)
@@ -377,6 +385,10 @@
 		</div>
 		<div class="flex flex-col">
 			<h3>Divisions</h3>
+			<div class="mb-2">
+				<button type="button" on:click={selectAllDivisions} class="mr-2 px-2 py-1 bg-blue-500 text-white rounded">Select All</button>
+				<button type="button" on:click={deselectAllDivisions} class="px-2 py-1 bg-blue-500 text-white rounded">Deselect All</button>
+			</div>
 			{#each divisions.sort((a, b) => parseInt(a.code) - parseInt(b.code)) as division}
 				<label class="flex items-center mb-2">
 					<input type="checkbox" name="divisions" value={division.code} on:change={() => toggleDivision(division.code)} checked={selectedDivisions.includes(division.code)} class="mr-2">
