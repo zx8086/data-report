@@ -4,6 +4,7 @@
 
 	import ProgressBar from '$lib/components/ProgressBar.svelte';
 	import DivisionalVideoPlayer from '$lib/components/DivisionalVideoPlayer.svelte';
+	import StatCard from '$lib/components/common/StatsCard.svelte';
 	import { page } from '$app/stores';
 
 	import { key } from '$lib/context/tracker';
@@ -96,14 +97,16 @@
 						<ProgressBar titleHeading="Front Image" completed={collectionsData.hasFrontImageUrl} total={collectionsData.totalOptions} />
 						<ProgressBar titleHeading="Images" completed={collectionsData.hasImages} total={collectionsData.totalOptions} />
 						<ProgressBar titleHeading="Delivery Dates" completed={collectionsData.hasDeliveryDates} total={collectionsData.totalOptions} />
-						<ProgressBar titleHeading="Open For Ecom" completed={collectionsData.isOpenForEcom} total={collectionsData.totalOptions} />
-						<ProgressBar titleHeading="Licensed" completed={collectionsData.isLicensed} total={collectionsData.totalOptions} />
-						<ProgressBar titleHeading="New" completed={collectionsData.isNew} total={collectionsData.totalOptions} />
-						<ProgressBar titleHeading="Updated" completed={collectionsData.isUpdated} total={collectionsData.totalOptions} />
-						<ProgressBar titleHeading="Sold Out" completed={collectionsData.isSoldOut} total={collectionsData.totalOptions} />
-						<ProgressBar titleHeading="Closed" completed={collectionsData.isClosed} total={collectionsData.totalOptions} />
-						<ProgressBar titleHeading="Cancelled" completed={collectionsData.isCancelled} total={collectionsData.totalOptions} />
-						<ProgressBar titleHeading="Invalid" completed={collectionsData.isInvalid} total={collectionsData.totalOptions} />
+						<div class="flex flex-col items-center w-full mt-4 mb-4">
+							<StatCard title="Open For Ecom" stat={collectionsData.isOpenForEcom} />
+							<StatCard title="Licensed" stat={collectionsData.isLicensed} />
+							<StatCard title="New" stat={collectionsData.isNew} />
+							<StatCard title="Updated" stat={collectionsData.isUpdated} />
+							<StatCard title="Sold Out" stat={collectionsData.isSoldOut} />
+							<StatCard title="Closed" stat={collectionsData.isClosed} />
+							<StatCard title="Cancelled" stat={collectionsData.isCancelled} />
+							<StatCard title="Invalid" stat={collectionsData.isInvalid} />
+						</div>
 					</div>
 					<div class="flex justify-center mt-1">
 						<a href={`/${styleSeasonCode}/${brandCode}/${divisionCode}/collection`} class="btn-th-detailed-report border-2 p-2">

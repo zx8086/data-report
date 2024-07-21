@@ -103,14 +103,14 @@
 
 	<RightSidebar />
 
-	<div class="fixed bottom-6 left-6 z-40">
+	<div class="fixed bottom-2 left-4 z-40">
 		<Button on:click={() => slideoverOpen = true}>Settings</Button>
 	</div>
 
 	<Slideover
 		bind:open={slideoverOpen}
 		title="Settings"
-		subtitle="Adjust your preferences"
+		subtitle="Adjust your settings here"
 		on:save={handleSave}
 		on:cancel={handleCancel}
 		cancelText="Close"
