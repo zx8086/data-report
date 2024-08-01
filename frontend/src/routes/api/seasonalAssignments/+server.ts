@@ -2,7 +2,9 @@
 import { json } from '@sveltejs/kit';
 import type { RequestHandler } from './$types';
 import { makeGrpcCall } from '$lib/grpcClient';
-import type { Division, SeasonalAssignment, SeasonalAssignmentsResponse } from '$lib/types'
+import type { SeasonalAssignmentsResponse } from '$lib/types';
+import { initializeDatabase } from '$lib/db/database';
+import { cacheDataInDatabase, fetchDataFromDatabase } from '$lib/db/databaseOperations';
 
 export const GET: RequestHandler = async ({ url }) => {
 	const styleSeasonCode = url.searchParams.get('styleSeasonCode');
@@ -14,24 +16,31 @@ export const GET: RequestHandler = async ({ url }) => {
 	}
 
 	try {
+		// Initialize the database schema
+		initializeDatabase();
+
 		let response: SeasonalAssignmentsResponse;
 
-		if (companyCode) {
-			// Fetch for a specific company
+		// Check if we have data for this styleSeasonCode
+		const cachedData = fetchDataFromDatabase(styleSeasonCode, companyCode, isActive);
+
+		if (cachedData.assignments.length === 0) {
+			// If no data exists in the database, fetch from gRPC
+			console.log(`getAllSeasonalAssignments called with:`, { styleSeasonCode, companyCode, isActive });
+
 			response = await makeGrpcCall<SeasonalAssignmentsResponse>('getAllSeasonalAssignments', {
 				styleSeasonCode,
 				companyCode,
 				isActive
 			});
+
+			// Cache the data in the database
+			cacheDataInDatabase(response);
 		} else {
-			// Fetch for all companies
-			response = await makeGrpcCall<SeasonalAssignmentsResponse>('getAllSeasonalAssignments', {
-				styleSeasonCode,
-				isActive
-			});
+			response = cachedData;
 		}
 
-		console.log("gRPC response:", JSON.stringify(response, null, 2));
+		console.log("Response:", JSON.stringify(response, null, 2));
 
 		if (companyCode) {
 			// If companyCode is provided, return only the matching assignment
