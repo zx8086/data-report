@@ -1,6 +1,38 @@
 // $types.ts
 // import type { LoadEvent } from '@sveltejs/kit';
 
+
+export interface Division {
+	name: string;
+	code: string;
+	isActive: boolean;
+}
+
+export interface SeasonalAssignment {
+	channels: string[];
+	divisions: Division[];
+	salesOrganizationCodes: string[];
+	companyCode: string;
+	name: string;
+	brand: string;
+	brandName: string;
+	styleSeasonCode: string;
+	fms: {
+		season: Array<{
+			code: string;
+			name: string;
+		}>;
+		year: string;
+	};
+	createdOn: string;
+	modifiedOn: string;
+}
+
+export interface SeasonalAssignmentsResponse {
+	assignments: SeasonalAssignment[];
+}
+
+
 export interface CollectionData {
 	optionCode: string;
 	description: string;

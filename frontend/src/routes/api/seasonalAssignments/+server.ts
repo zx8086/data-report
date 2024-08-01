@@ -2,36 +2,7 @@
 import { json } from '@sveltejs/kit';
 import type { RequestHandler } from './$types';
 import { makeGrpcCall } from '$lib/grpcClient';
-
-interface Division {
-	name: string;
-	code: string;
-	isActive: boolean;
-}
-
-interface SeasonalAssignment {
-	channels: string[];
-	divisions: Division[];
-	salesOrganizationCodes: string[];
-	companyCode: string;
-	name: string;
-	brand: string;
-	brandName: string;
-	styleSeasonCode: string;
-	fms: {
-		season: Array<{
-			code: string;
-			name: string;
-		}>;
-		year: string;
-	};
-	createdOn: string;
-	modifiedOn: string;
-}
-
-interface SeasonalAssignmentsResponse {
-	assignments: SeasonalAssignment[];
-}
+import type { Division, SeasonalAssignment, SeasonalAssignmentsResponse } from '$lib/types'
 
 export const GET: RequestHandler = async ({ url }) => {
 	const styleSeasonCode = url.searchParams.get('styleSeasonCode');
