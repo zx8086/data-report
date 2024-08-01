@@ -39,6 +39,7 @@
 	let searchResults = [];
 	let processing = false;
 	let errorMessage = '';
+	let searchPerformed = false;  // New variable
 
 	const allCollections = [
 		{ bucket: "default", scope: "seasons", collection: "dates" },
@@ -68,6 +69,7 @@
 		processing = true;
 		errorMessage = '';
 		searchResults = [];
+		searchPerformed = true;  // Set to true when search is performed
 
 		return async ({ result }) => {
 			console.log("Form submission result:", result);
@@ -115,7 +117,8 @@
 			id="documentKey"
 			name="documentKey"
 			bind:value={documentKey}
-			class="w-full p-2 border rounded"
+			on:input={() => { searchPerformed = false; }}
+		class="w-full p-2 border rounded"
 		/>
 	</div>
 
@@ -158,13 +161,13 @@
 			{documentKey}
 		/>
 	{/each}
-{:else if !processing && documentKey}
+{:else if !processing && documentKey && searchPerformed}
 	<p class="mt-4">No results found for the given document key.</p>
 {/if}
 
 {#if showDebugInfo}
-<div class="mt-4">
-	<h3>Debug Information:</h3>
-	<pre>{JSON.stringify({ processing, errorMessage, searchResults }, null, 2)}</pre>
-</div>
+	<div class="mt-4">
+		<h3>Debug Information:</h3>
+		<pre>{JSON.stringify({ processing, errorMessage, searchResults }, null, 2)}</pre>
+	</div>
 {/if}

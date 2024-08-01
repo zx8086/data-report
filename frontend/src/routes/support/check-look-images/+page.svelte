@@ -24,6 +24,7 @@
 	let errorMessage = '';
 	let divisionProgress: { [key: string]: { total: number, processed: number } } = {};
 	let abortController: AbortController | null = null;
+	let formSubmitted = false; // New variable
 
 	const logStore = writable<{message: string, status: 'success' | 'error' | 'info'}[]>([]);
 	let logBox: HTMLDivElement;
@@ -87,16 +88,19 @@
 
 	function selectAllDivisions() {
 		selectedDivisions = divisions.map(d => d.code);
+		formSubmitted = false; // Reset formSubmitted
 	}
 
 	function deselectAllDivisions() {
 		selectedDivisions = [];
+		formSubmitted = false; // Reset formSubmitted
 	}
 
 	function toggleDivision(divisionCode: string) {
 		selectedDivisions = selectedDivisions.includes(divisionCode)
 			? selectedDivisions.filter(d => d !== divisionCode)
 			: [...selectedDivisions, divisionCode];
+		formSubmitted = false; // Reset formSubmitted
 	}
 
 	let processComplete = false;
@@ -111,6 +115,7 @@
 
 	async function handleSubmit(event: Event) {
 		event.preventDefault();
+		formSubmitted = true; // Set formSubmitted to true
 		processing = true;
 		processComplete = false;
 		failedUrls = [];
@@ -177,7 +182,6 @@
 		progress = 0;
 		divisionProgress = {};
 
-		// Sort data by division code numerically
 		const sortedData = data.sort((a, b) => parseInt(a.divisionCode) - parseInt(b.divisionCode));
 
 		try {
@@ -410,6 +414,7 @@
 					{division.name}
 				</label>
 			{/each}
+		</div>
 	</div>
 	<button type="submit" disabled={processing || !selectedSeason || selectedDivisions.length === 0} class="w-full py-2 px-4 bg-blue-500 text-white rounded-md cursor-pointer">
 		{processing ? 'Processing...' : 'Check URLs'}
@@ -442,7 +447,7 @@
 	</div>
 {/if}
 
-{#if !processing && urlSuffixes.length === 0 && !processComplete}
+{#if formSubmitted && !processing && urlSuffixes.length === 0 && !processComplete}
 	<p class="mt-4">No URLs found to check. Please try different selection criteria.</p>
 {/if}
 
@@ -494,3 +499,10 @@
 		Cancel Check
 	</button>
 </div>
+
+
+
+
+
+
+
