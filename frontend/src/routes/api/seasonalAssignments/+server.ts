@@ -7,9 +7,9 @@ import { initializeDatabase } from '$lib/db/database';
 import { cacheDataInDatabase, fetchDataFromDatabase } from '$lib/db/databaseOperations';
 
 export const GET: RequestHandler = async ({ url }) => {
-	const styleSeasonCode = url.searchParams.get('styleSeasonCode');
-	const companyCode = url.searchParams.get('companyCode');
-	const isActive = url.searchParams.get('isActive') === 'true';
+	const styleSeasonCode : string | null = url.searchParams.get('styleSeasonCode');
+	const companyCode : any = url.searchParams.get('companyCode');
+	const isActive : boolean = url.searchParams.get('isActive') === 'true';
 
 	if (!styleSeasonCode) {
 		return json({ error: 'styleSeasonCode is required' }, { status: 400 });
