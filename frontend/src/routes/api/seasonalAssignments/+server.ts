@@ -16,7 +16,6 @@ export const GET: RequestHandler = async ({ url }) => {
 	}
 
 	try {
-		// Initialize the database schema
 		initializeDatabase();
 
 		let response: SeasonalAssignmentsResponse;
@@ -24,9 +23,11 @@ export const GET: RequestHandler = async ({ url }) => {
 		// Check if we have data for this styleSeasonCode
 		const cachedData = fetchDataFromDatabase(styleSeasonCode, companyCode, isActive);
 
-		if (cachedData.assignments.length === 0) {
-			// If no data exists in the database, fetch from gRPC
-			console.log(`getAllSeasonalAssignments called with:`, { styleSeasonCode, companyCode, isActive });
+		console.log("API: fetchDataFromDatabase into cachedData",cachedData)
+
+		if (cachedData) {
+			// If no data exists in the database, fetch from gRPC - Need to refacor this for a proper check
+			console.log(`API - Cached Data: getAllSeasonalAssignments called with:`, { styleSeasonCode, companyCode, isActive });
 
 			response = await makeGrpcCall<SeasonalAssignmentsResponse>('getAllSeasonalAssignments', {
 				styleSeasonCode,
@@ -34,13 +35,12 @@ export const GET: RequestHandler = async ({ url }) => {
 				isActive
 			});
 
-			// Cache the data in the database
 			cacheDataInDatabase(response);
 		} else {
 			response = cachedData;
 		}
 
-		console.log("Response:", JSON.stringify(response, null, 2));
+		console.log("API : Response:", JSON.stringify(response, null, 2));
 
 		if (companyCode) {
 			// If companyCode is provided, return only the matching assignment
