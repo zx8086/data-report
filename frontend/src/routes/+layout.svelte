@@ -55,7 +55,6 @@
 			console.log("Settings loaded successfully from layout.svelte");
 		} catch (error) {
 			console.error("Error loading settings from +layout.svelte:", error);
-			// Handle the error, maybe set default values or show an error message
 		}
 
 		// Initialize OpenReplay tracker

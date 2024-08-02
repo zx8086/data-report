@@ -48,9 +48,13 @@ export function cacheDataInDatabase(response: SeasonalAssignmentsResponse) {
 			}
 		}
 	})();
+	console.log("cacheDataInDatabase: Database seeded with seasonal assignments");
 }
 
 export function fetchDataFromDatabase(styleSeasonCode: string, companyCode?: string, isActive?: boolean): SeasonalAssignmentsResponse {
+
+	console.log(`Fetching Assignments from database: ${styleSeasonCode}:`)
+
 	let query = `
     SELECT sa.*, 
            GROUP_CONCAT(DISTINCT d.division_code || ':' || d.division_name || ':' || d.is_active) as divisions,
@@ -100,5 +104,6 @@ export function fetchDataFromDatabase(styleSeasonCode: string, companyCode?: str
 		modifiedOn: row.modified_on
 	}));
 
+	console.log("DB: Assignments from fetchDataFromDatabase function being returned", assignments);
 	return { assignments };
 }
