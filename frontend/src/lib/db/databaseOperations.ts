@@ -79,9 +79,10 @@ export function fetchDataFromDatabase(styleSeasonCode: string, companyCode?: str
 
 	query += " GROUP BY sa.company_code";
 
-	const rows = db.prepare(query).all(params);
+	// @ts-ignore
+	const rows : any = db.prepare(query).all(params);
 
-	const assignments: SeasonalAssignment[] = rows.map(row => ({
+	const assignments: SeasonalAssignment[] = rows.map((row: { company_code: any; name: any; brand: any; brand_name: any; style_season_code: any; channels: string; divisions: string; fms_seasons: string; fms_year: any; sales_organization_codes: string; created_on: any; modified_on: any; }) => ({
 		companyCode: row.company_code,
 		name: row.name,
 		brand: row.brand,
