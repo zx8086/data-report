@@ -7,6 +7,7 @@
   },
   "dependencies": {
     "@elastic/apm-rum": "^5.16.0",
+    "@elastic/ecs-winston-format": "^1.5.3",
     "@elysiajs/cors": "^1.0.2",
     "@elysiajs/graphql-yoga": "^1.0.3",
     "@graphql-yoga/plugin-prometheus": "^5.1.0",
@@ -22,13 +23,16 @@
     "@opentelemetry/sdk-trace-node": "^1.25.1",
     "@opentelemetry/semantic-conventions": "^1.25.1",
     "@opentelemetry/tracing": "^0.24.0",
+    "@opentelemetry/winston-transport": "^0.5.0",
     "couchbase": "^4.3.1",
     "elastic-apm-node": "^4.7.0",
     "elysia": "latest",
     "graphql": "^16.9.0",
     "graphql-tag": "^2.12.6",
     "graphql-yoga": "^5.4.0",
-    "prom-client": "^15.1.2"
+    "prom-client": "^15.1.2",
+    "winston": "^3.13.1",
+    "winston-daily-rotate-file": "^5.0.0"
   },
   "overrides": {
     "*/graphql": "^16.9.0"
