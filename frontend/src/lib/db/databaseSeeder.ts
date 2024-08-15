@@ -1,4 +1,6 @@
 // src/lib/databaseSeeder.ts
+
+// src/lib/databaseSeeder.ts
 import { db } from './database';
 import { makeGrpcCall } from '$lib/grpcClient';
 import type { SeasonalAssignmentsResponse } from '$lib/types';

@@ -1,12 +1,25 @@
+<!--frontend/src/routes/support/document-search/+page.svelte-->
+
 <script lang="ts">
 	import { enhance } from '$app/forms';
 	import { page } from '$app/stores';
 	import DocumentDisplay from '$lib/components/DocumentDisplay.svelte';
 	import { onMount, getContext } from 'svelte';
 	import { key } from '$lib/context/tracker';
+	import { getCollections } from '$lib/collectionManager';
+
 	const { getTracker } = getContext(key);
 	let showDebugInfo = false;
 	let debugInfo = '';
+
+	let documentKey = '';
+	let searchResults = [];
+	let processing = false;
+	let errorMessage = '';
+	let searchPerformed = false;
+
+	let allCollections: { bucket: string; scope_name: string; collection_name: string; }[] = [];
+	let selectedCollections: { bucket: string; scope_name: string; collection_name: string; }[] = [];
 
 	onMount(async () => {
 		const tracker = getTracker();
@@ -33,43 +46,21 @@
 				});
 			}
 		}
+
+		try {
+			allCollections = await getCollections();
+			selectedCollections = [...allCollections];
+		} catch (error) {
+			console.error('Error fetching collections:', error);
+			errorMessage = 'Failed to fetch collections. Please try again later.';
+		}
 	});
-
-	let documentKey = '';
-	let searchResults = [];
-	let processing = false;
-	let errorMessage = '';
-	let searchPerformed = false;  // New variable
-
-	const allCollections = [
-		{ bucket: "default", scope: "seasons", collection: "dates" },
-		{ bucket: "default", scope: "seasons", collection: "dates_import" },
-		{ bucket: "default", scope: "seasons", collection: "delivery_dates_import" },
-		{ bucket: "default", scope: "seasons", collection: "delivery_dates" },
-		{ bucket: "default", scope: "brands_divisions", collection: "brands_divisions" },
-		{ bucket: "default", scope: "media_assets", collection: "look_items" },
-		{ bucket: "default", scope: "media_assets", collection: "images" },
-		{ bucket: "default", scope: "styles", collection: "article" },
-		{ bucket: "default", scope: "styles", collection: "variant" },
-		{ bucket: "default", scope: "styles", collection: "prepacks" },
-		{ bucket: "default", scope: "styles", collection: "distribution_curves" },
-		{ bucket: "default", scope: "styles", collection: "product2g" },
-		{ bucket: "default", scope: "customer", collection: "assignments" },
-		{ bucket: "default", scope: "customer", collection: "sales-organizations" },
-		{ bucket: "default", scope: "customer", collection: "customers" },
-		{ bucket: "default", scope: "_default", collection: "_default" },
-		{ bucket: "default", scope: "_default", collection: "data_merge_check" },
-		{ bucket: "default", scope: "prices", collection: "prices" },
-		{ bucket: "prices", scope: "_default", collection: "_default" }
-	];
-
-	let selectedCollections = allCollections;
 
 	function handleSubmit(event) {
 		processing = true;
 		errorMessage = '';
 		searchResults = [];
-		searchPerformed = true;  // Set to true when search is performed
+		searchPerformed = true;
 
 		return async ({ result }) => {
 			console.log("Form submission result:", result);
@@ -94,10 +85,16 @@
 		};
 	}
 
-	function toggleCollection(collection) {
-		selectedCollections = selectedCollections.includes(collection)
-			? selectedCollections.filter(c => c !== collection)
-			: [...selectedCollections, collection];
+	function toggleCollection(collection: { bucket: string; scope_name: string; collection_name: string; }) {
+		const index = selectedCollections.findIndex(c =>
+			c.bucket === collection.bucket && c.scope_name === collection.scope_name && c.collection_name === collection.collection_name
+		);
+
+		if (index !== -1) {
+			selectedCollections = selectedCollections.filter((_, i) => i !== index);
+		} else {
+			selectedCollections = [...selectedCollections, collection];
+		}
 	}
 
 	function selectAllCollections() {
@@ -107,6 +104,12 @@
 	function deselectAllCollections() {
 		selectedCollections = [];
 	}
+
+	$: isSelected = (collection: { bucket: string; scope_name: string; collection_name: string; }) => {
+		return selectedCollections.some(c =>
+			c.bucket === collection.bucket && c.scope_name === collection.scope_name && c.collection_name === collection.collection_name
+		);
+	};
 </script>
 
 <form use:enhance={handleSubmit} method="POST" action="?/searchDocuments" class="max-w-3xl mx-auto">
@@ -118,7 +121,7 @@
 			name="documentKey"
 			bind:value={documentKey}
 			on:input={() => { searchPerformed = false; }}
-		class="w-full p-2 border rounded"
+			class="w-full p-2 border rounded"
 		/>
 	</div>
 
@@ -130,10 +133,10 @@
 			<label class="block">
 				<input
 					type="checkbox"
-					checked={selectedCollections.includes(collection)}
+					checked={isSelected(collection)}
 					on:change={() => toggleCollection(collection)}
 				/>
-				{collection.bucket}.{collection.scope}.{collection.collection}
+				{collection.bucket}.{collection.scope_name}.{collection.collection_name}
 			</label>
 		{/each}
 	</div>
@@ -168,6 +171,6 @@
 {#if showDebugInfo}
 	<div class="mt-4">
 		<h3>Debug Information:</h3>
-		<pre>{JSON.stringify({ processing, errorMessage, searchResults }, null, 2)}</pre>
+		<pre>{JSON.stringify({ processing, errorMessage, searchResults, allCollections, selectedCollections }, null, 2)}</pre>
 	</div>
 {/if}
